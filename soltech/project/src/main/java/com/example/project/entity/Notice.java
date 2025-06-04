@@ -1,0 +1,57 @@
+package com.example.project.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.Entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Getter
+@Builder
+@ToString(exclude = {"deptNo", "empNo"})
+@AllArgsConstructor
+@NoArgsConstructor
+
+@Entity
+public class Notice {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long notiNo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "NOTI_EMP_NO", nullable = false)
+    private Employee empNo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "NOTI_DEPT_NO", nullable = false)
+    private Department deptNo;
+
+    @Column(nullable = false)
+    private String notiTitle;
+
+    @Column(nullable = false)
+    private String notiContent;
+
+    @Column(nullable = false)
+    private LocalDateTime notiRegDate;
+
+    private LocalDateTime notiUpdateDate;
+
+    public void changeNotiContent(String notiContent) {
+        this.notiContent = notiContent;
+    }
+
+}
