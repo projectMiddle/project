@@ -51,12 +51,12 @@ public class AttendanceService {
 }
 
 
-    // // 불 반짝
-    // public boolean working(Employee employee){
-    //    return attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now())
-    //     .map(att ->att.getAttStatus() == AttStatus.WORK)
-    //     .orElse(false);
-    // }
+    // 불 반짝
+    public boolean working(Employee employee){
+       return attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now())
+        .map(att ->att.getAttStatus() == AttStatus.WORK)
+        .orElse(false);
+    }
 
 
   
