@@ -46,7 +46,7 @@ public class Attendance {
     @Column(nullable = false)
     private LocalTime attStartTime;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalTime attEndTime;
 
     @Enumerated(EnumType.STRING)

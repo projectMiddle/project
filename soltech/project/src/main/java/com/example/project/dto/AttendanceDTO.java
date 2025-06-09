@@ -23,7 +23,8 @@ public class AttendanceDTO {
     
     private Long attNo;
 
-    private Employee empNo;
+    // private Employee empNo;
+    private Long empNo;
 
     private LocalDate attWorkDate;
 
@@ -32,5 +33,6 @@ public class AttendanceDTO {
     private LocalTime attEndTime;
 
     private AttStatus attStatus;
+
 
 }
