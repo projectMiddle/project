@@ -14,35 +14,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @Log4j2
-@RequestMapping("/")
+@RequestMapping("/attendance")
 @RequiredArgsConstructor
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
-    // @PostMapping("/add")
-    // public AttendanceDTO login(@AuthenticationPrincipal Employee employee) {
-    //    log.info("출근");
-        
-    //     return attendanceService.login(empployee);
+    // @PostMapping("/login")
+    // public AttendanceDTO login(Employee employee) {
+    // log.info("출근");
+
+    // return attendanceService.login(employee);
     // }
-    
-    
 
-   
+    // @PostMapping("/login")
+    // public String postMethodName(@RequestBody String entity) {
+    // //TODO: process POST request
 
-    @PostMapping("")
-    public AttendanceDTO logout(Employee employee) {
-        log.info("퇴근");
-        return attendanceService.logout(employee);
-    }
+    // return entity;
+    // }
 
+    // @PostMapping("/logout")
+    // public AttendanceDTO logout(Employee employee) {
+    // log.info("퇴근");
+    // return attendanceService.logout(employee);
+    // }
 
-    @GetMapping("")
-    public boolean working(@AuthenticationPrincipal Employee employee) {
-        return attendanceService.working(employee);
-    }
+    // // 반짝
+    // @GetMapping("")
+    // public boolean working(Employee employee) {
+    // return attendanceService.working(employee);
+    // }
 }
-
