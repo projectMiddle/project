@@ -1,17 +1,15 @@
 package com.example.project.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.example.project.dto.AttendanceDTO;
 import com.example.project.entity.Attendance;
 import com.example.project.entity.Employee;
-import com.example.project.entity.constant.AttStatus;
+
 import com.example.project.service.AttendanceService;
 
 @SpringBootTest
@@ -27,16 +25,39 @@ public class AttendanceRepositoryTest {
     private EmployeeRepository employeeRepository;
 
     @Test
-    public void login() {
+    public void loginTest() {
         Employee employee = employeeRepository.findById(1001L).get();
-        attendanceService.login(employee);
+        AttendanceDTO dto = attendanceService.login(employee);
+
+        System.out.println("사번: " + dto.getEmpNo());
+        System.out.println("출근 날짜: " + dto.getAttWorkDate());
+        System.out.println("출근 시간: " + dto.getAttStartTime());
+        System.out.println("상태: " + dto.getAttStatus());
+
+        Attendance saved = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
+        System.out.println("DB 출결: " + saved);
+
     }
 
     @Test
-    public Attendance logout() {
+    public void logoutTest() {
         Employee employee = employeeRepository.findById(1001L).get();
-        Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
-        attendanceService.logout(employee);
-        return attendance;
+
+        AttendanceDTO dto = attendanceService.logout(employee);
+        System.out.println("사번: " + dto.getEmpNo());
+        System.out.println("퇴근 시간: " + dto.getAttEndTime());
+        System.out.println("상태: " + dto.getAttStatus());
+
+        Attendance saved = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
+        System.out.println("DB 출결: " + saved);
     }
+
+    @Test
+    public void workingTest() {
+        Employee employee = employeeRepository.findById(1001L).get();
+
+        boolean result = attendanceService.working(employee);
+        System.out.println("출근 여부" + result);
+    }
+
 }

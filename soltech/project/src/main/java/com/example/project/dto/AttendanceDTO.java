@@ -20,7 +20,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class AttendanceDTO {
-    
+
     private Long attNo;
 
     // private Employee empNo;
@@ -33,6 +33,5 @@ public class AttendanceDTO {
     private LocalTime attEndTime;
 
     private AttStatus attStatus;
-
 
 }

@@ -31,7 +31,7 @@ import lombok.ToString;
 
 @Entity
 public class Attendance {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attNo;

@@ -1,6 +1,5 @@
 package com.example.project.service;
 
-import java.beans.Transient;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,7 +10,7 @@ import com.example.project.entity.Attendance;
 import com.example.project.entity.Employee;
 import com.example.project.entity.constant.AttStatus;
 import com.example.project.repository.AttendanceRepository;
-import com.example.project.repository.approval.AppFileRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -22,20 +21,8 @@ public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
 
-    // // 출근
-    // public AttendanceDTO login(Employee employee) {
-    // Attendance attendance = Attendance.builder()
-    // .empNo(employee)
-    // .attWorkDate(LocalDate.now())
-    // .attStartTime(LocalTime.now())
-    // .attEndTime(null)
-    // .attStatus(AttStatus.WORK)
-    // .build();
-
-    // return entityDto(attendanceRepository.save(attendance), employee);
-    // }
-
-    public Long login(Employee employee) {
+    // 출근
+    public AttendanceDTO login(Employee employee) {
         Attendance attendance = Attendance.builder()
                 .empNo(employee)
                 .attWorkDate(LocalDate.now())
@@ -43,30 +30,21 @@ public class AttendanceService {
                 .attEndTime(null)
                 .attStatus(AttStatus.WORK)
                 .build();
+        Attendance saved = attendanceRepository.save(attendance);
 
-        return attendanceRepository.save(attendance).getAttNo();
-
+        return entityDto(saved, employee);
     }
 
-    // // 퇴근
-    // @Transient
-    // public AttendanceDTO logout(Employee employee) {
-    // Attendance attendance =
-    // attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
-    // attendance.changeAttEndTime(LocalTime.now());
-    // attendance.changeAttStatus(AttStatus.OFF);
+    // 퇴근
+    public AttendanceDTO logout(Employee employee) {
 
-    // return entityDto(attendance, employee);
-
-    // }
-
-    @Transient
-    public Attendance logout(Employee employee) {
         Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
         attendance.changeAttEndTime(LocalTime.now());
         attendance.changeAttStatus(AttStatus.OFF);
 
-        return attendance;
+        Attendance saved = attendanceRepository.save(attendance);
+
+        return entityDto(saved, employee);
 
     }
 
