@@ -29,7 +29,7 @@ import lombok.ToString;
 
 @Entity
 public class EmpPay {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long payNo;
@@ -71,5 +71,24 @@ public class EmpPay {
 
     @Column(nullable = false, columnDefinition = "NUMBER default 0")
     private int payLongtermCare; // 장기요양보험
+
+    // 추가 항목들
+
+    @Column(nullable = false, columnDefinition = "NUMBER default 0")
+    private int payTotalSalary; // 총 지급액
+
+    @Column(nullable = false, columnDefinition = "NUMBER default 0")
+    private int payTotalDeduction; // 총 공제액
+
+    @Column(nullable = false, columnDefinition = "NUMBER default 0")
+    private int payNetSalary; // 실 수령액
+
+    public void setPayBaseSalary(int payBaseSalary) {
+        this.payBaseSalary = payBaseSalary;
+    }
+
+    public void setPayBonusWage(int payBonusWage) {
+        this.payBonusWage = payBonusWage;
+    }
 
 }
