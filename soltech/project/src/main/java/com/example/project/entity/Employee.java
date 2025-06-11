@@ -3,6 +3,7 @@ package com.example.project.entity;
 import java.time.LocalDate;
 
 import com.example.project.entity.constant.Gender;
+import com.example.project.entity.constant.MemberRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"deptNo", "jobNo"})
+@ToString(exclude = { "deptNo", "jobNo" })
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -63,6 +64,9 @@ public class Employee {
 
     @Column(nullable = false)
     private Long eSalary;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole mMemberRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "E_DEPT_NO", nullable = false)

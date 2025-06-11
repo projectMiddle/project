@@ -47,7 +47,6 @@ public class MailAttachment {
     @Column(nullable = false)
     private int mailFileSize;
 
-    @Column(nullable = false)
     private LocalDate mailUploadDate;
     
 }

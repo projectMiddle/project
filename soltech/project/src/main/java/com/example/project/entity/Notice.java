@@ -2,6 +2,8 @@ package com.example.project.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -45,6 +47,7 @@ public class Notice {
     @Column(nullable = false)
     private String notiContent;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime notiRegDate;
 

@@ -2,6 +2,8 @@ package com.example.project.entity.mail;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import com.example.project.entity.Employee;
 
 import jakarta.persistence.Column;
@@ -43,6 +45,7 @@ public class MailSend {
     @Column
     private String mailContent;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime mailSendDate;
 
