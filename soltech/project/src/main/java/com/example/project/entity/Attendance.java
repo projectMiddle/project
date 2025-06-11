@@ -31,7 +31,7 @@ import lombok.ToString;
 
 @Entity
 public class Attendance {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attNo;
@@ -46,7 +46,6 @@ public class Attendance {
     @Column(nullable = false)
     private LocalTime attStartTime;
 
-    @Column(nullable = false)
     private LocalTime attEndTime;
 
     @Enumerated(EnumType.STRING)

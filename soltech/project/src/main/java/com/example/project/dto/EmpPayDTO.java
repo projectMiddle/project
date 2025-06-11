@@ -1,7 +1,6 @@
 package com.example.project.dto;
 
 import java.time.YearMonth;
-import com.example.project.entity.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
