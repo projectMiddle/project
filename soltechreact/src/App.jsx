@@ -21,6 +21,9 @@ function App() {
         {/* <Link to="/schedule">스케줄</Link> 메뉴에서 버튼으로 사용할때  */}
         {/* 메인 페이지용 Route (선택사항) */}
         <Route path="/" element={<h1 style={{ padding: "40px" }}>팀 공통 메인 페이지</h1>} />
+        {/* 신승찬 경로 수정 중 */}
+        {/* <Route path="/" element={<Navigate to="/notice" replace />} /> */}
+        <Route path="/notice" element={<NoticeForm />} />
       </Routes>
     </BrowserRouter>
   );
