@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.EmpPayDTO;
 import com.example.project.dto.EmpPayResponseDTO;
 import com.example.project.entity.EmpPay;
-import com.example.project.repository.EmpPayRepository;
 import com.example.project.service.EmpPayService;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PutMapping;

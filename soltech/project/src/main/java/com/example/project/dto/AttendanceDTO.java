@@ -3,7 +3,6 @@ package com.example.project.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.example.project.entity.Employee;
 import com.example.project.entity.constant.AttStatus;
 
 import lombok.AllArgsConstructor;
@@ -20,10 +19,10 @@ import lombok.ToString;
 @Getter
 @Setter
 public class AttendanceDTO {
-    
+
     private Long attNo;
 
-    private Employee empNo;
+    private Long empNo;
 
     private LocalDate attWorkDate;
 
