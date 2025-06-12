@@ -40,7 +40,7 @@ public class Employee {
     private Gender eGender;
 
     @Column(nullable = false)
-    private LocalDate eBirth;
+    private LocalDate eBirthday;
 
     @Column(nullable = false, unique = true)
     private String eEmail;
@@ -66,7 +66,7 @@ public class Employee {
     private Long eSalary;
 
     @Enumerated(EnumType.STRING)
-    private MemberRole mMemberRole;
+    private MemberRole eMemberRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "E_DEPT_NO", nullable = false)
