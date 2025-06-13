@@ -26,7 +26,7 @@ public class AttendanceRepositoryTest {
 
     @Test
     public void loginTest() {
-        Employee employee = employeeRepository.findById(1001L).get();
+        Employee employee = employeeRepository.findById(1049L).get();
         AttendanceDTO dto = attendanceService.login(employee);
 
         System.out.println("사번: " + dto.getEmpNo());
@@ -41,7 +41,7 @@ public class AttendanceRepositoryTest {
 
     @Test
     public void logoutTest() {
-        Employee employee = employeeRepository.findById(1001L).get();
+        Employee employee = employeeRepository.findById(1049L).get();
 
         AttendanceDTO dto = attendanceService.logout(employee);
         System.out.println("사번: " + dto.getEmpNo());

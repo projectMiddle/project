@@ -4,18 +4,18 @@ import AttendanceTable from "../components/AttendanceTable";
 import { useNavigate } from "react-router-dom";
 
 const Attendance = () => {
-  const [attList, setAttList] = useState([]);
+  const [attList, setAttList] = useState([]); // 서버에서 받아 올거
   const [year, setYear] = useState(2025);
   const [month, setMonth] = useState(6);
   const navigate = useNavigate();
 
-  const empNo = 1001; // 임시
+  const empNo = 1049; // 임시
   const fetchAttendance = () => {
     axios
-      .get(`/attendance/login/${empNo}`)
+      .post(`/attendance/login/${empNo}`)
       .then((res) => {
         console.log("출근 작성👉", res.data);
-        setAttList(res.data);
+        setAttList([res.data]); // 단일 dto -> 배열ㄹ
       })
       .catch((err) => {
         console.error("❌", err);
@@ -39,13 +39,15 @@ const Attendance = () => {
           className="border px-3 py-1 rounded w-24"
         />
         <label className="text-gray-700">월: </label>
-        <input type="number" value={month} onChange={(e) => setMonth(parseInt(e.target.value))} />
+        <input
+          type="number"
+          value={month}
+          onChange={(e) => setMonth(parseInt(e.target.value))}
+          className="border px-3 py-1 rounded w-24"
+        />
       </div>
       {/* 테이블 */}
       <AttendanceTable attList={attList} />
-      <button onClick={fetchAttendance} className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
-        월별 급여명세서 조회
-      </button>
     </div>
   );
 };
