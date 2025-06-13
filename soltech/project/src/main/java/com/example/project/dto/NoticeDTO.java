@@ -18,12 +18,12 @@ import lombok.ToString;
 @Getter
 @Setter
 public class NoticeDTO {
-    
+
     private Long notiNo;
 
-    private Employee empNo;
+    private Long empNo;
 
-    private Department deptNo;
+    private Long deptNo;
 
     private String notiTitle;
 
