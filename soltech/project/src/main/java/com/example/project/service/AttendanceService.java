@@ -29,6 +29,7 @@ public class AttendanceService {
                 .attStartTime(LocalTime.now())
                 .attEndTime(null)
                 .attStatus(AttStatus.WORK)
+
                 .build();
         Attendance saved = attendanceRepository.save(attendance);
 

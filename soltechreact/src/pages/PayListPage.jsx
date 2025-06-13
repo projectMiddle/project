@@ -11,7 +11,7 @@ const PayListPage = () => {
 
   const fetchPayList = () => {
     axios
-      .get("/pay/list", {
+      .post("/pay/list", {
         params: {
           empNo: 1,
           year,
