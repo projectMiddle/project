@@ -32,4 +32,8 @@ public class AttendanceDTO {
 
     private AttStatus attStatus;
 
+    private String eName;
+
+    private String deptName;
+
 }

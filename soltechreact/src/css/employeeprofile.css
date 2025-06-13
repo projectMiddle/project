@@ -1,90 +1,108 @@
-/* src/components/EmployeeProfile.css */
-
-.profile-container {
-  max-width: 400px;
-  margin: 40px auto;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", sans-serif;
+.information-container {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
 }
 
-.profile-header {
+/* 아바타 + info 가로 정렬 */
+.profile-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+/* 프로필 쪽 전체 컨테이너 */
+.info-all-container {
+  width: 400px;
+  height: 400px;
+}
+
+/* 사람 아이콘 */
+.avatar-box {
+  width: 150px;
+  height: 150px;
+  background-color: #d1d5db;
+  border-radius: 9999px;
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.profile-image {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 16px;
+.avatar-icon {
+  width: 80px;
+  height: 80px;
 }
 
-.profile-info h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.emp-no {
-  font-size: 14px;
-  font-weight: normal;
-  margin-left: 6px;
-  color: #777;
-}
-
-.button-group {
-  margin-top: 8px;
-}
-
-.btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  color: #fff;
-  margin-right: 8px;
-}
-
-.btn-main {
-  background-color: #a855f7; /* 진보라 */
-}
-
-.btn-sub {
-  background-color: #c084fc; /* 연보라 */
-}
-
-.profile-fields {
+/* 이름 / 부서 / 버튼 묶음 */
+.info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 14px;
+  gap: 1.5rem;
 }
 
-.profile-field {
+/* 이름 + 초록불 */
+.name-tag {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #d6b0ff;
-  padding: 6px 0;
-}
-
-.field-label {
-  min-width: 90px;
-  text-align: left;
+  gap: 0.5rem;
+  background-color: #e5e7eb;
+  padding: 4px 12px;
+  border-radius: 8px;
   font-weight: 600;
-  color: #5a5a5a;
 }
 
-.field-value {
-  flex: 1;
-  text-align: center;
-  color: #333;
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #10b981;
+  border-radius: 9999px;
+}
+
+/* 부서 */
+.department {
+  background-color: #e5e7eb;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 500;
-  word-break: break-word;
+}
+
+/* 정보 변경 버튼 */
+.profile-button {
+  background-color: #e5e7eb;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.profile-button:hover {
+  background-color: #d1d5db;
+}
+
+/* 아이콘 4개 */
+.icon-grid {
+  justify-content: space-between;
+  gap: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.85rem;
+  gap: 4px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
 }
