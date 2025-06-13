@@ -20,7 +20,7 @@ const testData = {
   },
 };
 function Yongsung() {
-  return <CalendarView />;
+  return <EmployeeProfile employee={testData} />;
 }
 
 export default Yongsung;
