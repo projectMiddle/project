@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
 import "../../css/employeeprofile.css";
+import Calendar from "./Calendar";
+
 import axios from "axios";
+
 const Information = () => {
   // 더미
   const userName = "개똥벌레";

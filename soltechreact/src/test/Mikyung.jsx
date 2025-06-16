@@ -6,7 +6,7 @@ const Mikyung = () => {
   return (
     <div>
       <IntraHome />
-      <Attendance />
+      {/* <Attendance /> */}
     </div>
   );
 };

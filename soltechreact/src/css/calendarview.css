@@ -71,7 +71,7 @@
   justify-content: flex-start !important;
 }
 .fc .fc-daygrid-day-frame {
-  min-height: 120px !important; /* 정사각형 비율 확보 */
+  min-height: 120px; /* 정사각형 비율 확보 */
   padding: 6px;
 }
 
