@@ -4,6 +4,7 @@
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
+    "@internationalized/date": "^3.8.2",
     "@tailwindcss/vite": "^4.1.9",
     "axios": "^1.9.0",
     "dayjs": "^1.11.13",

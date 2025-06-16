@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.project.dto.AttendanceDTO;
 import com.example.project.entity.Attendance;
@@ -13,6 +15,7 @@ import com.example.project.entity.Employee;
 import com.example.project.service.AttendanceService;
 
 @SpringBootTest
+@Transactional
 public class AttendanceRepositoryTest {
 
     @Autowired
@@ -25,6 +28,7 @@ public class AttendanceRepositoryTest {
     private EmployeeRepository employeeRepository;
 
     @Test
+    @Commit
     public void loginTest() {
         Employee employee = employeeRepository.findById(1049L).get();
         AttendanceDTO dto = attendanceService.login(employee);
@@ -40,6 +44,7 @@ public class AttendanceRepositoryTest {
     }
 
     @Test
+    @Commit
     public void logoutTest() {
         Employee employee = employeeRepository.findById(1049L).get();
 
@@ -54,7 +59,7 @@ public class AttendanceRepositoryTest {
 
     @Test
     public void workingTest() {
-        Employee employee = employeeRepository.findById(1001L).get();
+        Employee employee = employeeRepository.findById(1049L).get();
 
         boolean result = attendanceService.working(employee);
         System.out.println("출근 여부" + result);
