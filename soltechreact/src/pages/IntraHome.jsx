@@ -1,61 +1,40 @@
 import React from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
-import "./IntraHome.css";
+import "../pages/IntraHome.css";
 import Information from "../components/IntraHome/Information";
+import Notice from "../components/IntraHome/Notice";
+import Approval from "../components/IntraHome/Approval";
+import Calendar from "../components/IntraHome/Calendar";
 
 function IntraHome() {
   return (
-    // <div className="container">
-    //   <div className="layout">
-    //     {/* 사이드바 */}
-    //     <aside className="sidebar">
-    //       <div className="avatar-box">
-    //         <User2 className="avatar-icon" />
-    //       </div>
+    <div className="w-full p-4 flex flex-col gap-4">
+      {/* 상단: 프로필 정보 + 아이콘 */}
+      <div className="min-h-[120px]">
+        <Information />
+      </div>
 
-    //       <div className="profile-info">
-    //         <div className="name-tag">
-    //           <span>이름</span>
-    //           <span className="status-dot" />
-    //         </div>
-    //         <div className="department">부서</div>
-    //         <button className="profile-button">정보 변경</button>
-    //       </div>
+      {/* 중단: 공지 + 결재함 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-gray-100 rounded-xl p-3 min-h-[100px] flex items-center justify-center text-gray-500 text-sm">
+          공지 영역 (추후 구현)
+        </div>
+        <div className="bg-gray-100 rounded-xl p-3 min-h-[100px] flex items-center justify-center text-gray-500 text-sm">
+          결재함 영역 (추후 구현)
+        </div>
+      </div>
 
-    //       <div className="icon-grid">
-    //         {[Mail, PenLine, Bell, BarChart3].map((Icon, idx) => (
-    //           <div key={idx} className="icon-item">
-    //             <Icon className="icon" />
-    //             {["새 메일", "미결함", "업무 알림", "재경/인사"][idx]}
-    //           </div>
-    //         ))}
-    //       </div>
-    //     </aside>
-
-    //     {/* 본문 컨텐츠 */}
-    //     <main className="main-content">
-    //       <section className="graph-widget">
-    //         <span className="graph-placeholder">그래프 / 이미지</span>
-    //       </section>
-
-    //       <div className="widget-spacer" />
-
-    //       <section className="notice-widget">공지</section>
-    //       <section className="notice-widget">보류</section>
-
-    //       <section className="schedule-widget">일정</section>
-
-    //       <section className="table-wrapper">
-    //         <div className="table-box">
-    //           <div className="table-line-top" />
-    //           <div className="table-column-1" />
-    //           <div className="table-column-2" />
-    //         </div>
-    //       </section>
-    //     </main>
-    //   </div>
-    // </div>
-    <Information />
+      {/* 하단: 일정 안내 + 캘린더 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-3 flex items-center justify-center text-gray-400 text-sm ">
+          일정 기능은 추후 구현 예정입니다.
+        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-3  overflow-hidden ">
+          <Calendar />
+        </div>
+      </div>
+    </div>
   );
 }
+
 export default IntraHome;

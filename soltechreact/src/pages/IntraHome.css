@@ -67,7 +67,6 @@
   border-radius: 9999px;
 }
 
-
 /* 부서 */
 .department {
   background-color: #e5e7eb;
@@ -233,4 +232,51 @@
 
 .table-column-2 {
   left: 66.6666%;
+}
+.placeholder {
+  background-color: #eee;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.placeholder.notice {
+  height: 120px;
+}
+
+.placeholder.approval {
+  height: 120px;
+}
+
+.intra-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.intra-left,
+.intra-right {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc .fc-daygrid-day-frame {
+  height: "auto" !important;
+  min-height: 30px !important;
+  padding: 2px !important;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 11px;
+  padding-right: 2px;
+}
+
+.fc-event {
+  font-size: 10px !important;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
