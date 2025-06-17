@@ -2,46 +2,56 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "../../css/intrahome.css";
 import dayjs from "dayjs";
-import "../../pages/IntraHome.css";
-import CalendarView from "../CalendarView";
 
 const Calendar = () => {
-  const [events, _setEvents] = useState([
-    {
-      id: "1",
-      title: "프로젝트 1차 기안 작성 및 ppt 발표",
-      start: dayjs("2025-06-09T09:00").toISOString(),
-      end: dayjs("2025-06-18T10:00").toISOString(),
-      type: "DEPARTMENT",
-      color: "#D580F6",
-    },
-    {
-      id: "2",
-      title: "연차",
-      start: dayjs("2025-06-16T13:00").toISOString(),
-      end: dayjs("2025-06-18T14:00").toISOString(),
-      type: "PERSONAL",
-      color: "#2196F3",
-    },
-    {
-      id: "3",
-      title: "현충일",
-      start: dayjs("2025-06-06T13:00").toISOString(),
-      end: dayjs("2025-06-06T23:00").toISOString(),
-      color: "#ED1115",
-      classNames: ["holiday-event"],
-    },
-    {
-      id: "4",
-      title: "대통령 선거",
-      start: dayjs("2025-06-02T13:00").toISOString(),
-      end: dayjs("2025-06-02T23:00").toISOString(),
-      color: "#ED1115",
-      classNames: ["holiday-event"],
-    },
-  ]);
+  const [events, setEvents] = useState([]);
+
+  // ✅ localStorage에서 일정 불러오기
+  useEffect(() => {
+    const savedEvents = localStorage.getItem("calendarEvents");
+    if (savedEvents) {
+      setEvents(JSON.parse(savedEvents));
+    } else {
+      // 로컬스토리지에 아무것도 없을 때 기본값
+      setEvents([
+        {
+          id: "1",
+          title: "프로젝트 1차 기안 작성 및 ppt 발표",
+          start: dayjs("2025-06-09T09:00").toISOString(),
+          end: dayjs("2025-06-18T10:00").toISOString(),
+          type: "DEPARTMENT",
+          color: "#D580F6",
+        },
+        {
+          id: "2",
+          title: "연차",
+          start: dayjs("2025-06-16T13:00").toISOString(),
+          end: dayjs("2025-06-18T14:00").toISOString(),
+          type: "PERSONAL",
+          color: "#2196F3",
+        },
+        {
+          id: "3",
+          title: "현충일",
+          start: dayjs("2025-06-06T13:00").toISOString(),
+          end: dayjs("2025-06-06T23:00").toISOString(),
+          color: "#ED1115",
+          classNames: ["holiday-event"],
+        },
+        {
+          id: "4",
+          title: "대통령 선거",
+          start: dayjs("2025-06-02T13:00").toISOString(),
+          end: dayjs("2025-06-02T23:00").toISOString(),
+          color: "#ED1115",
+          classNames: ["holiday-event"],
+        },
+      ]);
+    }
+  }, []);
 
   return (
     <div className="p-0">

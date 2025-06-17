@@ -2,45 +2,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import "../css/calendarview.css";
+import "../../css/calendarView.css";
 
 const CalendarView = () => {
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "프로젝트 1차 기안 작성 및 ppt 발표",
-      start: dayjs("2025-06-09T09:00").toISOString(),
-      end: dayjs("2025-06-18T10:00").toISOString(),
-      type: "DEPARTMENT",
-      color: "#D580F6",
-    },
-    {
-      id: "2",
-      title: "연차",
-      start: dayjs("2025-06-16T09:00").toISOString(),
-      end: dayjs("2025-06-18T24:00").toISOString(),
-      type: "PERSONAL",
-      color: "#2196F3",
-    },
-    {
-      id: "3",
-      title: "현충일",
-      start: dayjs("2025-06-06T00:00").toISOString(),
-      end: dayjs("2025-06-06T24:00").toISOString(),
-      color: "#ED1115",
-      classNames: ["holiday-event"],
-    },
-    {
-      id: "4",
-      title: "대통령 선거",
-      start: dayjs("2025-06-02T00:00").toISOString(),
-      end: dayjs("2025-06-02T24:00").toISOString(),
-      color: "#ED1115",
-      classNames: ["holiday-event"],
-    },
-  ]);
+  const [events, setEvents] = useState([]);
 
   const [newEvent, setNewEvent] = useState({
     id: null,
@@ -53,18 +20,73 @@ const CalendarView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  // ✅ localStorage 저장 함수
+  const saveToLocalStorage = (updatedEvents) => {
+    localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
+  };
+
+  // ✅ 컴포넌트 로드시 저장된 일정 불러오기
+  useEffect(() => {
+    const savedEvents = localStorage.getItem("calendarEvents");
+    if (savedEvents) {
+      setEvents(JSON.parse(savedEvents));
+    } else {
+      // 기본 일정 초기값 (최초 진입시 한 번만 설정)
+      const defaultEvents = [
+        {
+          id: "1",
+          title: "프로젝트 1차 기안 작성 및 ppt 발표",
+          start: dayjs("2025-06-09T09:00").toISOString(),
+          end: dayjs("2025-06-18T10:00").toISOString(),
+          type: "DEPARTMENT",
+          color: "#D580F6",
+        },
+        {
+          id: "2",
+          title: "연차",
+          start: dayjs("2025-06-16T09:00").toISOString(),
+          end: dayjs("2025-06-18T24:00").toISOString(),
+          type: "PERSONAL",
+          color: "#2196F3",
+        },
+        {
+          id: "3",
+          title: "현충일",
+          start: dayjs("2025-06-06T00:00").toISOString(),
+          end: dayjs("2025-06-06T24:00").toISOString(),
+          color: "#ED1115",
+          classNames: ["holiday-event"],
+        },
+        {
+          id: "4",
+          title: "대통령 선거",
+          start: dayjs("2025-06-02T00:00").toISOString(),
+          end: dayjs("2025-06-02T24:00").toISOString(),
+          color: "#ED1115",
+          classNames: ["holiday-event"],
+        },
+      ];
+      setEvents(defaultEvents);
+      saveToLocalStorage(defaultEvents);
+    }
+  }, []);
+
   const handleAddOrUpdateEvent = () => {
     if (!newEvent.title || !newEvent.start || !newEvent.end) return;
     const color = newEvent.type === "DEPARTMENT" ? "#D580F6" : "#2196F3";
 
     if (isEditMode) {
-      // 수정 모드
-      setEvents(events.map((event) => (event.id === newEvent.id ? { ...newEvent, color } : event)));
+      const updated = events.map((event) => (event.id === newEvent.id ? { ...newEvent, color } : event));
+      setEvents(updated);
+      saveToLocalStorage(updated);
     } else {
-      // 추가 모드
       const id = String(events.length + 1);
-      setEvents([...events, { ...newEvent, id, color }]);
+      const newEventObj = { ...newEvent, id, color };
+      const updated = [...events, newEventObj];
+      setEvents(updated);
+      saveToLocalStorage(updated);
     }
+
     setNewEvent({ id: null, title: "", start: "", end: "", type: "PERSONAL" });
     setIsModalOpen(false);
     setIsEditMode(false);
@@ -89,7 +111,9 @@ const CalendarView = () => {
 
   const handleDeleteEvent = () => {
     if (window.confirm("일정을 삭제하시겠습니까?")) {
-      setEvents(events.filter((e) => e.id !== newEvent.id));
+      const updated = events.filter((e) => e.id !== newEvent.id);
+      setEvents(updated);
+      saveToLocalStorage(updated);
       setIsModalOpen(false);
       setIsEditMode(false);
     }

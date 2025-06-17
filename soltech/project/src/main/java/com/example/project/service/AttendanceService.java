@@ -14,7 +14,6 @@ import com.example.project.entity.Employee;
 import com.example.project.entity.constant.AttStatus;
 import com.example.project.repository.AttendanceRepository;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -39,7 +38,7 @@ public class AttendanceService {
 
         return entityDto(saved, employee);
     }
-  
+
     public AttendanceDTO logout(Employee employee) {
         Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
         attendance.changeAttEndTime(LocalTime.now());
@@ -51,7 +50,7 @@ public class AttendanceService {
 
     }
 
-    // // 불 반짝
+    // 불 반짝
     public boolean working(Employee employee) {
         Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
         if (attendance.getAttEndTime() == null) {
@@ -80,28 +79,28 @@ public class AttendanceService {
 
     // 부서포함
     public AttendanceDTO entityDtoWithDeptName(Attendance attendance, String eName, String deptName) {
-    return AttendanceDTO.builder()
-            .attNo(attendance.getAttNo())
-            .empNo(attendance.getEmpNo().getEmpNo())
-            .attWorkDate(attendance.getAttWorkDate())
-            .attStartTime(attendance.getAttStartTime())
-            .attEndTime(attendance.getAttEndTime())
-            .attStatus(attendance.getAttStatus())
-            .eName(eName)
-            .deptName(deptName)
-            .build();
-}
+        return AttendanceDTO.builder()
+                .attNo(attendance.getAttNo())
+                .empNo(attendance.getEmpNo().getEmpNo())
+                .attWorkDate(attendance.getAttWorkDate())
+                .attStartTime(attendance.getAttStartTime())
+                .attEndTime(attendance.getAttEndTime())
+                .attStatus(attendance.getAttStatus())
+                .eName(eName)
+                .deptName(deptName)
+                .build();
+    }
 
     // 날짜 필터링
-    public List<AttendanceDTO> getMonthYear(Employee emp, int year, int month){
+    public List<AttendanceDTO> getMonthYear(Employee emp, int year, int month) {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
         List<Attendance> list = attendanceRepository.findByEmpNoAndAttWorkDateBetween(emp, start, end);
 
         return list.stream()
-        .map(att -> entityDtoWithDeptName(att, emp.getEName(),emp.getDeptNo().getDeptName()))
-        .collect(Collectors.toList());
+                .map(att -> entityDtoWithDeptName(att, emp.getEName(), emp.getDeptNo().getDeptName()))
+                .collect(Collectors.toList());
     }
 
 }

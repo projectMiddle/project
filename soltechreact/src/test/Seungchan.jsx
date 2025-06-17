@@ -1,7 +1,7 @@
 import React from "react";
-import NoticeForm from "./../pages/NoticeForm";
-import EditNoticeForm from "../pages/editNoticeForm";
-import NoticeList from "../components/NoticeList";
+import NoticeForm from "../pages/notice/NoticeForm";
+import EditNoticeForm from "../pages/notice/editNoticeForm";
+import NoticeList from "../pages/notice/NoticeList";
 import "../css/board/BoardForm.css";
 
 const Seungchan = () => {

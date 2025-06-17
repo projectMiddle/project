@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 // import CalendarView from "./../components/CalendarView";
-import EmployeeProfile from "../components/EmployeeProfile";
-import CalendarView from "../components/CalendarView";
+import EmployeeProfile from "../components/IntraHome/EmployeeProfile";
+import CalendarView from "../pages/calendar/CalendarView";
 const testData = {
   empNo: 1001,
   eName: "이주빈",
