@@ -29,16 +29,24 @@ public class AppFile {
     private Long appFileNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "APP_DOC_NO", nullable = false)
+    @JoinColumn(name = "APP_DOC_NO")
     private ApprovalDocument appDocNo;
 
-    @Column(nullable = false, length = 200)
+    @Column(length = 200)
     private String appFileName;
 
-    @Column(nullable = false)
     private String appFilePath;
 
-    @Column(nullable = false)
     private String appFileUuid;
+
+    public void updateFileInfo(String fileName, String filePath, String uuid) {
+        this.appFileName = fileName;
+        this.appFilePath = filePath;
+        this.appFileUuid = uuid;
+    }
+
+    public void setAppDocNo(ApprovalDocument doc) {
+        this.appDocNo = doc;
+    }
 
 }
