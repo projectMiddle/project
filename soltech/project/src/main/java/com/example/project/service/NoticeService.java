@@ -107,6 +107,21 @@ public class NoticeService {
                                 .build();
         }
 
+        // private NoticeDTO entityToDto(Notice notice) {
+        // if (notice == null)
+        // return null;
+
+        // return NoticeDTO.builder()
+        // .notiNo(notice.getNotiNo())
+        // .notiTitle(notice.getNotiTitle())
+        // .notiContent(notice.getNotiContent())
+        // .notiRegDate(notice.getNotiRegDate())
+        // .notiUpdateDate(notice.getNotiUpdateDate())
+        // .deptName(notice.getDeptNo() != null ? notice.getDeptNo().getDeptName() :
+        // null)
+        // .name(notice.getEmpNo() != null ? notice.getEmpNo().getEName() : null)
+        // .build();
+        // }
         private NoticeDTO entityToDto(Notice notice) {
                 if (notice == null)
                         return null;
@@ -118,7 +133,9 @@ public class NoticeService {
                                 .notiRegDate(notice.getNotiRegDate())
                                 .notiUpdateDate(notice.getNotiUpdateDate())
                                 .deptName(notice.getDeptNo() != null ? notice.getDeptNo().getDeptName() : null)
+                                .deptNo(notice.getDeptNo() != null ? notice.getDeptNo().getDeptNo() : null) // ✅ 추가
                                 .name(notice.getEmpNo() != null ? notice.getEmpNo().getEName() : null)
+                                .empNo(notice.getEmpNo() != null ? notice.getEmpNo().getEmpNo() : null) // ✅ 추가
                                 .build();
         }
 

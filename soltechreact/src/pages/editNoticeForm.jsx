@@ -42,10 +42,11 @@ const EditNoticeForm = ({ noticeData, onUpdate }) => {
     const payload = {
       notiTitle: formData.notiTitle,
       notiContent: formData.notiContent,
-      notiRegDate: formData.notiRegDate,
-      empNo: noticeData.empNo, // 수정 시 사용되는 사번
-      deptNo: noticeData.deptNo, // 수정 시 사용되는 부서번호
+      notiRegDate: new Date(formData.notiRegDate).toISOString(), // <-- 중요
+      empNo: formData.empNo,
+      deptNo: formData.deptNo,
     };
+    console.log("payload:", payload);
 
     try {
       const res = await fetch(`/api/notices/${noticeData.notiNo}`, {
@@ -55,6 +56,7 @@ const EditNoticeForm = ({ noticeData, onUpdate }) => {
         },
         body: JSON.stringify(payload),
       });
+      console.log("notiNo:", noticeData?.notiNo);
 
       if (res.ok) {
         alert("수정되었습니다.");

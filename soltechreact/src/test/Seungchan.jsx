@@ -2,6 +2,7 @@ import React from "react";
 import NoticeForm from "./../pages/NoticeForm";
 import EditNoticeForm from "../pages/editNoticeForm";
 import NoticeList from "../components/NoticeList";
+import "../css/board/BoardForm.css";
 
 const Seungchan = () => {
   return (
