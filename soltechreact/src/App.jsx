@@ -6,11 +6,11 @@ import Mikyung from "./test/Mikyung";
 import Byeongsun from "./test/Byeongsun";
 import Seungchan from "./test/Seungchan";
 import Yongsung from "./test/Yongsung";
-
-import NoticeForm from "./pages/NoticeForm";
-import EditNoticeForm from "./pages/editNoticeForm";
-import NoticeList from "./components/NoticeList";
-import EditNoticeWrapper from "./pages/EditNoticeWrapper";
+import MainHome from "./pages/mainhomepages/MainHome";
+import MainEmpty from "./pages/mainhomepages/MainEmpty";
+import MainLogin from "./pages/mainhomepages/MainLogin";
+import MainAboutUs from "./pages/mainhomepages/MainAboutUs";
+import MainLayout from "./components/mainhome/MainLayout";
 
 function App() {
   return (
@@ -20,10 +20,13 @@ function App() {
       <Route path="/byeongsun" element={<Byeongsun />} />
       <Route path="/seungchan" element={<Seungchan />} />
       <Route path="/yongsung" element={<Yongsung />} />
-      <Route path="/notice" element={<NoticeList />} />
-      <Route path="/notice/new" element={<NoticeForm />} />
-      <Route path="/notice/edit" element={<EditNoticeForm />} />
-      <Route path="/notice/edit/:notiNo" element={<EditNoticeWrapper />} />
+      {/* 메인화면 관련 기능들 */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<MainHome />} />
+        <Route path="mainempty" element={<MainEmpty />} />
+        <Route path="login" element={<MainLogin />} />
+        <Route path="aboutus" element={<MainAboutUs />} />
+      </Route>
     </Routes>
   );
 }
