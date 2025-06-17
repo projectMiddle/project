@@ -1,10 +1,16 @@
 package com.example.project.controller;
 
 import com.example.project.dto.NoticeDTO;
+import com.example.project.entity.Department;
+import com.example.project.repository.DepartmentRepository;
 import com.example.project.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +22,13 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
+    private final DepartmentRepository departmentRepository;
+
+    @GetMapping
+    public List<Department> getAllDepartments() {
+        return departmentRepository.findAll();
+    }
+
     // 공지 목록 조회 (페이징)
     @GetMapping({ "/List" })
     public Page<NoticeDTO> list(@RequestParam(defaultValue = "1") int page,
@@ -26,21 +39,20 @@ public class NoticeController {
 
     // 공지 등록
     @PostMapping("/create")
-    public ResponseEntity<Long> create(@RequestBody NoticeDTO dto) {
-        log.info("API 공지 등록 요청: {}", dto);
-        Long noticeId = noticeService.create(dto);
-        return ResponseEntity.ok(noticeId);
+    public ResponseEntity<?> createNotice(@RequestBody NoticeDTO noticeDTO) {
+        try {
+            Long noticeId = noticeService.create(noticeDTO);
+            return ResponseEntity.ok(noticeId);
+        } catch (Exception e) {
+            log.error("공지 등록 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+        }
     }
 
     // 공지 단건 조회
-    @GetMapping("/List/{notiNo}")
-    public NoticeDTO get(@PathVariable Long notiNo) {
-        return noticeService.getPagedList(1, 100)
-                .getContent()
-                .stream()
-                .filter(n -> n.getNotiNo().equals(notiNo))
-                .findFirst()
-                .orElseThrow();
+    @GetMapping("/{notiNo}")
+    public NoticeDTO getNotice(@PathVariable Long notiNo) {
+        return noticeService.findById(notiNo);
     }
 
     // 공지 수정
@@ -55,6 +67,6 @@ public class NoticeController {
     @DeleteMapping("/{notiNo}")
     public void delete(@PathVariable Long notiNo) {
         log.info("API 공지 삭제 요청: {}", notiNo);
-        noticeService.delete(notiNo);
+        noticeService.deleteNotices(notiNo);
     }
 }

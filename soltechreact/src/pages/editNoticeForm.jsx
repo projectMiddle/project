@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from "react";
 
-const NoticeForm = () => {
+const EditNoticeForm = ({ noticeData, onUpdate }) => {
   const [formData, setFormData] = useState({
     notiRegDate: "",
-    empNo: "",
-    name: "",
-    deptNo: "",
+    empName: "",
+    deptName: "",
     notiTitle: "",
     notiContent: "",
     file: null,
   });
 
-  // 오늘 날짜 자동 설정
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    setFormData((prev) => ({ ...prev, notiRegDate: today }));
-  }, []);
+    console.log("noticeData:", noticeData);
+
+    if (noticeData) {
+      const formattedDate = noticeData.notiRegDate ? new Date(noticeData.notiRegDate).toISOString().split("T")[0] : "";
+
+      setFormData({
+        notiRegDate: formattedDate,
+        empName: noticeData.name || "",
+        deptName: noticeData.deptName || "",
+        notiTitle: noticeData.notiTitle || "",
+        notiContent: noticeData.notiContent || "",
+        file: null,
+      });
+    }
+  }, [noticeData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,22 +39,17 @@ const NoticeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const regDateOnly = document.querySelector('input[name="notiRegDate"]').value; // '2025-06-16'
-    const notiRegDate = `${regDateOnly}T00:00:00`; // '2025-06-16T00:00:00'
-
     const payload = {
-      empNo: Number(formData.empNo), // 여기에 사원번호 넣기
-      deptNo: Number(formData.deptNo),
       notiTitle: formData.notiTitle,
       notiContent: formData.notiContent,
-      notiRegDate,
+      notiRegDate: formData.notiRegDate,
+      empNo: noticeData.empNo, // 수정 시 사용되는 사번
+      deptNo: noticeData.deptNo, // 수정 시 사용되는 부서번호
     };
 
-    console.log("전송할 데이터:", payload);
-
     try {
-      const res = await fetch("/api/notices/create", {
-        method: "POST",
+      const res = await fetch(`/api/notices/${noticeData.notiNo}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -52,10 +57,10 @@ const NoticeForm = () => {
       });
 
       if (res.ok) {
-        alert("등록되었습니다.");
-        window.location.href = "/notice"; // 원하면 리다이렉트 추가
+        alert("수정되었습니다.");
+        if (onUpdate) onUpdate();
       } else {
-        alert("등록 실패");
+        alert("수정 실패");
       }
     } catch (err) {
       console.error(err);
@@ -63,10 +68,14 @@ const NoticeForm = () => {
     }
   };
 
+  const handleCancel = () => {
+    window.history.back();
+  };
+
   return (
-    <>
-      <h1 className="text-3xl font-bold">공지사항 작성</h1>
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 border-2 border-purple-500 rounded-xl space-y-4">
+    <div className="max-w-4xl mx-auto mt-10">
+      <h1 className="text-3xl font-bold mb-6">공지사항 수정</h1>
+      <form onSubmit={handleSubmit} className="p-6 border-2 border-purple-500 rounded-xl space-y-4">
         <div>
           <label className="block font-semibold">작성일자</label>
           <input
@@ -77,39 +86,27 @@ const NoticeForm = () => {
             className="w-full border border-purple-400 rounded-full px-4 py-1"
           />
         </div>
+
         <div>
           <label className="block font-semibold">작성자</label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border border-purple-400 rounded-full px-4 py-1"
-            required
+            value={formData.empName}
+            className="w-full border border-purple-400 rounded-full px-4 py-1 bg-gray-100"
+            readOnly
           />
         </div>
+
         <div>
-          <label className="block font-semibold">부서번호</label>
+          <label className="block font-semibold">부서명</label>
           <input
-            type="number"
-            name="deptNo"
-            value={formData.deptNo}
-            onChange={handleChange}
-            className="w-full border border-purple-400 rounded-full px-4 py-1"
-            required
+            type="text"
+            value={formData.deptName}
+            className="w-full border border-purple-400 rounded-full px-4 py-1 bg-gray-100"
+            readOnly
           />
         </div>
-        <div>
-          <label className="block font-semibold">사원번호</label>
-          <input
-            type="number"
-            name="empNo"
-            value={formData.empNo}
-            onChange={handleChange}
-            className="w-full border border-purple-400 rounded-full px-4 py-1"
-            required
-          />
-        </div>
+
         <div>
           <label className="block font-semibold">제목</label>
           <input
@@ -134,24 +131,27 @@ const NoticeForm = () => {
           />
         </div>
 
-        {/* ✅ 파일 첨부 영역 유지 */}
         <div>
           <label className="flex items-center gap-2 font-semibold">📎 파일첨부</label>
           <input type="file" onChange={handleFileChange} className="w-full mt-1" />
           {formData.file && <p className="text-sm text-gray-600 mt-1">선택된 파일: {formData.file.name}</p>}
         </div>
 
-        <div className="flex justify-end gap-4">
-          <button type="submit" className="bg-purple-500 text-white px-6 py-1 rounded-xl hover:bg-purple-600">
-            등록
+        <div className="flex justify-end gap-4 pt-4">
+          <button type="submit" className="bg-purple-500 text-white px-6 py-2 rounded-xl hover:bg-purple-600">
+            수정
           </button>
-          <button type="button" className="bg-purple-300 text-white px-6 py-1 rounded-xl hover:bg-purple-400">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="bg-purple-300 text-white px-6 py-2 rounded-xl hover:bg-purple-400"
+          >
             취소
           </button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 
-export default NoticeForm;
+export default EditNoticeForm;
