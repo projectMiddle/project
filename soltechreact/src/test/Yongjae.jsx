@@ -1,23 +1,21 @@
 import React from "react";
-import MainHome from "../pages/mainhomepages/MainHome";
 import { Route, Routes } from "react-router-dom";
-import MainLayout from "../components/mainhomecomponents/MainLayout";
-import MainLogin from "../pages/mainhomepages/MainLogin";
-import MainEmpty from "../pages/mainhomepages/MainEmpty";
-import MainAboutUs from "../pages/mainhomepages/MainAboutUs";
+import IntraLayout from "../components/intrahome/IntraLayout";
+import ApprovalForm from "../components/approval/ApprovalForm";
+import ApprovalList from "../components/approval/ApprovalList";
 
 const Yongjae = () => {
-  return <div>
-    <MainLayout>
+  return (
+    <div>
       <Routes>
-        {/* yongjae 전용 페이지 */}
-        <Route path="/" element={<MainHome />} />
-        <Route path="mainempty" element={<MainEmpty />} />
-        <Route path="login" element={<MainLogin />} />
-        <Route path="aboutus" element={<MainAboutUs />} />
+        {/* MainLayout 없이 바로 접근 */}
+        <Route element={<IntraLayout />}>
+          <Route path="approval/form" element={<ApprovalForm />} />
+          <Route path="approval" element={<ApprovalList />} />
+        </Route>
       </Routes>
-    </MainLayout>
-  </div>;
+    </div>
+  );
 };
 
 export default Yongjae;
