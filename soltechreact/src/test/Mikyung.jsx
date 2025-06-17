@@ -1,6 +1,6 @@
 import React from "react";
-import IntraHome from "../pages/IntraHome";
-import Attendance from "../pages/Attendance";
+import IntraHome from "../pages/intrahomepages/IntraHome";
+import Attendance from "../pages/attendance/Attendance";
 
 const Mikyung = () => {
   return (

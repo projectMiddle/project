@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { workTime, overTime } from "../utils/timeUtils";
+import { workTime, overTime } from "../../utils/timeUtils";
 
 const AttendanceTable = ({ attList }) => {
   return (

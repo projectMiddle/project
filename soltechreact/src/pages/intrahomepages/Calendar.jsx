@@ -3,7 +3,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
-import "../../pages/IntraHome.css";
+import "../../css/intrahome.css";
 import dayjs from "dayjs";
 
 const Calendar = () => {

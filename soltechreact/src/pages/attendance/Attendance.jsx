@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AttendanceTable from "../components/AttendanceTable";
-import AttendanceSummary from "../components/AttendanceSummary";
+import AttendanceTable from "./AttendanceTable";
+import AttendanceSummary from "./AttendanceSummary";
 import { useNavigate } from "react-router-dom";
-import { totalWorkTime } from "../utils/timeUtils";
+import { totalWorkTime } from "../../utils/timeUtils";
 
 const Attendance = () => {
   const [attList, setAttList] = useState([]); // 서버에서 받아 올 데이터
