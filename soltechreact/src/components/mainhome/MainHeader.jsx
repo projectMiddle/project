@@ -43,10 +43,10 @@ const MainHeader = () => {
                     {/* 메뉴 */}
                     <ul className="flex space-x-20 text-base font-medium text-gray-700">
                         <li>
-                            <Link to="/yongjae">Home</Link>
+                            <Link to="/">Home</Link>
                         </li>
                         <li>
-                            <Link to="/yongjae/aboutus">About Us</Link>
+                            <Link to="aboutus">About Us</Link>
                         </li>
                         <li>Project</li>
                         <li>
@@ -64,10 +64,10 @@ const MainHeader = () => {
                     {/* 로그인 버튼들 */}
                     <div className="flex space-x-2">
                         <button className="text-sm text-gray-600">
-                            <Link to="/yongjae/login">Log in</Link>
+                            <Link to="login">Log in</Link>
                         </button>
                         <button className="bg-purple-400 text-white text-sm px-3 py-1 rounded">
-                            <Link to="/yongjae/mainempty">Sign Up</Link>
+                            <Link to="mainempty">Sign Up</Link>
                         </button>
                     </div>
                 </div>

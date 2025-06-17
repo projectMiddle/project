@@ -1,7 +1,7 @@
 import React from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
-import "./IntraHome.css";
-import Information from "../components/IntraHome/Information";
+import "../css/IntraHome.css";
+import Information from "../components/intrahome/Information";
 
 function IntraHome() {
   return (
