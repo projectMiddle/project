@@ -106,3 +106,8 @@
   width: 24px;
   height: 24px;
 }
+
+/* 켈린더 */
+.calendar-wrapper {
+  padding: 40px 20px;
+}

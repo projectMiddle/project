@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.NoticeDTO;
@@ -29,90 +31,105 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class NoticeService {
 
-    private final NoticeRepository noticeRepository;
-    private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository departmentRepository;
+        private final NoticeRepository noticeRepository;
+        private final EmployeeRepository employeeRepository;
+        private final DepartmentRepository departmentRepository;
 
-    // 새글작성
-    @Transactional
-    public Long create(NoticeDTO dto) {
-        log.info("새글 작성 요청");
+        // 새글작성
+        @Transactional
+        public Long create(NoticeDTO dto) {
+                log.info("새글 작성 요청");
+                log.info("📨 받은 NoticeDTO: {}", dto);
 
-        // 사원, 부서 실제로 조회
-        Employee emp = employeeRepository.findById(dto.getEmpNo())
-                .orElseThrow(() -> new RuntimeException("해당 사원이 존재하지 않음"));
+                Employee emp = employeeRepository.findById(dto.getEmpNo())
+                                .orElseThrow(() -> new RuntimeException("해당 사원이 존재하지 않음"));
+                String name = emp.getEName();
+                log.info("작성자 이름: {}", name);
+                Department dept = departmentRepository.findById(dto.getDeptNo())
+                                .orElseThrow(() -> new RuntimeException("해당 부서가 존재하지 않음"));
+                String deptName = dept.getDeptName();
+                log.info("작성자 부서명: {}", deptName);
 
-        // 사원, 부서 객체를 그대로 dtoToEntity에 전달
-        Notice notice = dtoToEntity(dto);
+                Notice notice = dtoToEntity(dto, emp, dept);
+                // return noticeRepository.save(notice).getNotiNo();
 
-        // 저장 후 ID 반환
-        return noticeRepository.save(notice).getNotiNo();
-    }
+                Notice saved = noticeRepository.save(notice);
+                log.info("📌 저장된 공지사항: {}", saved); // 로그에 출력되는지 확인
+                return saved.getNotiNo();
+        }
 
-    // 삭제
-    @Transactional
-    public void delete(Long bno) {
-        // 연관관계 데이터 정리 => 댓글
-        // SQL : 댓글 선 삭제 후 게시글 삭제 or 댓글 부모를 null 변경 후 삭제
+        public void deleteNotices(Long notiNo) {
+                Notice notice = noticeRepository.findById(notiNo)
+                                .orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+                noticeRepository.delete(notice);
+        }
 
-        // 댓글 삭제 : 1) bno로 댓글 찾기 2) 삭제
-        noticeRepository.deleteById(bno);
-    }
+        // 수정
+        @Transactional
+        public Long update(NoticeDTO dto) {
+                Notice notice = noticeRepository.findById(dto.getNotiNo())
+                                .orElseThrow(() -> new RuntimeException("공지 없음"));
 
-    // 수정
-    public Long update(NoticeDTO dto) {
-        // 수정할 대상 찾기(Id 로 찾기)
-        Notice notice = noticeRepository.findById(dto.getNotiNo()).orElseThrow();
-        // 내용 업데이트
-        notice.changeNotiContent(dto.getNotiContent());
-        // 저장
-        noticeRepository.save(notice);
+                notice.changeNotiContent(dto.getNotiContent());
+                noticeRepository.save(notice);
 
-        return notice.getNotiNo();
-    }
+                return notice.getNotiNo();
+        }
 
-    public Page<NoticeDTO> getPagedList(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("notiNo").descending());
-        return noticeRepository.findAll(pageable)
-                .map(this::entityToDto);
-    }
+        public Page<NoticeDTO> getPagedList(int page, int size) {
+                Pageable pageable = PageRequest.of(page - 1, size, Sort.by("notiNo").descending());
+                return noticeRepository.findAll(pageable)
+                                .map(this::entityToDto);
+        }
 
-    public PageResultDTO<NoticeDTO> readAll(PageRequestDTO pageRequestDTO) {
-        Pageable pageable = PageRequest.of(
-                pageRequestDTO.getPage() - 1,
-                pageRequestDTO.getSize(),
-                Sort.by("notiNo").descending());
+        public NoticeDTO findById(Long notiNo) {
+                Notice notice = noticeRepository.findById(notiNo)
+                                .orElseThrow(() -> new RuntimeException("공지 없음"));
+                return entityToDto(notice);
+        }
 
-        Page<Notice> result = noticeRepository.findAll(pageable);
+        public PageResultDTO<NoticeDTO> readAll(PageRequestDTO pageRequestDTO) {
+                Pageable pageable = PageRequest.of(
+                                pageRequestDTO.getPage() - 1,
+                                pageRequestDTO.getSize(),
+                                Sort.by("notiNo").descending());
 
-        List<NoticeDTO> dtoList = result.get()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+                Page<Notice> result = noticeRepository.findAll(pageable);
 
-        return PageResultDTO.<NoticeDTO>withAll()
-                .dtoList(dtoList)
-                .totalCount(result.getTotalElements())
-                .pageRequestDTO(pageRequestDTO)
-                .build();
-    }
+                List<NoticeDTO> dtoList = result.get()
+                                .map(this::entityToDto)
+                                .collect(Collectors.toList());
 
-    private NoticeDTO entityToDto(Notice notice) {
-        NoticeDTO dto = NoticeDTO.builder()
-                .notiNo(notice.getNotiNo())
-                .notiTitle(notice.getNotiTitle())
-                .notiContent(notice.getNotiContent())
-                .notiRegDate(notice.getNotiRegDate())
-                .build();
-        return dto;
-    }
+                return PageResultDTO.<NoticeDTO>withAll()
+                                .dtoList(dtoList)
+                                .totalCount(result.getTotalElements())
+                                .pageRequestDTO(pageRequestDTO)
+                                .build();
+        }
 
-    private Notice dtoToEntity(NoticeDTO dto) {
-        return Notice.builder()
-                .empNo(Employee.builder().empNo(dto.getEmpNo()).build())
-                .deptNo(Department.builder().deptNo(dto.getDeptNo()).build())
-                .notiTitle(dto.getNotiTitle())
-                .notiContent(dto.getNotiContent())
-                .notiRegDate(dto.getNotiRegDate())
-                .build();
-    }
+        private NoticeDTO entityToDto(Notice notice) {
+                if (notice == null)
+                        return null;
+
+                return NoticeDTO.builder()
+                                .notiNo(notice.getNotiNo())
+                                .notiTitle(notice.getNotiTitle())
+                                .notiContent(notice.getNotiContent())
+                                .notiRegDate(notice.getNotiRegDate())
+                                .notiUpdateDate(notice.getNotiUpdateDate())
+                                .deptName(notice.getDeptNo() != null ? notice.getDeptNo().getDeptName() : null)
+                                .name(notice.getEmpNo() != null ? notice.getEmpNo().getEName() : null)
+                                .build();
+        }
+
+        private Notice dtoToEntity(NoticeDTO dto, Employee emp, Department dept) {
+                return Notice.builder()
+                                .empNo(emp) // 완전한 Employee 엔티티 객체 넣기
+                                .deptNo(dept) // 완전한 Department 엔티티 객체 넣기
+                                .notiTitle(dto.getNotiTitle())
+                                .notiContent(dto.getNotiContent())
+                                .notiRegDate(dto.getNotiRegDate() != null ? dto.getNotiRegDate() : LocalDateTime.now())
+                                .build();
+        }
+
 }

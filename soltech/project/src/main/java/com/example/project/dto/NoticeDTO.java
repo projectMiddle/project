@@ -1,6 +1,8 @@
 package com.example.project.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.example.project.entity.Department;
 import com.example.project.entity.Employee;
@@ -24,6 +26,10 @@ public class NoticeDTO {
     private Long empNo;
 
     private Long deptNo;
+
+    private String deptName;
+
+    private String name;
 
     private String notiTitle;
 
