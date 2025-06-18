@@ -2,13 +2,14 @@ import React from "react";
 import NoticeForm from "../pages/notice/NoticeForm";
 import EditNoticeForm from "../pages/notice/editNoticeForm";
 import NoticeList from "../pages/notice/NoticeList";
-import "../css/board/BoardForm.css";
+import "../css/boardform.css";
+import { Router } from "react-router-dom";
 
 const Seungchan = () => {
   return (
     <>
       <div>
-        <NoticeList />
+        <NoticeForm />
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../css/board/BoardForm.css";
+import "../../css/boardform.css";
 
 const NoticeList = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const NoticeList = () => {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch(`/api/notices/List?page=${page}&size=10`);
+      const res = await fetch(`/notices/List?page=${page}&size=10`);
       const data = await res.json();
       setNotices(data.content || []);
       setTotalPages(data.totalPages || 1);
@@ -149,7 +149,7 @@ const NoticeList = () => {
           </button>
 
           <button
-            onClick={() => navigate("/notice/new")}
+            onClick={() => navigate("/notices/new")}
             className="bg-purple-500 text-white px-5 py-1 rounded-xl hover:bg-purple-600"
           >
             작성

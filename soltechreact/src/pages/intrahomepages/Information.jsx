@@ -18,11 +18,12 @@ const Information = () => {
     { icon: Bell, label: "업무 알림" },
     { icon: BarChart3, label: "재경 / 인사" },
   ];
-
+  const empNo = 1049; // 임시
   useEffect(() => {
     axios
-      .get("/attendance/user/info")
+      .get(`/attendance/user/info/${empNo}`)
       .then((res) => {
+        console.log("출근 정보", res.data);
         const { name, department, attStatus } = res.data;
         setUser({ name, department });
         setIsWorking(attStatus === "WORK");

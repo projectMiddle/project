@@ -43,7 +43,7 @@ const NoticeForm = () => {
     console.log("전송할 데이터:", payload);
 
     try {
-      const res = await fetch("/api/notices/create", {
+      const res = await fetch("/notices/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,22 +89,22 @@ const NoticeForm = () => {
           />
         </div>
         <div>
-          <label className="block font-semibold">부서번호</label>
+          <label className="block font-semibold">사원번호</label>
           <input
             type="number"
-            name="deptNo"
-            value={formData.deptNo}
+            name="empNo"
+            value={formData.empNo}
             onChange={handleChange}
             className="w-full border border-purple-400 rounded-full px-4 py-1"
             required
           />
         </div>
         <div>
-          <label className="block font-semibold">사원번호</label>
+          <label className="block font-semibold">부서번호</label>
           <input
             type="number"
-            name="empNo"
-            value={formData.empNo}
+            name="deptNo"
+            value={formData.deptNo}
             onChange={handleChange}
             className="w-full border border-purple-400 rounded-full px-4 py-1"
             required

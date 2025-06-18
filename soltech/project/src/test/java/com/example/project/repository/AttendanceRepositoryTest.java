@@ -61,8 +61,8 @@ public class AttendanceRepositoryTest {
     public void workingTest() {
         Employee employee = employeeRepository.findById(1049L).get();
 
-        boolean result = attendanceService.working(employee);
-        System.out.println("출근 여부" + result);
+        AttendanceDTO result = attendanceService.working(employee);
+        System.out.println("출근 여부" + result.getAttStatus());
     }
 
 }

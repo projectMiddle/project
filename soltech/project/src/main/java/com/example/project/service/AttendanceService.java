@@ -50,14 +50,16 @@ public class AttendanceService {
 
     }
 
-    // 불 반짝
-    public boolean working(Employee employee) {
+    // 불 반짝 업그레이드
+    public AttendanceDTO working(Employee employee) {
         Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
-        if (attendance.getAttEndTime() == null) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return AttendanceDTO.builder()
+                .empNo(employee.getEmpNo())
+                .eName(employee.getEName())
+                .deptName(employee.getDeptNo().getDeptName())
+                .attStatus(attendance.getAttStatus())
+                .build();
     }
 
     // entity => dto

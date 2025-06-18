@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PayListTable from "../components/PayListTable";
 import { useNavigate } from "react-router-dom";
+import PayListTable from "./PayListTable";
 
 const PayListPage = () => {
   const [payList, setPayList] = useState([]);
@@ -11,7 +11,7 @@ const PayListPage = () => {
 
   const fetchPayList = () => {
     axios
-      .post("/pay/list", {
+      .get("/pay/list", {
         params: {
           empNo: 1,
           year,
@@ -54,6 +54,14 @@ const PayListPage = () => {
         <input type="number" value={month} onChange={(e) => setMonth(parseInt(e.target.value))} />
         <button onClick={fetchPayList} className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
           월별 급여명세서 조회
+        </button>
+      </div>
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={() => navigate("/byeongsun/form")}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-6"
+        >
+          + 급여명세서 작성
         </button>
       </div>
     </div>

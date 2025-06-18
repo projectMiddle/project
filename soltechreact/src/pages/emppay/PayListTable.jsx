@@ -18,11 +18,12 @@ const PayListTable = ({ payList }) => {
           {Array.isArray(payList) && payList.length > 0 ? (
             payList.map((pay) => (
               <tr key={pay.payNo} className="hover:bg-gray-50 border-t">
-                <td className="px-4 py-2 text-blue-600 underline">{pay.payMonth}</td>
+                <td className="px-4 py-2 text-blue-600 underline">
+                  <Link to={`/pay/detail/${pay.payNo}`}>{pay.payMonth}</Link>
+                </td>
                 <td className="px-4 py-2">{pay.departmentName}</td>
                 <td className="px-4 py-2">{pay.rankName}</td>
                 <td className="px-4 py-2">{pay.accountNumber}</td>
-                <td className="px-4 py-2">{pay.bankName}</td>
               </tr>
             ))
           ) : (
