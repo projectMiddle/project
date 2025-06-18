@@ -22,6 +22,9 @@ const FixedBar = () => {
               메일
             </a>
             <Link to="/yongjae/approval">결재</Link>
+            <a href="#" className="hover:underline">
+              검색
+            </a>
           </nav>
         </div>
 

@@ -1,7 +1,9 @@
 import React from "react";
-// 💡 커스텀 스타일 적용
 
-const EmployeeProfile = ({ employee }) => {
+const EmpInfo = ({ employee }) => {
+  if (!employee) {
+    return <div>🔄 직원 정보를 불러오는 중입니다...</div>;
+  }
   return (
     <div className="profile-container">
       <div className="profile-header">
@@ -18,13 +20,13 @@ const EmployeeProfile = ({ employee }) => {
       </div>
 
       <div className="profile-fields">
-        <ProfileField label="부서" value={employee.department?.deptName} />
-        <ProfileField label="직급" value={employee.jobRank?.jobName} />
+        <ProfileField label="부서" value={employee.deptNo?.deptName} />
+        <ProfileField label="직급" value={employee.jobNo?.jobName} />
         <ProfileField label="이메일" value={employee.eEmail} />
         <ProfileField label="전화번호" value={employee.eMobile} />
         <ProfileField label="계좌번호" value={employee.eAccount} />
         <ProfileField label="입사일" value={employee.eHiredate} />
-        <ProfileField label="생년월일" value={employee.eBirthday} />
+        <ProfileField label="생년월일" value={employee.eBirth} />
         <ProfileField label="주소" value={employee.eAddress} />
         <ProfileField label="성별" value={employee.eGender} />
       </div>
@@ -39,4 +41,4 @@ const ProfileField = ({ label, value }) => (
   </div>
 );
 
-export default EmployeeProfile;
+export default EmpInfo;
