@@ -1,12 +1,12 @@
 // 사이드
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { IoMailUnreadOutline } from "react-icons/io5";
 const MailSidebar = () => {
-    const location = useLocation();  // 현 브라우저 경로 가져왕 하이라이트 칠해야 됑
-    
-    const menu = [
-    { label: "메일쓰기", path: "/mail/compose" },
+  const location = useLocation(); // 현 브라우저 경로 가져왕 하이라이트 칠해야 됑
+
+  const menu = [
+    { label: "메일작성", path: "/mail/compose" },
     { label: "받은메일함", path: "/mail" },
     { label: "보낸메일함", path: "/mail/sent" },
     { label: "휴지통", path: "/mail/trash" },
@@ -21,12 +21,12 @@ const MailSidebar = () => {
             location.pathname === item.path ? "bg-gray-200 font-semibold" : ""
           }`}
         >
+          {item.label === "메일작성" && <IoMailUnreadOutline className="text-xl" />}
           {item.label}
         </Link>
       ))}
     </div>
   );
 };
-
 
 export default MailSidebar;
