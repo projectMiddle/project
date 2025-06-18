@@ -1,9 +1,9 @@
 import React from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
-import "../pages/IntraHome.css";
+import "../../css/intrahome.css";
 import Information from "./Information";
 import Notice from "./Notice";
-import Approval from "./Approval";
+
 import Calendar from "./Calendar";
 import dayjs from "dayjs";
 

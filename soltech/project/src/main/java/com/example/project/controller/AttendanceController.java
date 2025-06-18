@@ -44,9 +44,10 @@ public class AttendanceController {
         return attendanceService.logout(employee);
     }
 
+    // 불반짝 업그레이드
     @GetMapping("/working/{empNo}")
-    public boolean working(@PathVariable Long empNo) {
-        Employee employee = employeeRepository.findById(empNo).get();
+    public AttendanceDTO working(@PathVariable Long empNo) {
+        Employee employee = employeeRepository.findById(empNo).orElseThrow();
         return attendanceService.working(employee);
     }
 
