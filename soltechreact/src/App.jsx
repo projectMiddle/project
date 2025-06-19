@@ -70,7 +70,7 @@ function App() {
     <Routes>
       <Route path="/yongjae" element={<Yongjae />} />
       <Route path="/mikyung" element={<Mikyung />} />
-      <Route path="/byeongsun" element={<Byeongsun />} />
+      <Route path="/byeongsun/*" element={<Byeongsun />} />
       <Route path="/seungchan" element={<Seungchan />} />
       <Route path="/yongsung" element={<Yongsung />} />
       {/* 메인화면 관련 기능들 */}

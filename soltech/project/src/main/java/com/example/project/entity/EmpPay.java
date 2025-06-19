@@ -91,4 +91,8 @@ public class EmpPay {
         this.payBonusWage = payBonusWage;
     }
 
+    public void setEmpNo(Employee empNo) {
+        this.empNo = empNo;
+    }
+
 }
