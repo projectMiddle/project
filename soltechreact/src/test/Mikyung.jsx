@@ -6,9 +6,9 @@ import MailPage from "./../pages/mail/MailPage";
 const Mikyung = () => {
   return (
     <div>
-      {/* <IntraHome />
-      <Attendance /> */}
-      <MailPage />
+      <IntraHome />
+      <Attendance />
+      {/* <MailPage /> */}
     </div>
   );
 };
