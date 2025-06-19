@@ -1,32 +1,40 @@
-// 사이드
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  IoMailUnreadOutline, // 메일작성
+  IoMailOpenOutline, // 받은메일함
+  IoSendOutline, // 보낸메일함
+  IoTrashOutline, // 휴지통
+} from "react-icons/io5";
 
 const MailSidebar = () => {
-    const location = useLocation();  // 현 브라우저 경로 가져왕 하이라이트 칠해야 됑
-    
-    const menu = [
-    { label: "메일쓰기", path: "/mail/compose" },
-    { label: "받은메일함", path: "/mail" },
-    { label: "보낸메일함", path: "/mail/sent" },
-    { label: "휴지통", path: "/mail/trash" },
+  const location = useLocation();
+
+  const menu = [
+    { label: "메일작성", path: "/mail/compose", icon: <IoMailUnreadOutline /> },
+    { label: "받은메일함", path: "/mail", icon: <IoMailOpenOutline /> },
+    { label: "보낸메일함", path: "/mail/sent", icon: <IoSendOutline /> },
+    { label: "휴지통", path: "/mail/trash", icon: <IoTrashOutline /> },
   ];
+
   return (
-    <div className="flex flex-col gap-2 p-4 w-48 bg-white rounded shadow">
-      {menu.map((item) => (
-        <Link
-          to={item.path}
-          key={item.path}
-          className={`block px-4 py-2 rounded hover:bg-gray-100 transition ${
-            location.pathname === item.path ? "bg-gray-200 font-semibold" : ""
-          }`}
-        >
-          {item.label}
-        </Link>
-      ))}
-    </div>
+    <aside className="w-56 bg-white shadow rounded-xl p-4 flex flex-col gap-3 mt-30">
+      {menu.map((item) => {
+        const isActive = location.pathname === item.path;
+        return (
+          <Link
+            to={item.path}
+            key={item.path}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all
+              ${isActive ? "bg-violet-200 text-violet-800 font-semibold" : "text-gray-700 hover:bg-violet-50"}`}
+          >
+            <span className="text-lg">{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </aside>
   );
 };
-
 
 export default MailSidebar;

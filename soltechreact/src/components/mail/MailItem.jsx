@@ -1,6 +1,6 @@
 // 메일 리스트 데이터
 
-import React from 'react';
+import React from "react";
 
 const MailItem = ({ mail }) => {
   const { title, sender, date, isRead } = mail;
