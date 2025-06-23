@@ -8,7 +8,6 @@ const Yongjae = () => {
   return (
     <div>
       <Routes>
-        {/* MainLayout 없이 바로 접근 */}
         <Route element={<IntraLayout />}>
           <Route path="approval/form" element={<ApprovalForm />} />
           <Route path="approval" element={<ApprovalList />} />

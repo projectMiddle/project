@@ -1,105 +1,174 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { fetchApprovalList } from "../../api/approvalApi";
+import { Link, useLocation } from "react-router-dom";
 
 const ApprovalList = () => {
   const [category, setCategory] = useState("기안서");
-  const navigate = useNavigate();
+  const [approvals, setApprovals] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState(null);
+  // 현재 경로를 확인해서 상태 분기
+  const location = useLocation();
+  let status = "all"; // 기본값
 
-  // 예시 데이터 (나중에 API 연결 예정)
-  const dummyApprovals = [
-    {
-      id: 1,
-      title: "기안서 - 연차 신청",
-      writer: "홍길동",
-      dept: "인사팀",
-      date: "2025.06.01",
-      status: "대기",
-      category: "기안서",
-    },
-    {
-      id: 2,
-      title: "보고서 - 프로젝트 정리",
-      writer: "김푸름",
-      dept: "영업팀",
-      date: "2025.06.02",
-      status: "승인",
-      category: "보고서",
-    },
-    // 다른 분류 데이터도 추가 가능
-  ];
+  if (location.pathname.includes("/confirm/list")) status = "list"; // 수신함
+  else if (location.pathname.includes("/request/processing"))
+    status = "processing"; // 내가 상신한 진행 중
+  else if (location.pathname.includes("submitted")) status = "all";
+  else if (location.pathname.includes("completed")) status = "completed";
+  else if (location.pathname.includes("history")) status = "history";
+  else if (location.pathname.includes("reference")) status = "reference";
 
-  const filteredApprovals = dummyApprovals.filter((doc) => doc.category === category);
+  // 결재함별 상태 확인
+  console.log("현재 상태:", status);
+
+  // ====================== 테스트 용 ======================
+  const [empNo, setEmpNo] = useState(1015); // 임시 empNo
+
+  useEffect(() => {
+    fetchApprovalList(status, page, 10, empNo)
+      .then((data) => {
+        console.log("응답된 approvals:", data.dtoList);
+        setApprovals(data.dtoList);
+        setPageInfo(data);
+      })
+      .catch((err) => {
+        console.error("목록 불러오기 실패", err);
+      });
+  }, [status, page, empNo, category]); // ✅ empNo 추가
+  // ====================== 테스트 용 ======================
+
+  // 실사용 jwt 이후 수정 예정
+  // useEffect(() => {
+  //   fetchApprovalList(status, page, 10)
+  //     .then(data => {
+  //       console.log("결재 문서 리스트:", data.dtoList);
+
+  //       setApprovals(data.dtoList);
+  //       setPageInfo(data);
+  //     })
+  //     .catch(err => {
+  //       console.error("목록 불러오기 실패", err);
+  //     });
+  // }, [status, page]);
+
+  // ✅ submitted일 때만 카테고리 필터 적용
+  const shouldFilterByCategory = ["submitted", "list"].includes(status);
+
+  const filteredApprovals = shouldFilterByCategory
+    ? approvals.filter((doc) => doc.appDocCategory === category)
+    : approvals;
+
+  // 상태확인
+  console.log("상태:", status);
+  console.log("응답된 approvals:", approvals);
+  console.log("필터된 문서:", filteredApprovals);
+
+  console.log("선택된 category:", category);
 
   return (
-    <div className="bg-[#fff9fd]">
-      <div className="flex p-6 text-sm font-semibold text-black min-h-screen max-w-6xl mx-auto">
-        {/* 사이드 메뉴 */}
-        <aside className="w-48 mr-6 mt-10">
-          <h2 className="mb-2 border-b border-gray-300 pb-1">결재양식</h2>
-          <ul className="space-y-1 mb-6 text-gray-700">
-            {["기안서", "보고서", "연차신청서", "출장신청서"].map((item) => (
-              <li
-                key={item}
-                onClick={() => setCategory(item)}
-                className={`cursor-pointer hover:text-purple-600 ${category === item ? "text-purple-800 font-bold" : ""
-                  }`}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+    <div className="bg-[#f4f4f4e1]">
+      <div className="flex text-sm font-semibold text-black min-h-screen mx-auto">
+        {/* 본문: ApprovalList */}
+        <div className="flex-1 bg-gray-50 rounded-xl p-10">
+          <section className="bg-white rounded-xl p-6 shadow min-h-screen">
+            <div className="text-right text-xs text-gray-500 mb-4">
+              home / 전자결재
+            </div>
 
-          <h2 className="mb-2 border-b border-gray-300 pb-1">문서보관함</h2>
-          <ul className="space-y-1 text-gray-700">
-            <li className="cursor-pointer hover:text-purple-600">상신함</li>
-            <li className="cursor-pointer hover:text-purple-600">수신함</li>
-            <li className="cursor-pointer hover:text-purple-600">반려함</li>
-          </ul>
-        </aside>
+            {/* 카테고리 탭 */}
+            <div className="flex gap-4 mb-4 text-sm">
+              {["기안서", "보고서", "연차신청서", "출장신청서"].map((cat) => (
+                <button
+                  key={cat}
+                  className={`px-3 py-1 rounded 
+                    ${
+                      cat === category
+                        ? "bg-purple-600 text-white"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  onClick={() => setCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
 
-        {/* 본문 */}
-        <section className="flex-1 bg-white rounded-xl p-6 shadow min-h-screen">
-          <div className="text-right text-xs text-gray-500 mb-4">
-            home / 전자결재
-          </div>
-
-          {/* 상단 버튼 */}
-          <div className="text-right mb-4">
-            <button
-              onClick={() => navigate(`/yongjae/approval/form?category=${category}`)}
-              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-            >
-              + 새 {category} 작성
-            </button>
-          </div>
-
-          {/* 리스트 */}
-          <div className="space-y-2 bg-purple-50 p-4 rounded-xl">
-            {filteredApprovals.map((doc) => (
-              <div
-                key={doc.id}
-                className="flex items-center justify-between bg-white px-4 py-3 rounded-lg shadow-sm hover:bg-gray-50 transition"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-purple-300 text-white flex items-center justify-center font-bold rounded-full">
-                    {doc.category[0]}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-800">{doc.title}</div>
-                    <div className="text-xs text-gray-500">
-                      기안자: {doc.writer} · {doc.dept} · {doc.date}
+            {/* 리스트 뿌리는 공간 */}
+            <div className="space-y-4">
+              {filteredApprovals.map((doc) => (
+                <Link
+                  key={doc.appDocNo}
+                  to={`/intra.soltech/approval/detail/${doc.appDocNo}`}
+                  className="block"
+                >
+                  <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 hover:bg-[#f9fbff] transition">
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 bg-purple-100 text-purple-700 flex items-center justify-center font-bold rounded-full">
+                        {doc.appDocCategory[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-800">
+                          {doc.appDocTitle}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          기안자 : {doc.eName} · {doc.deptName} ·{" "}
+                          {doc.appDocDate}
+                        </div>
+                      </div>
                     </div>
+
+                    <span
+                      className={`text-xs font-semibold px-2 py-0.5 rounded
+            ${
+              doc.appIsFinalized
+                ? "text-green-700 bg-green-100"
+                : "text-yellow-700 bg-yellow-100"
+            }`}
+                    >
+                      {doc.appIsFinalized ? "완료" : "대기"}
+                    </span>
                   </div>
-                </div>
-                <div>
-                  <span className="text-xs font-semibold text-yellow-700 bg-yellow-200 px-2 py-0.5 rounded">
-                    {doc.status}
-                  </span>
-                </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* 페이지네이션 */}
+            {pageInfo && (
+              <div className="flex justify-center mt-8 gap-1">
+                {pageInfo.prev && (
+                  <button
+                    onClick={() => setPage(pageInfo.prevPage)}
+                    className="px-2 py-1 text-xs text-gray-500"
+                  >
+                    이전
+                  </button>
+                )}
+                {pageInfo.pageNumList.map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setPage(num)}
+                    className={`px-3 py-1 rounded text-sm font-semibold ${
+                      num === page
+                        ? "bg-purple-600 text-white"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+                {pageInfo.next && (
+                  <button
+                    onClick={() => setPage(pageInfo.nextPage)}
+                    className="px-2 py-1 text-xs text-gray-500"
+                  >
+                    다음
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
-        </section>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   );
