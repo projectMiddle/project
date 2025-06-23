@@ -50,11 +50,6 @@ const PayListPage = () => {
           onChange={(e) => setYear(parseInt(e.target.value))}
           className="border px-3 py-1 rounded w-24"
         />
-        <label className="text-gray-700">월: </label>
-        <input type="number" value={month} onChange={(e) => setMonth(parseInt(e.target.value))} />
-        <button onClick={fetchPayList} className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
-          월별 급여명세서 조회
-        </button>
       </div>
       <div className="flex justify-end mt-4">
         <button

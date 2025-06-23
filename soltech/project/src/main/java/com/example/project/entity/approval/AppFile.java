@@ -45,7 +45,7 @@ public class AppFile {
         this.appFileUuid = uuid;
     }
 
-    public void setAppDocNo(ApprovalDocument doc) {
+    public void changeAppDocNo(ApprovalDocument doc) {
         this.appDocNo = doc;
     }
 
