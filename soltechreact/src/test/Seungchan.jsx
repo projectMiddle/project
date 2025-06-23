@@ -4,15 +4,17 @@ import EditNoticeForm from "../pages/notice/editNoticeForm";
 import NoticeList from "../pages/notice/NoticeList";
 import "../css/boardform.css";
 import { Route, Router, Routes } from "react-router-dom";
+import NoticeRead from "../pages/notice/NoticeRead";
 
 const Seungchan = () => {
   return (
     <>
       <div>
         <Routes>
-          <Route path="" element={<NoticeList />} />
-          <Route path="Form" element={<NoticeForm />} />
+          <Route path="List" element={<NoticeList />} />
           <Route path="edit/:id" element={<EditNoticeForm />} />
+          <Route path="Form" element={<NoticeForm />} />
+          <Route path=":notiNo" element={<NoticeRead />} />
         </Routes>
       </div>
     </>

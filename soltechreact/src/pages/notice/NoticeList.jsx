@@ -4,6 +4,8 @@ import "../../css/boardform.css";
 
 const NoticeList = () => {
   const navigate = useNavigate();
+
+  // 기존 상태들
   const [notices, setNotices] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -11,20 +13,22 @@ const NoticeList = () => {
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedNotices, setSelectedNotices] = useState([]);
 
+  // 검색 상태
+  const [keyword, setKeyword] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [totalCount, setTotalCount] = useState(0); // 1️⃣ 총 개수 상태 추가
+
   const fetchNotices = async () => {
     try {
-      const res = await fetch(`/api/notices/List?page=${page}&size=10`);
+      const res = await fetch(`/api/notices/List?page=${page}&size=15&search=${encodeURIComponent(searchTerm)}`); // ✅
       const data = await res.json();
       setNotices(data.content || []);
-      setTotalPages(data.totalPages || 1);
+      setTotalPages(data.totalPages || 0);
+      setTotalCount(data.totalElements || 0); // 2️⃣ 총 개수 저장
     } catch (err) {
       console.error("공지사항 불러오기 실패", err);
     }
   };
-
-  useEffect(() => {
-    fetchNotices();
-  }, [page]);
 
   const goToPage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -51,40 +55,87 @@ const NoticeList = () => {
       alert("삭제가 완료되었습니다.");
       setDeleteMode(false);
       setSelectedNotices([]);
-      fetchNotices();
     } catch (err) {
       alert("삭제 중 오류가 발생했습니다.");
     }
   };
 
-  return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">공지사항</h1>
+  const handleSearch = () => {
+    setPage(1);
+    setSearchTerm(keyword.trim());
+  };
+  useEffect(() => {
+    fetchNotices();
+  }, [page, searchTerm]); // ✅ page나 searchTerm이 바뀔 때마다 재요청
 
-      <table className="w-full border-2 border-purple-400 text-center">
-        <thead className="bg-white">
-          <tr className="border-b border-purple-300">
-            {deleteMode && <th className="py-2 text-sm border-r border-purple-300">선택</th>}
-            <th className="py-2 text-sm border-r border-purple-300">글번호</th>
-            <th className="py-2 text-sm border-r border-purple-300">제목</th>
-            <th className="py-2 text-sm border-r border-purple-300">작성자</th>
-            <th className="py-2 text-sm border-r border-purple-300">부서</th>
-            <th className="py-2 text-sm border-r border-purple-300">등록날짜</th>
-            <th className="py-2 text-sm">수정날짜</th>
-          </tr>
-        </thead>
-        <tbody>
-          {notices.length === 0 ? (
+  return (
+    <div className="min-h-screen">
+      <div className="w-full bg-purple-500 text-white py-4 px-6 text-3xl font-bold mt-0">회사 공지사항</div>
+
+      {/* 검색 바 */}
+      <div className="w-full bg-gray-100 py-5 px-4">
+        <div className="w-full flex items-center gap-3">
+          <label className="font-semibold text-sm">제목</label>
+          <input
+            type="text"
+            placeholder="검색어를 입력해주세요."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+            className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-purple-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded"
+          >
+            검색
+          </button>
+          <button
+            onClick={() => {
+              setKeyword("");
+              setSearchTerm("");
+            }}
+            className="border border-gray-300 text-sm px-4 py-2 rounded hover:bg-gray-100 bg-white"
+          >
+            초기화
+          </button>
+        </div>
+      </div>
+
+      {/* 검색 결과 */}
+      <p className="mt-4.5 mb-2 text-sm px-10 ">
+        총 <span className="text-blue-600 font-bold">{totalCount}</span>건의 공지사항이 검색되었습니다.
+      </p>
+
+      {/* 공지 리스트 */}
+      <div className="bg-white px-6 py-4 rounded shadow-sm">
+        <table className="w-full border border-gray-300 border-collapse text-sm">
+          <thead className="bg-gray-50 ">
             <tr>
-              <td colSpan="7" className="py-8 text-gray-400">
-                등록된 공지사항이 없습니다.
-              </td>
+              {deleteMode && <th className="py-2 px-2 border border-gray-300">선택</th>}
+              <th className="py-2 px-2 border border-gray-300">번호</th>
+              <th className="py-2 px-2 border border-gray-300">제목</th>
+              <th className="py-2 px-2 border border-gray-300">작성자</th>
+              <th className="py-2 px-2 border border-gray-300">부서</th>
+              <th className="py-2 px-2 border border-gray-300">작성일</th>
+              <th className="py-2 px-2 border border-gray-300">수정일</th>
             </tr>
-          ) : (
-            notices.map((notice) => (
-              <tr key={notice.notiNo} className="border-t border-purple-200 hover:bg-purple-50 transition">
+          </thead>
+
+          <tbody>
+            {notices.map((notice) => (
+              <tr
+                key={notice.notiNo}
+                className="border-t border-purple-200 hover:bg-purple-50 transition cursor-pointer"
+                onClick={() => navigate(`/notices/${notice.notiNo}`)}
+              >
                 {deleteMode && (
-                  <td className="py-2 border-r border-purple-100">
+                  <td
+                    className="py-2 border-r border-purple-100"
+                    onClick={(e) => e.stopPropagation()} // 클릭 이벤트 버블링 방지
+                  >
                     <input
                       type="checkbox"
                       checked={selectedNotices.includes(notice.notiNo)}
@@ -103,7 +154,10 @@ const NoticeList = () => {
                 <td className="py-2 text-sm border-r border-purple-100">{notice.empName || "-"}</td>
                 <td className="py-2 text-sm border-r border-purple-100">{notice.deptName || "-"}</td>
                 <td className="py-2 text-sm border-r border-purple-100">{notice.notiRegDate}</td>
-                <td className="py-2 text-sm">
+                <td
+                  className="py-2 text-sm border-r border-purple-100"
+                  onClick={(e) => e.stopPropagation()} // 수정 버튼 클릭 시 tr 클릭 방지
+                >
                   {notice.notiUpdateDate || "-"}
                   <button
                     onClick={() => navigate(`/notices/edit/${notice.notiNo}`)}
@@ -113,20 +167,27 @@ const NoticeList = () => {
                   </button>
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* 페이지네이션 */}
-      <div className="flex items-center justify-between mt-6">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <button onClick={() => goToPage(page - 1)}>&larr; Previous</button>
+      {/* 글쓰기 버튼: 왼쪽 정렬 */}
+      <div className="flex items-center mt-6 justify-between px-6">
+        <button
+          onClick={() => navigate("/notices/Form")}
+          className="bg-purple-500 hover:bg-blue-600 text-white px-4 py-2 rounded "
+        >
+          작성
+        </button>
+        <div className="flex-1 flex justify-center items-center gap-1 px">
           {[...Array(totalPages)].map((_, idx) => (
             <button
               key={idx + 1}
               onClick={() => goToPage(idx + 1)}
-              className={`px-2 py-1 rounded ${page === idx + 1 ? "bg-black text-white" : "hover:bg-purple-100"}`}
+              className={`px-3 py-1 border rounded ${
+                page === idx + 1 ? "bg-blue-500 text-white" : "hover:bg-gray-100"
+              }`}
             >
               {idx + 1}
             </button>

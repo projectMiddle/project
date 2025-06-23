@@ -2,6 +2,7 @@ package com.example.project.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.persister.collection.mutation.AbstractUpdateRowsCoordinator;
 import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
@@ -13,7 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import jakarta.persistence.Entity;
-
+import jakarta.persistence.EntityListeners;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,13 +23,13 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"deptNo", "empNo"})
+@ToString(exclude = { "deptNo", "empNo" })
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
+@EntityListeners(AbstractUpdateRowsCoordinator.class)
 public class Notice {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notiNo;
@@ -55,6 +56,11 @@ public class Notice {
 
     public void changeNotiContent(String notiContent) {
         this.notiContent = notiContent;
+        this.notiUpdateDate = LocalDateTime.now();
+    }
+
+    public void changeNotiUpdateDate(LocalDateTime updateDate) {
+        this.notiUpdateDate = updateDate;
     }
 
 }

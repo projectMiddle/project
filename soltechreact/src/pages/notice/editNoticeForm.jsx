@@ -1,63 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // ✅ 공지사항 ID 가져오기
+import { useNavigate, useParams } from "react-router-dom";
 
-const EditNoticeForm = () => {
-  const { id } = useParams(); // URL의 :id
-  const [noticeData, setNoticeData] = useState(null);
-
+const NoticeEdit = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    notiRegDate: "",
-    empName: "",
-    deptName: "",
     notiTitle: "",
     notiContent: "",
-    file: null,
+    empNo: "",
+    deptNo: "",
+    notiRegDate: "",
   });
 
   // ✅ 공지사항 정보 불러오기
   useEffect(() => {
-    const fetchNotice = async () => {
-      try {
-        const res = await fetch(`/api/notices/${id}`);
-        const data = await res.json();
-        setNoticeData(data);
-
-        const formattedDate = data.notiRegDate ? new Date(data.notiRegDate).toISOString().split("T")[0] : "";
-
+    fetch(`/api/notices/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
         setFormData({
-          notiRegDate: formattedDate,
-          empName: data.name || "",
-          deptName: data.deptName || "",
-          notiTitle: data.notiTitle || "",
-          notiContent: data.notiContent || "",
-          file: null,
+          notiTitle: data.notiTitle,
+          notiContent: data.notiContent,
+          empNo: data.empNo,
+          deptNo: data.deptNo,
+          notiRegDate: data.notiRegDate,
         });
-      } catch (err) {
-        console.error("공지사항 불러오기 실패:", err);
-      }
-    };
-
-    fetchNotice();
+      });
   }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, file: e.target.files[0] }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = {
-      notiTitle: formData.notiTitle,
-      notiContent: formData.notiContent,
-      notiRegDate: formData.notiRegDate,
-      empNo: noticeData?.empNo,
-      deptNo: noticeData?.deptNo,
+      ...formData,
+      notiUpdateDate: new Date().toISOString(),
     };
 
     try {
@@ -66,105 +40,110 @@ const EditNoticeForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
-      if (res.ok) {
-        alert("수정되었습니다.");
-        window.history.back(); // 또는 navigate(-1)
-      } else {
-        alert("수정 실패");
-      }
+      if (!res.ok) throw new Error("수정 실패");
+      alert("수정되었습니다.");
+      navigate(`/notices/${id}`);
     } catch (err) {
-      console.error(err);
-      alert("에러 발생");
+      alert("오류 발생: " + err.message);
     }
   };
 
-  const handleCancel = () => {
-    window.history.back();
-  };
-
-  if (!noticeData) return <div className="text-center mt-20">📄 공지사항을 불러오는 중입니다...</div>;
-
   return (
-    <div className="max-w-4xl mx-auto mt-10">
-      <h1 className="text-3xl font-bold mb-6">공지사항 수정</h1>
-      <form onSubmit={handleSubmit} className="p-6 border-2 border-purple-500 rounded-xl space-y-4">
-        <div>
-          <label className="block font-semibold">작성일자</label>
-          <input
-            type="date"
-            name="notiRegDate"
-            value={formData.notiRegDate}
-            onChange={handleChange}
-            className="w-full border border-purple-400 rounded-full px-4 py-1"
-          />
-        </div>
+    <div style={{ width: "100%", minHeight: "100vh" }}>
+      <h2 style={{ backgroundColor: "#A855F7", color: "white", padding: "16px 24px", fontSize: "24px" }}>
+        회사 공지사항 수정
+      </h2>
+      <div style={{ padding: "16px" }}>
+        <p style={{ fontSize: "18px", marginBottom: 20 }}>회사 공지사항을 수정합니다.</p>
+        <form onSubmit={handleSubmit}>
+          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
+            <tbody>
+              <tr>
+                <td style={cellStyleTitle}>제목</td>
+                <td style={cellStyle}>
+                  <input
+                    type="text"
+                    value={formData.notiTitle ?? ""}
+                    onChange={(e) => setFormData({ ...formData, notiTitle: e.target.value })}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td style={cellStyleTitle}>사원번호</td>
+                <td style={cellStyle}>{formData.empNo}</td>
+              </tr>
+              <tr>
+                <td style={cellStyleTitle}>부서번호</td>
+                <td style={cellStyle}>{formData.deptNo}</td>
+              </tr>
 
-        <div>
-          <label className="block font-semibold">작성자</label>
-          <input
-            type="text"
-            value={formData.empName}
-            className="w-full border border-purple-400 rounded-full px-4 py-1 bg-gray-100"
-            readOnly
-          />
-        </div>
+              <tr>
+                <td style={cellStyleTitle}>작성일자</td>
+                <td style={cellStyle}>
+                  {new Date(formData.notiRegDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                </td>
+              </tr>
+              <tr>
+                <td style={cellStyleTitle}>수정일자</td>
+                <td style={cellStyle}>{new Date().toLocaleDateString("ko-KR").replace(/\.$/, "")}</td>
+              </tr>
+            </tbody>
+          </table>
 
-        <div>
-          <label className="block font-semibold">부서명</label>
-          <input
-            type="text"
-            value={formData.deptName}
-            className="w-full border border-purple-400 rounded-full px-4 py-1 bg-gray-100"
-            readOnly
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold">제목</label>
-          <input
-            type="text"
-            name="notiTitle"
-            value={formData.notiTitle}
-            onChange={handleChange}
-            className="w-full border border-purple-400 px-4 py-1"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold">내용</label>
           <textarea
-            name="notiContent"
             value={formData.notiContent}
-            onChange={handleChange}
-            rows={8}
-            className="w-full border border-purple-400 rounded-xl px-4 py-2"
+            onChange={(e) => setFormData({ ...formData, notiContent: e.target.value })}
             required
+            style={{
+              width: "100%",
+              height: "300px",
+              padding: "15px",
+              fontSize: "1rem",
+              border: "1px solid #ccc",
+              resize: "none",
+              whiteSpace: "pre-wrap",
+              marginBottom: "24px",
+            }}
           />
-        </div>
 
-        <div>
-          <label className="flex items-center gap-2 font-semibold">📎 파일첨부</label>
-          <input type="file" onChange={handleFileChange} className="w-full mt-1" />
-          {formData.file && <p className="text-sm text-gray-600 mt-1">선택된 파일: {formData.file.name}</p>}
-        </div>
-
-        <div className="flex justify-end gap-4 pt-4">
-          <button type="submit" className="bg-purple-500 text-white px-6 py-2 rounded-xl hover:bg-purple-600">
-            수정
-          </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="bg-purple-300 text-white px-6 py-2 rounded-xl hover:bg-purple-400"
-          >
-            취소
-          </button>
-        </div>
-      </form>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
+            <button type="button" onClick={() => navigate(-1)} style={buttonStyle}>
+              취소
+            </button>
+            <button
+              type="submit"
+              style={{ ...buttonStyle, backgroundColor: "#A855F7", color: "white", border: "none" }}
+            >
+              저장
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default EditNoticeForm;
+const cellStyle = {
+  border: "1px solid #ddd",
+  padding: "14px 16px",
+  backgroundColor: "#fff",
+  fontSize: "16px",
+};
+
+const cellStyleTitle = {
+  ...cellStyle,
+  backgroundColor: "#f9f9f9",
+  fontWeight: "bold",
+  width: "15%",
+};
+
+const buttonStyle = {
+  padding: "10px 20px",
+  border: "1px solid #ccc",
+  backgroundColor: "#eee",
+  borderRadius: 6,
+  fontSize: "16px",
+  cursor: "pointer",
+};
+
+export default NoticeEdit;
