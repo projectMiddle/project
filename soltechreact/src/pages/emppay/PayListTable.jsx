@@ -20,7 +20,7 @@ const PayListTable = ({ payList }) => {
             payList.map((pay) => (
               <tr key={pay.payNo} className="hover:bg-gray-50 border-t">
                 <td className="px-4 py-2 text-blue-600 underline">
-                  <Link to={`/pay/detail/${pay.payNo}`}>{pay.payMonth}</Link>
+                  <Link to={`/byeongsun/detail/${pay.payNo}`}>{pay.payMonth}</Link>
                 </td>
                 <td className="px-4 py-2">{pay.ename || "-"}</td>
                 <td className="px-4 py-2">{pay.departmentName || "-"}</td>
