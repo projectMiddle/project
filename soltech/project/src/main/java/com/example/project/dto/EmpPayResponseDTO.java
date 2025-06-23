@@ -32,6 +32,7 @@ public class EmpPayResponseDTO {
 
     public static EmpPayResponseDTO from(EmpPay empPay) {
         return EmpPayResponseDTO.builder()
+
                 .payMonth(empPay.getPayMonth())
                 .baseSalary(BigDecimal.valueOf(empPay.getPayBaseSalary()))
                 .bonusWage(BigDecimal.valueOf(empPay.getPayBonusWage()))

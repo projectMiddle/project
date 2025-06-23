@@ -97,7 +97,7 @@ export default function PayForm() {
     try {
       await axios.post("/pay/create", saveForm);
       alert("급여명세서가 저장되었습니다.");
-      navigate("/pay/list");
+      navigate("/byeongsun");
     } catch (err) {
       console.error("저장 실패 ❌", err);
       alert("저장 실패: " + err.message);

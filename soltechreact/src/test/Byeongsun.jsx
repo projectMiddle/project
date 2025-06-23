@@ -13,7 +13,7 @@ const Byeongsun = () => {
           <Route path="/" element={<PayListPage />} />
           <Route path="/form" element={<PayForm />} />
           <Route path="/:payNo" element={<PayListTable />} />
-          <Route path="/pay/detail/:id" element={<PayDetailPage />} />
+          <Route path="/detail/:id" element={<PayDetailPage />} />
         </Routes>
       </div>
     </>
