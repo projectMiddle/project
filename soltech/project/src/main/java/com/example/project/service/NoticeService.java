@@ -9,8 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.dto.NoticeDTO;
 import com.example.project.dto.PageRequestDTO;
@@ -35,7 +33,6 @@ public class NoticeService {
         private final EmployeeRepository employeeRepository;
         private final DepartmentRepository departmentRepository;
 
-        // 새글작성
         @Transactional
         public Long create(NoticeDTO dto) {
                 log.info("새글 작성 요청");
@@ -43,18 +40,12 @@ public class NoticeService {
 
                 Employee emp = employeeRepository.findById(dto.getEmpNo())
                                 .orElseThrow(() -> new RuntimeException("해당 사원이 존재하지 않음"));
-                String name = emp.getEName();
-                log.info("작성자 이름: {}", name);
                 Department dept = departmentRepository.findById(dto.getDeptNo())
                                 .orElseThrow(() -> new RuntimeException("해당 부서가 존재하지 않음"));
-                String deptName = dept.getDeptName();
-                log.info("작성자 부서명: {}", deptName);
 
                 Notice notice = dtoToEntity(dto, emp, dept);
-                // return noticeRepository.save(notice).getNotiNo();
-
                 Notice saved = noticeRepository.save(notice);
-                log.info("📌 저장된 공지사항: {}", saved); // 로그에 출력되는지 확인
+                log.info("📌 저장된 공지사항: {}", saved);
                 return saved.getNotiNo();
         }
 
@@ -64,22 +55,16 @@ public class NoticeService {
                 noticeRepository.delete(notice);
         }
 
-        // 수정
         @Transactional
         public Long update(NoticeDTO dto) {
                 Notice notice = noticeRepository.findById(dto.getNotiNo())
                                 .orElseThrow(() -> new RuntimeException("공지 없음"));
 
                 notice.changeNotiContent(dto.getNotiContent());
+                notice.changeNotiUpdateDate(LocalDateTime.now());
+
                 noticeRepository.save(notice);
-
                 return notice.getNotiNo();
-        }
-
-        public Page<NoticeDTO> getPagedList(int page, int size) {
-                Pageable pageable = PageRequest.of(page - 1, size, Sort.by("notiNo").descending());
-                return noticeRepository.findAll(pageable)
-                                .map(this::entityToDto);
         }
 
         public NoticeDTO findById(Long notiNo) {
@@ -107,21 +92,18 @@ public class NoticeService {
                                 .build();
         }
 
-        // private NoticeDTO entityToDto(Notice notice) {
-        // if (notice == null)
-        // return null;
+        public Page<NoticeDTO> getPagedList(int page, int size, String search) {
+                Pageable pageable = PageRequest.of(page - 1, size, Sort.by("notiNo").descending());
 
-        // return NoticeDTO.builder()
-        // .notiNo(notice.getNotiNo())
-        // .notiTitle(notice.getNotiTitle())
-        // .notiContent(notice.getNotiContent())
-        // .notiRegDate(notice.getNotiRegDate())
-        // .notiUpdateDate(notice.getNotiUpdateDate())
-        // .deptName(notice.getDeptNo() != null ? notice.getDeptNo().getDeptName() :
-        // null)
-        // .name(notice.getEmpNo() != null ? notice.getEmpNo().getEName() : null)
-        // .build();
-        // }
+                Page<Notice> result;
+                if (search == null || search.isEmpty()) {
+                        result = noticeRepository.findAll(pageable);
+                } else {
+                        result = noticeRepository.findWithNullTitle(search, pageable);
+                }
+                return result.map(this::entityToDto);
+        }
+
         private NoticeDTO entityToDto(Notice notice) {
                 if (notice == null)
                         return null;
@@ -133,20 +115,19 @@ public class NoticeService {
                                 .notiRegDate(notice.getNotiRegDate())
                                 .notiUpdateDate(notice.getNotiUpdateDate())
                                 .deptName(notice.getDeptNo() != null ? notice.getDeptNo().getDeptName() : null)
-                                .deptNo(notice.getDeptNo() != null ? notice.getDeptNo().getDeptNo() : null) // ✅ 추가
+                                .deptNo(notice.getDeptNo() != null ? notice.getDeptNo().getDeptNo() : null)
                                 .name(notice.getEmpNo() != null ? notice.getEmpNo().getEName() : null)
-                                .empNo(notice.getEmpNo() != null ? notice.getEmpNo().getEmpNo() : null) // ✅ 추가
+                                .empNo(notice.getEmpNo() != null ? notice.getEmpNo().getEmpNo() : null)
                                 .build();
         }
 
         private Notice dtoToEntity(NoticeDTO dto, Employee emp, Department dept) {
                 return Notice.builder()
-                                .empNo(emp) // 완전한 Employee 엔티티 객체 넣기
-                                .deptNo(dept) // 완전한 Department 엔티티 객체 넣기
+                                .empNo(emp)
+                                .deptNo(dept)
                                 .notiTitle(dto.getNotiTitle())
                                 .notiContent(dto.getNotiContent())
-                                .notiRegDate(dto.getNotiRegDate() != null ? dto.getNotiRegDate() : LocalDateTime.now())
+                                .notiRegDate(dto.getNotiRegDate().now())
                                 .build();
         }
-
 }

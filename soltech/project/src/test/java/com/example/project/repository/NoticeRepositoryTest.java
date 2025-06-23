@@ -37,8 +37,8 @@ public class NoticeRepositoryTest {
     public void insertTest() {
         IntStream.rangeClosed(1, 50).forEach(i -> {
             Notice notice = Notice.builder()
-                    .empNo(Employee.builder().empNo(1001L).build())
-                    .deptNo(Department.builder().deptNo(1L).build())
+                    .empNo(Employee.builder().empNo(1007L).build())
+                    .deptNo(Department.builder().deptNo(201L).build())
                     .notiTitle("Test" + i)
                     .notiContent("Test" + i)
                     .notiRegDate(LocalDateTime.now())

@@ -2,14 +2,22 @@ package com.example.project.controller;
 
 import com.example.project.dto.NoticeDTO;
 import com.example.project.entity.Department;
+import com.example.project.entity.Employee;
+import com.example.project.entity.Notice;
 import com.example.project.repository.DepartmentRepository;
+import com.example.project.repository.NoticeRepository;
 import com.example.project.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +32,51 @@ public class NoticeController {
 
     private final DepartmentRepository departmentRepository;
 
+    private final NoticeRepository noticeRepository;
+
     @GetMapping
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
 
-    // 공지 목록 조회 (페이징)
-    @GetMapping({ "/List" })
-    public Page<NoticeDTO> list(@RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        log.info("API 공지 목록 요청: page={}, size={}", page, size);
-        return noticeService.getPagedList(page, size);
+    @GetMapping("/List")
+    public ResponseEntity<?> getNotices(
+            @RequestParam(defaultValue = "1") int page, // 💡 1부터 시작하는 프론트 요청 기준
+            @RequestParam(defaultValue = "15") int size,
+            @RequestParam(required = false, defaultValue = "") String search) {
+
+        // ✅ page - 1 로 수정 (0부터 시작하는 JPA용)
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("notiRegDate").descending());
+
+        Page<Notice> noticePage;
+        if (search == null || search.trim().isEmpty()) {
+            noticePage = noticeRepository.findAll(pageable);
+        } else {
+            noticePage = noticeRepository.findWithNullTitle(search.trim(), pageable);
+        }
+
+        List<NoticeDTO> dtoList = noticePage.getContent().stream().map(notice -> {
+            Employee emp = notice.getEmpNo();
+            Department dept = emp != null ? emp.getDeptNo() : null;
+            return NoticeDTO.builder()
+                    .notiNo(notice.getNotiNo())
+                    .empNo(emp != null ? emp.getEmpNo() : null)
+                    .name(emp != null ? emp.getEName() : null)
+                    .deptNo(dept != null ? dept.getDeptNo() : null)
+                    .deptName(dept != null ? dept.getDeptName() : null)
+                    .notiTitle(notice.getNotiTitle())
+                    .notiContent(notice.getNotiContent())
+                    .notiRegDate(notice.getNotiRegDate())
+                    .notiUpdateDate(notice.getNotiUpdateDate())
+                    .build();
+        }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", dtoList);
+        response.put("totalPages", noticePage.getTotalPages());
+        response.put("totalElements", noticePage.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     // 공지 등록
