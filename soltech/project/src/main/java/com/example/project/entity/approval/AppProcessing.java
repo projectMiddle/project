@@ -56,7 +56,7 @@ public class AppProcessing {
 
     private LocalDate appDate;
 
-    private int appOrder;
+    private Integer appOrder;
 
     public void changeAppRoleJobNo(AppRoleJobNo appRoleJobNo) {
         this.appRoleJobNo = appRoleJobNo;
@@ -76,6 +76,10 @@ public class AppProcessing {
 
     public void changeAppOrder(int appOrder) {
         this.appOrder = appOrder;
+    }
+
+    public void changeAppDate(LocalDate appDate) {
+        this.appDate = appDate;
     }
 
 }
