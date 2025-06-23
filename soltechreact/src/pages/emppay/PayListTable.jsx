@@ -2,7 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const PayListTable = ({ payList }) => {
-  console.log("💬 payList 내용:", payList);
+  const year = new Date().getFullYear(); // 혹은 props.year로 받아도 됨
+  const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+
+  // 월별 데이터를 키로 하는 map 생성
+  const payMap = {};
+  payList.forEach((p) => {
+    const [y, m] = p.payMonth.split("-");
+    const key = `${y}-${m.padStart(2, "0")}`;
+    payMap[key] = p;
+  });
+
   return (
     <div className="border border-gray-300 rounded-md shadow-sm overflow-hidden">
       <table className="table-auto w-full text-sm text-left">
@@ -16,25 +26,22 @@ const PayListTable = ({ payList }) => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(payList) && payList.length > 0 ? (
-            payList.map((pay) => (
-              <tr key={pay.payNo} className="hover:bg-gray-50 border-t">
+          {months.map((m) => {
+            const ymKey = `${year}-${m}`;
+            const pay = payMap[ymKey];
+
+            return (
+              <tr key={ymKey} className="hover:bg-gray-50 border-t">
                 <td className="px-4 py-2 text-blue-600 underline">
-                  <Link to={`/byeongsun/detail/${pay.payNo}`}>{pay.payMonth}</Link>
+                  {pay?.payNo ? <Link to={`/byeongsun/detail/${pay.payNo}`}>{ymKey}</Link> : ymKey}
                 </td>
-                <td className="px-4 py-2">{pay.ename || "-"}</td>
-                <td className="px-4 py-2">{pay.departmentName || "-"}</td>
-                <td className="px-4 py-2">{pay.jobName || "-"}</td>
-                <td className="px-4 py-2">{pay.accountNumber || "-"}</td>
+                <td className="px-4 py-2">{pay?.ename || "작성되지 않음"}</td>
+                <td className="px-4 py-2">{pay?.departmentName || "-"}</td>
+                <td className="px-4 py-2">{pay?.jobName || "-"}</td>
+                <td className="px-4 py-2">{pay?.accountNumber || "-"}</td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5} className="text-center text-gray-400 py-4">
-                급여 데이터가 없습니다.
-              </td>
-            </tr>
-          )}
+            );
+          })}
         </tbody>
       </table>
     </div>
