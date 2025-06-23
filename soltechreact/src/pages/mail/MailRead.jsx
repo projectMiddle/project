@@ -1,53 +1,58 @@
-// 상세 
-//ㅠㅠ
-
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-
-const dummyMailData = [
-  {
-    id: "1",
-    title: "프로젝트 자료 공유합니다",
-    sender: "김대리",
-    date: "2025-06-18",
-    content: "안녕하세요. 첨부한 프로젝트 자료 확인 부탁드립니다.",
-  },
-  {
-    id: "2",
-    title: "회의 일정 변경 안내",
-    sender: "박사원",
-    date: "2025-06-17",
-    content: "금주 회의 일정이 변경되었습니다. 확인 바랍니다.",
-  },
-];
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMail } from "../../contexts/MailContext";
 
 const MailRead = () => {
-  const { mailId } = useParams(); // URL에서 mailId 가져옴
+  const { mails, setMails } = useMail();
+  const location = useLocation();
   const navigate = useNavigate();
-
-  const mail = dummyMailData.find((m) => m.id === mailId);
+  const mail = location.state?.mail;
 
   if (!mail) {
-    return <div className="p-4 text-gray-500">존재하지 않는 메일입니다.</div>;
+    return <div className="p-4 text-gray-500">메일을 불러올 수 없습니다. 목록으로 돌아가주세요.</div>;
   }
 
+  // 삭제: mails 상태에서 제거
+  const handleDelete = () => {
+    const updated = mails.filter((m) => m.id !== mail.id);
+    setMails(updated);
+    navigate("/mail");
+  };
+
+  // 휴지통 이동: boxType = "trash"
+  const handleMoveToTrash = () => {
+    const updated = mails.map((m) => (m.id === mail.id ? { ...m, boxType: "trash" } : m));
+    setMails(updated);
+    navigate("/mail");
+  };
+
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow flex flex-col gap-4">
-      <h2 className="text-2xl font-bold">{mail.title}</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-2">{mail.title}</h2>
+      <div className="text-sm text-gray-600 mb-1">From: {mail.from}</div>
+      <div className="text-sm text-gray-500 mb-4">Date: {mail.date}</div>
 
-      <div className="text-sm text-gray-600">
-        <span className="font-medium">{mail.sender}</span> · {mail.date}
-      </div>
+      {mail.attachments && mail.attachments.length > 0 && (
+        <div className="mb-6">
+          <p className="font-semibold mb-1">📎 첨부파일</p>
+          <ul className="list-disc pl-5 text-sm text-gray-700">
+            {mail.attachments.map((file, idx) => (
+              <li key={idx}>{file}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-      <hr />
+      <div className="mb-8 text-gray-800 whitespace-pre-line">{mail.content || "📩 메일 본문이 없습니다."}</div>
 
-      <div className="text-gray-800 whitespace-pre-line">{mail.content}</div>
-
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => navigate(-1)} // 한 단계 뒤로 가기
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-        >
+      <div className="flex gap-2">
+        <button onClick={handleMoveToTrash} className="px-3 py-1 text-sm bg-yellow-100 hover:bg-yellow-200 rounded">
+          휴지통으로 이동
+        </button>
+        <button onClick={handleDelete} className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 rounded">
+          완전 삭제
+        </button>
+        <button onClick={() => navigate("/mail")} className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded">
           목록으로
         </button>
       </div>

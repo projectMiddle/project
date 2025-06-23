@@ -88,4 +88,8 @@ public class Employee {
         this.eAccount = eAccount;
     }
 
+    public void changeePassword(String ePassword) {
+        this.ePassword = ePassword;
+    }
+
 }

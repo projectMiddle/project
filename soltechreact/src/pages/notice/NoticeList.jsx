@@ -13,7 +13,7 @@ const NoticeList = () => {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch(`/notices/List?page=${page}&size=10`);
+      const res = await fetch(`/api/notices/List?page=${page}&size=10`);
       const data = await res.json();
       setNotices(data.content || []);
       setTotalPages(data.totalPages || 1);
@@ -106,7 +106,7 @@ const NoticeList = () => {
                 <td className="py-2 text-sm">
                   {notice.notiUpdateDate || "-"}
                   <button
-                    onClick={() => navigate(`/notice/edit/${notice.notiNo}`)}
+                    onClick={() => navigate(`/notices/edit/${notice.notiNo}`)}
                     className="ml-2 text-purple-500 underline hover:text-purple-700"
                   >
                     수정
@@ -149,7 +149,7 @@ const NoticeList = () => {
           </button>
 
           <button
-            onClick={() => navigate("/notices/new")}
+            onClick={() => navigate("Form")}
             className="bg-purple-500 text-white px-5 py-1 rounded-xl hover:bg-purple-600"
           >
             작성

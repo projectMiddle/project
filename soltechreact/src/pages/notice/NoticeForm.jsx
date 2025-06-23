@@ -43,7 +43,7 @@ const NoticeForm = () => {
     console.log("전송할 데이터:", payload);
 
     try {
-      const res = await fetch("/notices/create", {
+      const res = await fetch("/api/notices/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const NoticeForm = () => {
 
       if (res.ok) {
         alert("등록되었습니다.");
-        window.location.href = "/notice"; // 원하면 리다이렉트 추가
+        window.location.href = "/notices"; // 원하면 리다이렉트 추가
       } else {
         alert("등록 실패");
       }

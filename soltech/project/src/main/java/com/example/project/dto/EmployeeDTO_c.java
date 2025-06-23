@@ -18,7 +18,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class EmployeeDTO {
+public class EmployeeDTO_c {
 
     private Long empNo;
 
@@ -44,8 +44,12 @@ public class EmployeeDTO {
 
     private Long eSalary;
 
-    private Department deptNo;
+    // private Department deptNo;
 
-    private JobRank jobNo;
+    // private JobRank jobNo;
+    private Long deptNo;
+    private String deptName;
+
+    private String jobNo;
 
 }

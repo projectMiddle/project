@@ -23,6 +23,10 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      "/empinfo": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
     },
   },
   plugins: [react(), tailwindcss()],

@@ -1,4 +1,4 @@
-package com.example.project.dto;
+package com.example.project.dto.employee;
 
 import java.time.LocalDate;
 
@@ -18,34 +18,10 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class EmployeeDTO {
-
-    private Long empNo;
-
-    private String eName;
-
-    private Gender eGender;
-
-    private LocalDate eBirth;
-
-    private String eEmail;
-
-    private String eAddress;
+public class EmployeeUpdateDTO {
 
     private String eMobile;
-
+    private String eAddress;
     private String eAccount;
-
     private String ePassword;
-
-    private LocalDate eHiredate;
-
-    private LocalDate eLeavedate;
-
-    private Long eSalary;
-
-    private Department deptNo;
-
-    private JobRank jobNo;
-
 }

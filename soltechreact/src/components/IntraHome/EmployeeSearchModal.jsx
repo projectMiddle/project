@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { MdPersonSearch } from "react-icons/md";
 import EmployeeCard from "./EmployeeCard";
 
@@ -7,24 +8,34 @@ const EmployeeSearchModal = ({ isOpen, onClose }) => {
   const [employeeList, setEmployeeList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
 
+  // useEffect(() => {
+  //   fetch("/data/employees.json")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setEmployeeList(data);
+  //       setFilteredList(data);
+  //     });
+  // }, []);
   useEffect(() => {
-    fetch("/data/employees.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setEmployeeList(data);
-        setFilteredList(data);
+    axios
+      .get("/empinfo/search")
+      .then((res) => {
+        console.log("📦 백엔드 응답 데이터:", res.data);
+        setEmployeeList(res.data);
+      })
+      .catch((err) => {
+        console.error("🚨 사원 목록 불러오기 실패:", err);
       });
   }, []);
-
   //  타이핑할 때마다 자동 필터링
   useEffect(() => {
-    const filtered = employeeList.filter((emp) => emp.eName.toLowerCase().includes(searchText.toLowerCase()));
+    const filtered = employeeList.filter((emp) => emp.ename.toLowerCase().includes(searchText.toLowerCase()));
     setFilteredList(filtered);
   }, [searchText, employeeList]);
 
   //  버튼/엔터 검색 (하이브리드)
   const handleSearch = () => {
-    const filtered = employeeList.filter((emp) => emp.eName.toLowerCase().includes(searchText.toLowerCase()));
+    const filtered = employeeList.filter((emp) => emp.ename.toLowerCase().includes(searchText.toLowerCase()));
     setFilteredList(filtered);
   };
 

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"; // ✅ 공지사항 ID 가져오기
 
-const EditNoticeForm = ({ noticeData, onUpdate }) => {
+const EditNoticeForm = () => {
+  const { id } = useParams(); // URL의 :id
+  const [noticeData, setNoticeData] = useState(null);
+
   const [formData, setFormData] = useState({
     notiRegDate: "",
     empName: "",
@@ -10,22 +14,31 @@ const EditNoticeForm = ({ noticeData, onUpdate }) => {
     file: null,
   });
 
+  // ✅ 공지사항 정보 불러오기
   useEffect(() => {
-    console.log("noticeData:", noticeData);
+    const fetchNotice = async () => {
+      try {
+        const res = await fetch(`/api/notices/${id}`);
+        const data = await res.json();
+        setNoticeData(data);
 
-    if (noticeData) {
-      const formattedDate = noticeData.notiRegDate ? new Date(noticeData.notiRegDate).toISOString().split("T")[0] : "";
+        const formattedDate = data.notiRegDate ? new Date(data.notiRegDate).toISOString().split("T")[0] : "";
 
-      setFormData({
-        notiRegDate: formattedDate,
-        empName: noticeData.name || "",
-        deptName: noticeData.deptName || "",
-        notiTitle: noticeData.notiTitle || "",
-        notiContent: noticeData.notiContent || "",
-        file: null,
-      });
-    }
-  }, [noticeData]);
+        setFormData({
+          notiRegDate: formattedDate,
+          empName: data.name || "",
+          deptName: data.deptName || "",
+          notiTitle: data.notiTitle || "",
+          notiContent: data.notiContent || "",
+          file: null,
+        });
+      } catch (err) {
+        console.error("공지사항 불러오기 실패:", err);
+      }
+    };
+
+    fetchNotice();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,24 +56,20 @@ const EditNoticeForm = ({ noticeData, onUpdate }) => {
       notiTitle: formData.notiTitle,
       notiContent: formData.notiContent,
       notiRegDate: formData.notiRegDate,
-      empNo: noticeData.empNo, // 수정 시 사용되는 사번
-      deptNo: noticeData.deptNo, // 수정 시 사용되는 부서번호
+      empNo: noticeData?.empNo,
+      deptNo: noticeData?.deptNo,
     };
-    console.log("payload:", payload);
 
     try {
-      const res = await fetch(`/api/notices/${noticeData.notiNo}`, {
+      const res = await fetch(`/api/notices/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      console.log("notiNo:", noticeData?.notiNo);
 
       if (res.ok) {
         alert("수정되었습니다.");
-        if (onUpdate) onUpdate();
+        window.history.back(); // 또는 navigate(-1)
       } else {
         alert("수정 실패");
       }
@@ -73,6 +82,8 @@ const EditNoticeForm = ({ noticeData, onUpdate }) => {
   const handleCancel = () => {
     window.history.back();
   };
+
+  if (!noticeData) return <div className="text-center mt-20">📄 공지사항을 불러오는 중입니다...</div>;
 
   return (
     <div className="max-w-4xl mx-auto mt-10">
