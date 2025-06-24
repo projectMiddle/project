@@ -43,14 +43,10 @@ const ApprovalSidebar = () => {
 
   return (
     <aside className="w-[230px] bg-[#f4f4f4] border-r border-gray-300 text-gray-800 flex flex-col min-h-screen">
-      <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">
-        전자결재
-      </div>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">전자결재</div>
 
       <button
-        onClick={() =>
-          navigate(`/intra.soltech/approval/form?category=${category}`)
-        }
+        onClick={() => navigate(`/intrasoltech/approval/form?category=${category}`)}
         className="bg-purple-100 text-purple-700 hover:bg-purple-200 transition m-3 w-[90%] font-semibold rounded px-2 py-2 text-[14px]"
       >
         + 새 {category} 작성
@@ -87,16 +83,10 @@ const ApprovalSidebar = () => {
         <div className="mt-2">
           <div
             className="flex items-center justify-between text-[13px] font-medium cursor-pointer px-1 py-2 hover:bg-gray-200 rounded"
-            onClick={() =>
-              setOpen((prev) => ({ ...prev, 상신함: !prev.상신함 }))
-            }
+            onClick={() => setOpen((prev) => ({ ...prev, 상신함: !prev.상신함 }))}
           >
             <span className="flex-1">결재 상신함</span>
-            {open.상신함 ? (
-              <ChevronDown size={16} />
-            ) : (
-              <ChevronRight size={16} />
-            )}
+            {open.상신함 ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
           {open.상신함 && (
             <ul className="ml-3 space-y-1 text-[13px] animate-fadeIn">
@@ -108,9 +98,7 @@ const ApprovalSidebar = () => {
                 <li
                   key={item.path}
                   className="flex items-center py-1 cursor-pointer"
-                  onClick={() =>
-                    setActiveSend(activeSend === item.path ? null : item.path)
-                  }
+                  onClick={() => setActiveSend(activeSend === item.path ? null : item.path)}
                 >
                   {activeSend === item.path ? (
                     <FolderOpen className="w-4 h-4 mr-1 text-[#6b46c1]" />
@@ -119,11 +107,9 @@ const ApprovalSidebar = () => {
                   )}
                   <Link
                     className={`hover:text-purple-600 ${
-                      isActiveRoute(location.pathname, item.path)
-                        ? "font-bold text-purple-800"
-                        : ""
+                      isActiveRoute(location.pathname, item.path) ? "font-bold text-purple-800" : ""
                     }`}
-                    to={`/intra.soltech/approval/request/${item.path}`}
+                    to={`/intrasoltech/approval/request/${item.path}`}
                   >
                     {item.label}
                   </Link>
@@ -137,16 +123,10 @@ const ApprovalSidebar = () => {
         <div className="mt-2">
           <div
             className="flex items-center justify-between text-[13px] font-medium cursor-pointer px-1 py-2 hover:bg-gray-200 rounded"
-            onClick={() =>
-              setOpen((prev) => ({ ...prev, 수신함: !prev.수신함 }))
-            }
+            onClick={() => setOpen((prev) => ({ ...prev, 수신함: !prev.수신함 }))}
           >
             <span className="flex-1">결재 수신함</span>
-            {open.수신함 ? (
-              <ChevronDown size={16} />
-            ) : (
-              <ChevronRight size={16} />
-            )}
+            {open.수신함 ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
           {open.수신함 && (
             <ul className="ml-3 space-y-1 text-[13px] animate-fadeIn">
@@ -158,9 +138,7 @@ const ApprovalSidebar = () => {
                 <li
                   key={item.path}
                   className="flex items-center py-1 cursor-pointer"
-                  onClick={() =>
-                    setActiveRecv(activeRecv === item.path ? null : item.path)
-                  }
+                  onClick={() => setActiveRecv(activeRecv === item.path ? null : item.path)}
                 >
                   {activeRecv === item.path ? (
                     <FolderOpen className="w-4 h-4 mr-1 text-[#248CFF]" />
@@ -169,20 +147,16 @@ const ApprovalSidebar = () => {
                   )}
                   <Link
                     className={`hover:text-purple-600 ${
-                      isActiveRoute(location.pathname, item.path)
-                        ? "font-bold text-purple-800"
-                        : ""
+                      isActiveRoute(location.pathname, item.path) ? "font-bold text-purple-800" : ""
                     }`}
-                    to={`/intra.soltech/approval/confirm/${item.path}`}
+                    to={`/intrasoltech/approval/confirm/${item.path}`}
                   >
                     {item.label}
                   </Link>
                   {counts[item.path] > 0 && (
                     <span
                       className={`ml-auto rounded-full px-[7px] text-[11px] text-white ${
-                        item.path === "reference"
-                          ? "bg-[#6b46c1]"
-                          : "bg-[#248CFF]"
+                        item.path === "reference" ? "bg-[#6b46c1]" : "bg-[#248CFF]"
                       }`}
                     >
                       {counts[item.path]}
@@ -204,24 +178,16 @@ const ApprovalSidebar = () => {
         <div className="mt-2">
           <div
             className="flex items-center justify-between text-[13px] font-medium cursor-pointer px-1 py-2 hover:bg-gray-200 rounded"
-            onClick={() =>
-              setOpen((prev) => ({ ...prev, 보관함: !prev.보관함 }))
-            }
+            onClick={() => setOpen((prev) => ({ ...prev, 보관함: !prev.보관함 }))}
           >
             <span className="flex-1">보관함</span>
-            {open.보관함 ? (
-              <ChevronDown size={16} />
-            ) : (
-              <ChevronRight size={16} />
-            )}
+            {open.보관함 ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
           {open.보관함 && (
             <ul className="ml-3 space-y-1 text-[13px] animate-fadeIn">
               <li
                 className="flex items-center py-1 cursor-pointer"
-                onClick={() =>
-                  setActiveFolder(activeFolder === "soltech" ? null : "soltech")
-                }
+                onClick={() => setActiveFolder(activeFolder === "soltech" ? null : "soltech")}
               >
                 {activeFolder === "soltech" ? (
                   <FolderOpen className="w-4 h-4 mr-1 text-[#248CFF]" />
@@ -229,15 +195,11 @@ const ApprovalSidebar = () => {
                   <Folder className="w-4 h-4 mr-1 text-[#248CFF]" />
                 )}
                 SolTech 공유보관함
-                <span className="ml-auto bg-[#248CFF] text-white rounded-full px-[7px] text-[11px]">
-                  10
-                </span>
+                <span className="ml-auto bg-[#248CFF] text-white rounded-full px-[7px] text-[11px]">10</span>
               </li>
               <li
                 className="flex items-center py-1 cursor-pointer"
-                onClick={() =>
-                  setActiveFolder(activeFolder === "new" ? null : "new")
-                }
+                onClick={() => setActiveFolder(activeFolder === "new" ? null : "new")}
               >
                 {activeFolder === "new" ? (
                   <FolderOpen className="w-4 h-4 mr-1 text-[#6b46c1]" />
@@ -245,9 +207,7 @@ const ApprovalSidebar = () => {
                   <Folder className="w-4 h-4 mr-1 text-[#6b46c1]" />
                 )}
                 새로운 보관함
-                <span className="ml-auto bg-[#6b46c1] text-white rounded-full px-[7px] text-[11px]">
-                  1
-                </span>
+                <span className="ml-auto bg-[#6b46c1] text-white rounded-full px-[7px] text-[11px]">1</span>
               </li>
             </ul>
           )}
@@ -255,9 +215,7 @@ const ApprovalSidebar = () => {
       </nav>
 
       <div className="mt-auto bg-gray-100 border-t border-gray-300 px-4 py-3 flex items-center justify-center gap-2">
-        <span className="inline-flex items-center justify-center w-5 h-5 text-gray-600 leading-none">
-          &#9881;
-        </span>
+        <span className="inline-flex items-center justify-center w-5 h-5 text-gray-600 leading-none">&#9881;</span>
         <span className="text-gray-500">서비스관리</span>
       </div>
     </aside>

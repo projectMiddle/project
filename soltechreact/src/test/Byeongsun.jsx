@@ -7,16 +7,12 @@ import PayDetailPage from "./../pages/emppay/PayDetailPage";
 
 const Byeongsun = () => {
   return (
-    <>
-      <div className="pt-24 px-6">
-        <Routes>
-          <Route path="/" element={<PayListPage />} />
-          <Route path="/form" element={<PayForm />} />
-          <Route path="/:payNo" element={<PayListTable />} />
-          <Route path="/detail/:id" element={<PayDetailPage />} />
-        </Routes>
-      </div>
-    </>
+    <Routes>
+      <Route index element={<PayListPage />} />
+      <Route path="form" element={<PayForm />} />
+      <Route path=":payNo" element={<PayListTable />} />
+      <Route path="detail/:id" element={<PayDetailPage />} />
+    </Routes>
   );
 };
 

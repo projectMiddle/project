@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import EmpInfo from "../../components/IntraHome/EmpInfo";
+import EmpInfo from "../../components/intrhome/EmpInfo";
 
 export default function EmployeeProfile() {
   const [employee, setEmployee] = useState(null);
