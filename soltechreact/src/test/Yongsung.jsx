@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 // import CalendarView from "./../components/CalendarView";
-import EmployeeProfile from "../components/IntraHome/EmpInfo";
+import EmployeeProfile from "../components/intrhome/EmpInfo";
 import CalendarView from "../pages/calendar/CalendarView";
 const testData = {
   empNo: 1001,

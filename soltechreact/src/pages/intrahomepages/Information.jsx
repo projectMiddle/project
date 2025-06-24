@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
 import axios from "axios";
-import EditInfoModal from "../../components/IntraHome/EditInfoModal";
-import EmpInfoModal from "../../components/IntraHome/EmpInfoModal"; // ✅ 상세 팝업 추가
+import EditInfoModal from "../../components/intrhome/EditInfoModal";
+import EmpInfoModal from "../../components/intrhome/EmpInfoModal"; // ✅ 상세 팝업 추가
 
 const Information = () => {
   const [user, setUser] = useState(null); // 전체 유저 정보
