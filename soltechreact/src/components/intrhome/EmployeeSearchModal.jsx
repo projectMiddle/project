@@ -20,7 +20,6 @@ const EmployeeSearchModal = ({ isOpen, onClose }) => {
     axios
       .get("/empinfo/search")
       .then((res) => {
-        console.log("📦 백엔드 응답 데이터:", res.data);
         setEmployeeList(res.data);
       })
       .catch((err) => {

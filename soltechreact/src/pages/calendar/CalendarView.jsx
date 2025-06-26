@@ -120,108 +120,108 @@ const CalendarView = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="calendar-container">
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          headerToolbar={{
-            start: "prev,next today",
-            center: "title",
-            end: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          buttonText={{
-            today: "오늘",
-            month: "월간",
-            week: "주간",
-            day: "일간",
-          }}
-          events={events}
-          height={"auto"}
-          displayEventTime={false}
-          eventClick={handleEventClick}
-        />
-
-        <footer className="calendar-legend">
-          <span>
-            <span className="dot holiday"></span>공휴일
-          </span>
-          <span>
-            <span className="dot personal"></span>개인일정
-          </span>
-          <span>
-            <span className="dot department"></span>부서일정
-          </span>
-        </footer>
-
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={() => {
-              setNewEvent({ id: null, title: "", start: "", end: "", type: "PERSONAL" });
-              setIsEditMode(false);
-              setIsModalOpen(true);
+    <div>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px] mb-10">스케줄</div>
+      <div className="m-6 bg-white rounded-4xl p-10">
+        <div className="calendar-container">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            headerToolbar={{
+              start: "prev,next today",
+              center: "title",
+              end: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
-            className="bg-purple-500 text-white px-4 py-2 rounded fc-button"
-          >
-            일정 추가
-          </button>
-        </div>
-
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-              <h2 className="text-xl font-semibold mb-4">{isEditMode ? "일정 수정" : "일정 추가"}</h2>
-              <input
-                type="text"
-                placeholder="제목"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="border px-2 py-1 rounded w-full mb-2"
-              />
-              <input
-                type="date"
-                value={newEvent.start}
-                onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
-                className="border px-2 py-1 rounded w-full mb-2"
-              />
-              <input
-                type="date"
-                value={newEvent.end}
-                onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
-                className="border px-2 py-1 rounded w-full mb-2"
-              />
-              <select
-                value={newEvent.type}
-                onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
-                className="border px-2 py-1 rounded w-full mb-4"
-              >
-                <option value="PERSONAL">개인일정</option>
-                <option value="DEPARTMENT">부서일정</option>
-              </select>
-              <div className="flex justify-between gap-2">
-                {isEditMode && (
-                  <button onClick={handleDeleteEvent} className="bg-red-500 text-white px-3 py-1 rounded">
-                    삭제
-                  </button>
-                )}
-                <div className="flex justify-end gap-2 ml-auto">
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(false);
-                      setIsEditMode(false);
-                    }}
-                    className="bg-gray-300 px-3 py-1 rounded"
-                  >
-                    취소
-                  </button>
-                  <button onClick={handleAddOrUpdateEvent} className="bg-purple-500 text-white px-3 py-1 rounded">
-                    저장
-                  </button>
+            buttonText={{
+              today: "오늘",
+              month: "월간",
+              week: "주간",
+              day: "일간",
+            }}
+            events={events}
+            height={"auto"}
+            displayEventTime={false}
+            eventClick={handleEventClick}
+          />
+          <footer className="calendar-legend">
+            <span>
+              <span className="dot holiday"></span>공휴일
+            </span>
+            <span>
+              <span className="dot personal"></span>개인일정
+            </span>
+            <span>
+              <span className="dot department"></span>부서일정
+            </span>
+          </footer>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={() => {
+                setNewEvent({ id: null, title: "", start: "", end: "", type: "PERSONAL" });
+                setIsEditMode(false);
+                setIsModalOpen(true);
+              }}
+              className="bg-purple-500 text-white px-4 py-2 rounded fc-button"
+            >
+              일정 추가
+            </button>
+          </div>
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h2 className="text-xl font-semibold mb-4">{isEditMode ? "일정 수정" : "일정 추가"}</h2>
+                <input
+                  type="text"
+                  placeholder="제목"
+                  value={newEvent.title}
+                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                  className="border px-2 py-1 rounded w-full mb-2"
+                />
+                <input
+                  type="date"
+                  value={newEvent.start}
+                  onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
+                  className="border px-2 py-1 rounded w-full mb-2"
+                />
+                <input
+                  type="date"
+                  value={newEvent.end}
+                  onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
+                  className="border px-2 py-1 rounded w-full mb-2"
+                />
+                <select
+                  value={newEvent.type}
+                  onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
+                  className="border px-2 py-1 rounded w-full mb-4"
+                >
+                  <option value="PERSONAL">개인일정</option>
+                  <option value="DEPARTMENT">부서일정</option>
+                </select>
+                <div className="flex justify-between gap-2">
+                  {isEditMode && (
+                    <button onClick={handleDeleteEvent} className="bg-red-500 text-white px-3 py-1 rounded">
+                      삭제
+                    </button>
+                  )}
+                  <div className="flex justify-end gap-2 ml-auto">
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(false);
+                        setIsEditMode(false);
+                      }}
+                      className="bg-gray-300 px-3 py-1 rounded"
+                    >
+                      취소
+                    </button>
+                    <button onClick={handleAddOrUpdateEvent} className="bg-purple-500 text-white px-3 py-1 rounded">
+                      저장
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

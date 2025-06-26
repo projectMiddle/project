@@ -149,7 +149,7 @@ const ApprovalSidebar = () => {
                     className={`hover:text-purple-600 ${
                       isActiveRoute(location.pathname, item.path) ? "font-bold text-purple-800" : ""
                     }`}
-                    to={`/intrasoltech/approval/confirm/${item.path}`}
+                    to={`/intrasoltech/approval/confirm/${item.path}?category=${category}`}
                   >
                     {item.label}
                   </Link>

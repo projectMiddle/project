@@ -11,7 +11,7 @@ const EditNoticeWrapper = () => {
   useEffect(() => {
     const fetchNotice = async () => {
       try {
-        const res = await fetch(`/api/notices/${notiNo}`);
+        const res = await fetch(`/notices/${notiNo}`);
         if (!res.ok) throw new Error("공지사항 조회 실패");
         const data = await res.json();
         setNoticeData(data);

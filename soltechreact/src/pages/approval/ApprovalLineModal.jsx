@@ -25,6 +25,7 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
   useEffect(() => {
     appLineEmployees()
       .then((data) => {
+        console.log("사원목록 : {}", data)
         setEmployees(data);
         setFilteredEmployees(data);
       })
