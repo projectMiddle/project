@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createNotice } from "../../api/noticeApi"; // ✅ API 분리된 함수 import
 
 const NoticeForm = () => {
   const navigate = useNavigate();
@@ -20,17 +21,10 @@ const NoticeForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await fetch("/api/notices/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error("등록 실패");
+      await createNotice(formData); // ✅ 분리된 API 사용
       alert("공지사항이 등록되었습니다.");
-      navigate("/notices/List");
+      navigate("/intrasoltech/notices");
     } catch (err) {
       alert("오류 발생: " + err.message);
     }
@@ -38,12 +32,16 @@ const NoticeForm = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      <h2 style={headerStyle}>회사 공지사항</h2>
-      <div style={{ padding: "16px" }}>
-        <p style={{ fontSize: "18px", marginBottom: 20 }}>회사 공지사항을 작성합니다.</p>
-        <hr style={{ border: "none", borderTop: "1px solid #ccc", marginBottom: 24 }} />
-        <form onSubmit={handleSubmit}>
-          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">공지사항 - 작성</div>
+      <form onSubmit={handleSubmit}>
+        <div style={{ padding: "16px" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginBottom: 24,
+            }}
+          >
             <tbody>
               <tr>
                 <td style={cellStyleTitle}>제목</td>
@@ -87,56 +85,63 @@ const NoticeForm = () => {
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>
                 <td style={cellStyle}>
-                  {new Date(formData.notiRegDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                  {new Date(formData.notiRegDate)
+                    .toLocaleDateString("ko-KR")
+                    .replace(/\.$/, "")}
                 </td>
               </tr>
               <tr>
                 <td style={cellStyleTitle}>수정일자</td>
                 <td style={cellStyle}>
-                  {new Date(formData.notiUpdateDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                  {new Date(formData.notiUpdateDate)
+                    .toLocaleDateString("ko-KR")
+                    .replace(/\.$/, "")}
                 </td>
               </tr>
             </tbody>
           </table>
 
-          <div style={{ whiteSpace: "pre-wrap", border: "1px solid #ddd", padding: 20, minHeight: 349 }}>
+          <div
+            style={{
+              whiteSpace: "pre-wrap",
+              border: "1px solid #ddd",
+              padding: 20,
+              minHeight: 349,
+            }}
+          >
             <textarea
               name="notiContent"
               value={formData.notiContent}
               onChange={handleChange}
               placeholder="내용을 입력하세요"
               required
+              className="w-full h-80"
               style={{
                 width: "100%",
-                height: "100%",
                 border: "none",
                 fontSize: 16,
                 resize: "none",
               }}
             />
           </div>
-
-          <div style={footerStyle}>
-            <button type="button" onClick={() => navigate(-1)} style={buttonStyle}>
-              취소
-            </button>
-            <button type="submit" style={buttonStyle}>
-              등록
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div style={footerStyle}>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            style={buttonStyle}
+          >
+            취소
+          </button>
+          <button type="submit" style={buttonStyle}>
+            등록
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
 
-const headerStyle = {
-  backgroundColor: "#A855F7",
-  color: "white",
-  padding: "16px 24px",
-  fontSize: "24px",
-  marginBottom: 16,
-};
 
 const cellStyle = {
   border: "1px solid #ddd",

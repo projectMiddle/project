@@ -3,7 +3,6 @@ import IntraHome from "../pages/intrahomepages/IntraHome";
 import Attendance from "../pages/attendance/Attendance";
 import MailPage from "./../pages/mail/MailPage";
 
-import FixedBar from "../components/intrhome/FixedBar";
 import EmployeeProfile from "../pages/intrahomepages/EmployeeProfile";
 import MailList from "./../pages/mail/MailList";
 import MailCompose from "./../pages/mail/MailCompose";

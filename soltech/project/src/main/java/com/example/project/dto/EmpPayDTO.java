@@ -3,6 +3,7 @@ package com.example.project.dto;
 import java.time.YearMonth;
 
 import com.example.project.entity.EmpPay;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +55,7 @@ public class EmpPayDTO {
     private int payTotalDeduction; // 총 공제액
     private int payNetSalary; // 실 수령액
 
+    @JsonProperty("eName")
     private String eName;
 
     private String departmentName;
