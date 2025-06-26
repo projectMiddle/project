@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
-import axios from "axios";
-import EditInfoModal from "../../components/intrhome/EditInfoModal";
-import EmpInfoModal from "../../components/intrhome/EmpInfoModal"; // ✅ 상세 팝업 추가
+import { fetchEmployeeInfo } from "../../api/employeeProfile";
+import { fetchAttendanceStatus } from "../../api/attendanceApi";
+import EditInfoModal from "../../components/intrahome/EditInfoModal";
+import EmpInfoModal from "../../components/intrahome/EmpInfoModal"; // ✅ 상세 팝업 추가
+import useAuth from "../../hooks/useAuth";
 
 const Information = () => {
   const [user, setUser] = useState(null); // 전체 유저 정보
   const [isWorking, setIsWorking] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // ✅ 상세정보 모달
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const empNo = 1049; // 임시 값
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo; // 임시 값
 
   const iconList = [
     { icon: Mail, label: "새 메일" },
@@ -19,21 +22,19 @@ const Information = () => {
   ];
 
   useEffect(() => {
-    axios
-      .get(`/empinfo/${empNo}`)
-      .then((res) => {
-        console.log("직원 정보 조회 성공", res);
-        setUser(res.data);
+    fetchEmployeeInfo(empNo)
+      .then((data) => {
+        console.log("직원 정보 조회 성공", data);
+        setUser(data);
       })
       .catch((err) => {
         console.error("직원 정보 조회 실패:", err);
       });
 
-    axios
-      .get(`/attendance/user/info/${empNo}`)
-      .then((res) => {
-        console.log("불반짝 성공", res.data);
-        setIsWorking(res.data.attStatus === "WORK");
+    fetchAttendanceStatus(empNo)
+      .then((data) => {
+        console.log("불반짝 성공", data);
+        setIsWorking(data.attStatus === "WORK");
       })
       .catch((err) => {
         console.error("근태 상태 조회 실패:", err);
@@ -47,7 +48,7 @@ const Information = () => {
   return (
     <div className="info-all-container">
       <div className="information-container">
-        {/* ✅ 프로필 사진 클릭 → 상세 모달 열기 */}
+        {/* 프로필 사진 클릭 → 상세 모달 열기 */}
         <div className="avatar-box cursor-pointer" onClick={() => setIsProfileModalOpen(true)}>
           <User2 className="avatar-icon" />
         </div>

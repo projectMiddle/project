@@ -2,7 +2,6 @@ import React from "react";
 import NoticeForm from "../pages/notice/NoticeForm";
 import EditNoticeForm from "../pages/notice/editNoticeForm";
 import NoticeList from "../pages/notice/NoticeList";
-import "../css/boardform.css";
 import { Route, Router, Routes } from "react-router-dom";
 import NoticeRead from "../pages/notice/NoticeRead";
 

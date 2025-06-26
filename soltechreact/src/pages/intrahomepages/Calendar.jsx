@@ -6,6 +6,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
 import "../../css/intrahome.css";
 import dayjs from "dayjs";
+// import CalendarView from "../CalendarView";
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);

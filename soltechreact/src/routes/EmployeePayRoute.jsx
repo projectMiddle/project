@@ -9,9 +9,8 @@ const EmployeePayRoute = () => {
   return (
     <Routes>
       <Route index element={<PayListPage />} />
-      <Route path="emppay/form" element={<PayForm />} />
-      <Route path="emppay/:payNo" element={<PayListTable />} />
-      <Route path="emppay/detail/:id" element={<PayDetailPage />} />
+      <Route path="form" element={<PayForm />} />
+      <Route path="detail/:id" element={<PayDetailPage />} />
     </Routes>
   );
 };

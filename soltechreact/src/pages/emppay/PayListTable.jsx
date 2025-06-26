@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const PayListTable = ({ payList }) => {
-  const year = new Date().getFullYear(); // 혹은 props.year로 받아도 됨
+const PayListTable = ({ payList = [] }) => {
+  const year = new Date().getFullYear();
   const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 
   // 월별 데이터를 키로 하는 map 생성
@@ -33,7 +33,7 @@ const PayListTable = ({ payList }) => {
             return (
               <tr key={ymKey} className="hover:bg-gray-50 border-t">
                 <td className="px-4 py-2 text-blue-600 underline">
-                  {pay?.payNo ? <Link to={`/byeongsun/detail/${pay.payNo}`}>{ymKey}</Link> : ymKey}
+                  {pay?.payNo ? <Link to={`detail/${pay.payNo}`}>{ymKey}</Link> : ymKey}
                 </td>
                 <td className="px-4 py-2">{pay?.ename || "작성되지 않음"}</td>
                 <td className="px-4 py-2">{pay?.departmentName || "-"}</td>

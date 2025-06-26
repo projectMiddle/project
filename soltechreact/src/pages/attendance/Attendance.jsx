@@ -4,6 +4,8 @@ import AttendanceTable from "./AttendanceTable";
 import AttendanceSummary from "./AttendanceSummary";
 import { useNavigate } from "react-router-dom";
 import { totalWorkTime } from "../../utils/timeUtils";
+import { fetchAttendanceList } from "../../api/attendanceApi";
+import useAuth from "../../hooks/useAuth";
 
 const Attendance = () => {
   const [attList, setAttList] = useState([]); // 서버에서 받아 올 데이터
@@ -11,17 +13,17 @@ const Attendance = () => {
   const [month, setMonth] = useState(6);
   const navigate = useNavigate();
 
-  const empNo = 1049; // 임시 사번
+  const { userInfo } = useAuth();
+  const empNo = userInfo.empNo;
 
   const fetchAttendance = () => {
-    axios
-      .get(`/attendance/list/${empNo}?year=${year}&month=${month}`)
-      .then((res) => {
-        console.log("출근 작성👉", res.data);
-        setAttList(res.data);
+    fetchAttendanceList(empNo, year, month)
+      .then((data) => {
+        console.log("출근 작성", data);
+        setAttList(data);
       })
       .catch((err) => {
-        console.error("❌", err);
+        console.error("출근 작성 실패", err);
       });
   };
 

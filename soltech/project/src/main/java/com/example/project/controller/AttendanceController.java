@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @Log4j2
-@RequestMapping("/attendance")
+@RequestMapping("/intrasoltech/attendance")
 @RequiredArgsConstructor
 public class AttendanceController {
 

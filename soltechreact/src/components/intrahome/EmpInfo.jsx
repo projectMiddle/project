@@ -12,7 +12,7 @@ const EmpInfo = ({ employee }) => {
   }
 
   const goToAttendance = () => {
-    navigate("/attendance");
+    navigate("/intrasoltech/attendance");
   };
 
   return (

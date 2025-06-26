@@ -1,12 +1,12 @@
 package com.example.project.service;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.project.dto.EmployeeDTO;
-import com.example.project.dto.EmployeeDTO_c;
-import com.example.project.dto.EmployeeUpdateDTO;
 import com.example.project.entity.Employee;
 import com.example.project.repository.DepartmentRepository;
 import com.example.project.repository.EmployeeRepository;
@@ -19,55 +19,37 @@ import lombok.extern.log4j.Log4j2;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class EmployeeService {
+public class EmployeeService implements UserDetailsService {
 
+    @Autowired
     private final EmployeeRepository employeeRepository;
+    @Autowired
     private final DepartmentRepository departmentRepository;
+    @Autowired
     private final JobRankRepository jobRankRepository;
 
-    public EmployeeDTO_c getEmployee(Long empNo) {
-        Employee employee = employeeRepository.findById(empNo)
-                .orElseThrow();
+    @Override
+    public UserDetails loadUserByUsername(String empNoStr) throws UsernameNotFoundException {
 
-        return entityToDto(employee);
-    }
+        Long empNo;
 
-    public List<EmployeeDTO_c> getAllEmployees() {
-        return employeeRepository.findAll().stream()
-                .map(this::entityToDto)
-                .toList();
-    }
+        try {
+            empNo = Long.parseLong(empNoStr);
+        } catch (NumberFormatException e) {
+            throw new UsernameNotFoundException("사번 형식이 잘못되었습니다.");
+        }
 
-    @Transactional
-    public void updateEmployeeInfo(Long empNo, EmployeeUpdateDTO dto) {
-        Employee employee = employeeRepository.findById(empNo)
-                .orElseThrow(() -> new RuntimeException("사원을 찾을 수 없습니다."));
-        System.out.println("수정할 사원: " + employee.getEName());
-        System.out.println("수정 내용: " + dto);
-        employee.changeeMobile(dto.getEMobile());
-        employee.changeeAddress(dto.getEAddress());
-        employee.changeeAccount(dto.getEAccount());
-        employee.changeePassword(dto.getEPassword());
+        Employee employee = employeeRepository.findByEmpNo(empNo)
+                .orElseThrow(() -> new UsernameNotFoundException("사번이 없습니다."));
 
-    }
-
-    private EmployeeDTO_c entityToDto(Employee employee) {
-        return EmployeeDTO_c.builder()
+        return (UserDetails) EmployeeDTO.builder()
                 .empNo(employee.getEmpNo())
-                .eName(employee.getEName())
-                .eGender(employee.getEGender())
-                .eBirth(employee.getEBirthday())
-                .eEmail(employee.getEEmail())
-                .eAddress(employee.getEAddress())
-                .eMobile(employee.getEMobile())
-                .eAccount(employee.getEAccount())
                 .ePassword(employee.getEPassword())
-                .eHiredate(employee.getEHiredate())
-                .eLeavedate(employee.getELeavedate())
-                .eSalary(employee.getESalary())
-                .deptName(employee.getDeptNo().getDeptName())
-                .jobNo(employee.getJobNo().getJobName())
-
+                .deptNo(employee.getDeptNo())
+                .jobNo(employee.getJobNo())
+                .eName(employee.getEName())
+                .eEmail(employee.getEEmail())
+                .mMemberRole(employee.getEMemberRole())
                 .build();
     }
 

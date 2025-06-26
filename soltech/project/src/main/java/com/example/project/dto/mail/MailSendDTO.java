@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,5 +23,8 @@ public class MailSendDTO {
     private List<Long> receiverIds;
     private String mailTitle;
     private String mailContent;
-    private List<MultipartFile> attachments;
+
+    // 첨부파일
+    private MultipartFile[] attachments;
+
 }

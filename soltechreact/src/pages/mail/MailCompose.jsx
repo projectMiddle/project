@@ -1,48 +1,68 @@
+// 수정된 MailCompose.jsx
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMail } from "../../contexts/MailContext";
-import { VscSave } from "react-icons/vsc"; // 아이콘 추가
+
+import { VscSave } from "react-icons/vsc";
+import { postMail } from "../../api/mailApi";
+import EmployeeSearchModal from "../../components/intrahome/EmployeeSearchModal";
 
 const MailCompose = () => {
   const navigate = useNavigate();
-  const { mails, setMails } = useMail();
 
-  const [to, setTo] = useState("");
+  const [to, setTo] = useState(""); // 이름<이메일> 형식으로 표시
+  const [receiverIds, setReceiverIds] = useState([]); // 실제 수신자 empNo 배열
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [attachments, setAttachments] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const fileInputRef = useRef();
 
-  const fileInputRef = useRef(); // 숨겨진 input에 접근할 ref
-
+  // 파일
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
-    if (files.length > 5) {
-      alert("최대 5개의 파일만 첨부할 수 있습니다.");
-      e.target.value = ""; // 초기화
+    const updated = [...attachments, ...files].filter(
+      (file, index, self) => index === self.findIndex((f) => f.name === file.name && f.size === file.size)
+    );
+    setAttachments(updated);
+    e.target.value = "";
+  };
+  const handleRemoveFile = (name, size) => {
+    setAttachments((prev) => prev.filter((file) => !(file.name === name && file.size === size)));
+  };
+
+  // 수신자 선택 완료
+  const handleReceiverSelect = (selectedEmployees) => {
+    const names = selectedEmployees.map((emp) => `${emp.name}<${emp.email}>`).join(", ");
+    const ids = selectedEmployees.map((emp) => emp.id);
+    setTo(names);
+    setReceiverIds(ids);
+    setIsModalOpen(false);
+  };
+
+  // 메일 전송
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("📨 submit 호출됨");
+    if (receiverIds.length === 0) {
+      alert("수신자를 선택해주세요.");
       return;
     }
 
-    setAttachments(files);
-  };
+    const formData = new FormData();
+    formData.append("mailTitle", title);
+    formData.append("mailContent", content);
+    receiverIds.forEach((id) => formData.append("receiverIds", id));
+    attachments.forEach((file) => formData.append("attachments", file));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const newMail = {
-      id: Date.now(),
-      from: "me@company.com",
-      to,
-      title,
-      content,
-      date: new Date().toISOString().split("T")[0],
-      isRead: true,
-      boxType: "sent",
-      attachments: attachments.map((file) => file.name),
-    };
-
-    setMails([newMail, ...mails]);
-    navigate("/mail/sent");
+    try {
+      await postMail(1049, formData);
+      alert("메일 전송 성공");
+      navigate("/mail/sendList");
+    } catch (err) {
+      console.error("메일 전송 실패", err);
+      alert("메일 전송에 실패했습니다.");
+    }
   };
 
   return (
@@ -55,10 +75,20 @@ const MailCompose = () => {
           <input
             type="text"
             value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            required
+            readOnly
+            // onChange={(e) => setTo(e.target.value)}
+            // className="w-full border px-3 py-2 rounded"
+            // required
+            className="flex-1 border px-3 py-2 rounded bg-gray-50 cursor-not-allowed"
+            placeholder="이름<이메일>"
           />
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="text-sm px-3 py-2 bg-gray-100 border rounded hover:bg-gray-200"
+          >
+            사원 검색
+          </button>
         </div>
 
         <div>
@@ -85,8 +115,6 @@ const MailCompose = () => {
 
         <div>
           <label className="block font-semibold mb-1">첨부파일</label>
-
-          {/* 아이콘 버튼 클릭 시 input 작동 */}
           <button
             type="button"
             onClick={() => fileInputRef.current.click()}
@@ -95,15 +123,22 @@ const MailCompose = () => {
           >
             <VscSave />
           </button>
-
-          {/* 숨겨진 파일 input */}
           <input type="file" multiple onChange={handleFileChange} ref={fileInputRef} className="hidden" />
 
-          {/* 선택된 파일명 리스트 */}
+          {/* 수정 */}
           {attachments.length > 0 && (
             <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
               {attachments.map((file, idx) => (
-                <li key={idx}>{file.name}</li>
+                <li key={idx} className="flex items-center justify-between">
+                  <span>{file.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(file.name, file.size)}
+                    className="ml-2 text-red-500 hover:text-red-700"
+                  >
+                    ❌
+                  </button>
+                </li>
               ))}
             </ul>
           )}
@@ -115,6 +150,15 @@ const MailCompose = () => {
           </button>
         </div>
       </form>
+
+      {/* 사원 검색 모달 */}
+      {isModalOpen && (
+        <EmployeeSearchModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSelect={handleReceiverSelect}
+        />
+      )}
     </div>
   );
 };

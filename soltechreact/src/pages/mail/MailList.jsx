@@ -1,34 +1,91 @@
-// 받은메일함/보낸메일함/휴지통 화면
+// 받은메일함
 
 import React, { useEffect, useState } from "react";
-import MailItem from "../../components/mail/MailItem";
-import MailToolbar from "../../components/mail/MailToolbar";
 import { useNavigate } from "react-router-dom";
-import { useMail } from "../../contexts/MailContext";
+
+import { IoMdMailOpen } from "react-icons/io";
+import { getReceivedMails, markMailAsRead, deleteReceivedMail } from "../../api/mailApi";
 
 const PAGE_SIZE = 15;
+const empNo = 1049; // 로그인 사용자로 변경
 
 const MailList = () => {
-  const { mails, setMails } = useMail();
   const [filterText, setFilterText] = useState("");
   const [sortOrderAsc, setSortOrderAsc] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [mails, setMails] = useState([]);
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchMails = async () => {
+      try {
+        const data = await getReceivedMails(empNo);
+        const sorted = data.slice().sort((a, b) => b.mailNo - a.mailNo); // 내림차순 정렬
+        console.log("📥 받은 메일:", data);
+        setMails(
+          sorted.map((mail) => ({
+            id: mail.mailNo,
+            from: `${mail.sender.name}<${mail.sender.email}>`,
+            title: mail.mailTitle,
+            fullDate: mail.mailSendDate,
+            date: mail.mailSendDate.split("T")[0],
+            isRead: mail.mailIsRead,
+            boxType: "inbox",
+            checked: false,
+          }))
+        );
+      } catch (err) {
+        console.error("📩 받은 메일 조회 실패:", err);
+      }
+    };
+
+    fetchMails();
+  }, [setMails]);
   // 날짜 정렬
   const handleDateSort = () => {
     const newOrderAsc = !sortOrderAsc;
     const sorted = [...mails].sort((a, b) =>
-      newOrderAsc ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)
+      newOrderAsc ? new Date(a.fullDate) - new Date(b.fullDate) : new Date(b.fullDate) - new Date(a.fullDate)
     );
     setSortOrderAsc(newOrderAsc);
     setMails(sorted);
   };
 
-  // 읽음 처리
   const handleClick = (id) => {
-    const updated = mails.map((mail) => (mail.id === id ? { ...mail, isRead: true } : mail));
-    setMails(updated);
+    // 읽음 처리 + 상세페이지 이동
+    setMails((prev) => prev.map((mail) => (mail.id === id ? { ...mail, isRead: true } : mail)));
+
+    markMailAsRead(id, empNo).catch((err) => console.error("읽음 처리 실패", err));
+
+    navigate(`/mail/receive/${id}`);
+  };
+
+  const handleDeleteSelected = async () => {
+    const selected = mails.filter((mail) => mail.checked);
+    if (selected.length === 0) return alert("삭제할 메일을 선택하세요.");
+
+    try {
+      await Promise.all(selected.map((mail) => deleteReceivedMail(mail.id, empNo)));
+      setMails((prev) => prev.filter((mail) => !mail.checked));
+      alert("삭제 완료");
+    } catch (err) {
+      console.error("삭제 실패", err);
+      alert("삭제 중 오류 발생");
+    }
+  };
+
+  const handleMarkAsRead = async () => {
+    const selected = mails.filter((mail) => mail.checked);
+    if (selected.length === 0) return alert("읽음 처리할 메일을 선택하세요.");
+
+    try {
+      await Promise.all(selected.map((mail) => markMailAsRead(mail.id, empNo)));
+      setMails((prev) => prev.map((mail) => (mail.checked ? { ...mail, isRead: true } : mail)));
+    } catch (err) {
+      console.error("읽음 처리 실패", err);
+      alert("읽음 처리 실패");
+    }
   };
 
   // 필터링 (받은 메일함만 + 검색 적용)
@@ -45,7 +102,9 @@ const MailList = () => {
     <div className="bg-white rounded-xl shadow p-6 mt-6">
       {/* 상단 */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-        <h2 className="text-2xl font-bold text-violet-700">📥 받은 메일함</h2>
+        <h2 className="text-2xl font-bold text-violet-700 flex items-center gap-2">
+          <IoMdMailOpen className="w-6 h-6 text-violet-400" /> 받은 메일함
+        </h2>
 
         <div className="flex gap-2 items-center w-full md:w-auto">
           <button
@@ -67,16 +126,45 @@ const MailList = () => {
           />
         </div>
       </div>
+      {/* 기능 버튼들 */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={handleDeleteSelected}
+          className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+        >
+          삭제
+        </button>
+        <button
+          onClick={handleMarkAsRead}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+        >
+          읽음 처리
+        </button>
+      </div>
 
       {/* 메일 리스트 */}
       <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
           <thead className="bg-violet-100 text-violet-800 font-semibold">
             <tr>
-              <th className="p-2 w-10 text-center">#</th>
-              <th className="p-2">보낸 사람</th>
-              <th className="p-2">제목</th>
-              <th className="p-2 text-right">날짜</th>
+              <th className="p-3 w-10 text-left">
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setMails((prev) =>
+                      prev.map((mail) => ({
+                        ...mail,
+                        checked,
+                      }))
+                    );
+                  }}
+                />
+              </th>
+              <th className="p-3 w-10 text-left">#</th>
+              <th className="p-3 w-1/3 text-left">보낸 사람</th>
+              <th className="p-3 w-1/2 text-left">제목</th>
+              <th className="p-3 w-32 text-left">날짜</th>
             </tr>
           </thead>
           <tbody>
@@ -84,24 +172,34 @@ const MailList = () => {
               pagedMails.map((mail, index) => (
                 <tr
                   key={mail.id}
-                  className={`cursor-pointer hover:bg-violet-50 transition ${
-                    mail.isRead ? "text-gray-400 font-normal" : "text-black font-bold"
+                  className={`cursor-pointer hover:bg-violet-50 transition-colors border-t ${
+                    mail.isRead ? "text-gray-500" : "text-black font-semibold"
                   }`}
                 >
-                  <td className="p-2 text-center">{startIdx + index + 1}</td>
-                  <td className="p-2">{mail.from}</td>
+                  {/* 체크박스 */}
+                  <td className="p-2">
+                    <input
+                      type="checkbox"
+                      checked={mail.checked}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setMails((prev) => prev.map((m) => (m.id === mail.id ? { ...m, checked } : m)));
+                      }}
+                    />
+                  </td>
+                  <td className="p-2">{startIdx + index + 1}</td>
+                  <td className="p-3 truncate">{mail.from}</td>
 
                   <td
-                    className="p-2 underline hover:text-violet-700"
+                    className="p-2 underline hover:text-violet-700 truncate"
                     onClick={() => {
                       handleClick(mail.id);
-                      navigate(`/mail/read/${mail.id}`, { state: { mail } });
                     }}
                   >
                     {mail.title}
                   </td>
 
-                  <td className="p-2 text-right">{mail.date}</td>
+                  <td className="p-3 text-sm text-gray-600">{mail.date}</td>
                 </tr>
               ))
             ) : (

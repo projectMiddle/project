@@ -23,7 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/notices")
+@RequestMapping("/intrasoltech/notices")
 @RequiredArgsConstructor
 @Log4j2
 public class NoticeController {
@@ -39,7 +39,7 @@ public class NoticeController {
         return departmentRepository.findAll();
     }
 
-    @GetMapping("/List")
+    @GetMapping("/list")
     public ResponseEntity<?> getNotices(
             @RequestParam(defaultValue = "1") int page, // 💡 1부터 시작하는 프론트 요청 기준
             @RequestParam(defaultValue = "15") int size,

@@ -1,48 +1,51 @@
+// src/pages/emppay/PayForm.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { getEmployee, calculatePay, createPay } from "../../api/emppayApi";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function PayForm() {
+  const { state } = useLocation();
+  const empNo = state?.empNo ?? 1; // state로 넘어온 empNo, 없으면 1
+  const navigate = useNavigate();
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [employee, setEmployee] = useState({ empNo, baseSalary: 0 });
   const [calculated, setCalculated] = useState(null);
 
-  /** 사원 정보 */
-  const [employee, setEmployee] = useState({ empNo: 1021, baseSalary: 0 });
-  const navigate = useNavigate();
-
-  /* ───────────────── 사원 기본 정보 로드 ───────────────── */
+  // 사원 정보 & 연봉(eSalary → baseSalary) 가져오기
   useEffect(() => {
-    axios.get(`/employee/${employee.empNo}`).then((res) => {
-      console.log("사원정보 ✅", res.data);
-      // res.data ─ { eName, jobName, eSalary, ... }
-      setEmployee((prev) => ({
-        ...prev,
-        ...res.data,
-        baseSalary: res.data.eSalary, // ★ 기본급
-      }));
-    });
-  }, []);
+    getEmployee(empNo)
+      .then((res) => {
+        const data = res.data;
+        console.log("▶ getEmployee 응답", res.data);
+        setEmployee((prev) => ({
+          ...prev,
+          ...data,
+          baseSalary: data.eSalary,
+        }));
+      })
+      .catch((err) => console.error("사원 정보 조회 실패 ❌", err));
+  }, [empNo]);
 
-  /* 숫자 포맷 helper */
+  // 숫자 포맷 헬퍼 (원 단위, 반올림)
   const fmt = (n) => (n != null && !isNaN(n) ? Math.round(n).toLocaleString("ko-KR") : "");
 
-  /* ───────────────── 자동 계산 ───────────────── */
+  // 자동 계산
   const handleCalculate = async () => {
     try {
       const payMonth = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}`;
       const annual = employee.baseSalary;
       const baseSalary = Math.round(annual / 12);
-      const res = await axios.post("/pay/calculate", {
+      const res = await calculatePay({
         empNo: employee.empNo,
-        payMonth, // ★ DTO 필수
-        payBaseSalary: baseSalary, // ★ 기본급 전달
+        payMonth,
+        payBaseSalary: baseSalary,
       });
-      console.log("자동계산 ✅", res.data);
       setCalculated(res.data);
     } catch (err) {
       console.error("계산 실패 ❌", err);
@@ -50,23 +53,19 @@ export default function PayForm() {
     }
   };
 
-  /* ───────────────── 저장 ───────────────── */
+  // 저장
   const handleSave = async () => {
     if (!calculated) {
       alert("자동 계산을 먼저 해주세요.");
       return;
     }
-
-    const toNum = (v) => Number(v ?? 0); // ← 여기에 선언해줘
-
+    const toNum = (v) => Number(v ?? 0);
     const payMonth = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}`;
-
     const totalSalary =
       toNum(calculated.baseSalary) +
       toNum(calculated.bonusWage) +
       toNum(calculated.positionWage) +
       toNum(calculated.benefits);
-
     const totalDeduction =
       toNum(calculated.incomeTax) +
       toNum(calculated.residentTax) +
@@ -95,21 +94,20 @@ export default function PayForm() {
     };
 
     try {
-      await axios.post("/pay/create", saveForm);
+      await createPay(saveForm);
       alert("급여명세서가 저장되었습니다.");
-      navigate("/byeongsun");
+      navigate(".."); // 작성 후 리스트로 돌아가기
     } catch (err) {
       console.error("저장 실패 ❌", err);
       alert("저장 실패: " + err.message);
     }
   };
 
-  /* ────────────────────────── UI ────────────────────────── */
   return (
     <div className="p-6 border-2 border-purple-400 max-w-4xl mx-auto mt-10">
       <h2 className="text-2xl font-bold mb-4">급여명세서 작성</h2>
 
-      {/* ───── 사원 정보 & 월 선택 ───── */}
+      {/* 사원 정보 & 월 선택 */}
       <div className="grid grid-cols-6 gap-4 mb-6 items-center">
         <label className="col-span-1">급여자</label>
         <input
@@ -119,7 +117,7 @@ export default function PayForm() {
         />
         <input
           className="border border-purple-400 px-2 py-1 col-span-1 bg-gray-100"
-          value={employee.eName || ""}
+          value={employee.name || ""}
           disabled
         />
         <label className="col-span-1">지급년도</label>
@@ -175,27 +173,28 @@ export default function PayForm() {
             </td>
           </tr>
 
+          {/* bonusWage ~ longtermCare 항목들 */}
           {[
             ["bonusWage", "상여급", "residentTax", "주민세"],
             ["positionWage", "직책수당", "healthInsurance", "건강보험"],
             ["benefits", "복리후생비", "nationalPension", "국민연금"],
             ["", "", "empInsurance", "고용보험"],
             ["", "", "longtermCare", "장기요양보험"],
-          ].map(([leftKey, leftLabel, rightKey, rightLabel], idx) => (
+          ].map(([lKey, lLabel, rKey, rLabel], idx) => (
             <tr key={idx}>
-              <td className="border border-purple-400 px-4 py-2">{leftLabel}</td>
+              <td className="border border-purple-400 px-4 py-2">{lLabel}</td>
               <td className="border border-purple-400 px-4 py-2">
                 <input
                   className="w-full border-none outline-none bg-gray-50"
-                  value={leftKey ? fmt(calculated?.[leftKey]) : ""}
+                  value={lKey ? fmt(calculated?.[lKey]) : ""}
                   readOnly
                 />
               </td>
-              <td className="border border-purple-400 px-4 py-2">{rightLabel}</td>
+              <td className="border border-purple-400 px-4 py-2">{rLabel}</td>
               <td className="border border-purple-400 px-4 py-2">
                 <input
                   className="w-full border-none outline-none bg-gray-50"
-                  value={fmt(calculated?.[rightKey])}
+                  value={fmt(calculated?.[rKey])}
                   readOnly
                 />
               </td>

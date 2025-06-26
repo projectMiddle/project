@@ -9,9 +9,9 @@ const NoticeRoute = () => {
   return (
     <Routes>
       <Route index element={<NoticeList />} />
-      <Route path="Form" element={<NoticeForm />} />
+      <Route path="form" element={<NoticeForm />} />
       <Route path="edit/:id" element={<EditNoticeForm />} />
-      <Route path=":notiNo" element={<NoticeRead />} />
+      <Route path="read/:notiNo" element={<NoticeRead />} />
     </Routes>
   );
 };

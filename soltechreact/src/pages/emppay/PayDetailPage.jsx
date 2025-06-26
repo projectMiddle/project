@@ -1,20 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import { getPayDetail } from "../../api/emppayApi";
 export default function PayDetailPage() {
   const { id } = useParams();
-  const [pay, setPay] = useState({});
+  const [pay, setPay] = useState(null); // ① 초기값을 null로
 
   useEffect(() => {
-    axios.get(`/pay/${id}`).then((res) => {
-      setPay(res.data);
-    });
+    if (!id) return;
+    getPayDetail(id)
+      .then((res) => {
+        console.log("단일 급여 응답 👉", res.data);
+        setPay(res.data);
+      })
+      .catch(console.error);
   }, [id]);
 
-  const format = (num) => (num != null ? Number(num).toLocaleString("ko-KR") + " 원" : "");
+  // ② pay가 없거나 pay.payMonth가 없으면 로딩 처리
+  if (!pay || !pay.payMonth) {
+    return <div>로딩 중…</div>;
+  }
 
-  const [year, month] = pay.payMonth ? pay.payMonth.split("-") : [];
+  // ③ 이후에는 안전하게 split
+  const [year, month] = pay.payMonth.split("-");
+  const format = (num) => (num != null ? Number(num).toLocaleString("ko-KR") + " 원" : "");
 
   return (
     <div className="max-w-4xl mx-auto p-6 border-2 border-purple-400 mt-10">

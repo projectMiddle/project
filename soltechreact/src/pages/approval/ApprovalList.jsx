@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchApprovalList } from "../../api/approvalApi";
 import { Link, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const ApprovalList = () => {
   const [category, setCategory] = useState("기안서");
@@ -9,11 +10,11 @@ const ApprovalList = () => {
   const [pageInfo, setPageInfo] = useState(null);
   // 현재 경로를 확인해서 상태 분기
   const location = useLocation();
+  const { userInfo } = useAuth();
   let status = "all"; // 기본값
 
   if (location.pathname.includes("/confirm/list")) status = "list"; // 수신함
-  else if (location.pathname.includes("/request/processing"))
-    status = "processing"; // 내가 상신한 진행 중
+  else if (location.pathname.includes("/request/processing")) status = "processing"; // 내가 상신한 진행 중
   else if (location.pathname.includes("submitted")) status = "all";
   else if (location.pathname.includes("completed")) status = "completed";
   else if (location.pathname.includes("history")) status = "history";
@@ -23,7 +24,8 @@ const ApprovalList = () => {
   console.log("현재 상태:", status);
 
   // ====================== 테스트 용 ======================
-  const [empNo, setEmpNo] = useState(1015); // 임시 empNo
+  // const [empNo, setEmpNo] = useState(1015); // 임시 empNo
+  const empNo = userInfo?.empNo; // ✅ 여기서 바로 추출
 
   useEffect(() => {
     fetchApprovalList(status, page, 10, empNo)
@@ -72,9 +74,7 @@ const ApprovalList = () => {
         {/* 본문: ApprovalList */}
         <div className="flex-1 bg-gray-50 rounded-xl p-10">
           <section className="bg-white rounded-xl p-6 shadow min-h-screen">
-            <div className="text-right text-xs text-gray-500 mb-4">
-              home / 전자결재
-            </div>
+            <div className="text-right text-xs text-gray-500 mb-4">home / 전자결재</div>
 
             {/* 카테고리 탭 */}
             <div className="flex gap-4 mb-4 text-sm">
@@ -82,11 +82,7 @@ const ApprovalList = () => {
                 <button
                   key={cat}
                   className={`px-3 py-1 rounded 
-                    ${
-                      cat === category
-                        ? "bg-purple-600 text-white"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
+                    ${cat === category ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600"}`}
                   onClick={() => setCategory(cat)}
                 >
                   {cat}
@@ -97,34 +93,23 @@ const ApprovalList = () => {
             {/* 리스트 뿌리는 공간 */}
             <div className="space-y-4">
               {filteredApprovals.map((doc) => (
-                <Link
-                  key={doc.appDocNo}
-                  to={`/intra.soltech/approval/detail/${doc.appDocNo}`}
-                  className="block"
-                >
+                <Link key={doc.appDocNo} to={`/intra.soltech/approval/detail/${doc.appDocNo}`} className="block">
                   <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 hover:bg-[#f9fbff] transition">
                     <div className="flex items-center gap-4">
                       <div className="w-8 h-8 bg-purple-100 text-purple-700 flex items-center justify-center font-bold rounded-full">
                         {doc.appDocCategory[0]}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-800">
-                          {doc.appDocTitle}
-                        </div>
+                        <div className="text-sm font-medium text-gray-800">{doc.appDocTitle}</div>
                         <div className="text-xs text-gray-500">
-                          기안자 : {doc.eName} · {doc.deptName} ·{" "}
-                          {doc.appDocDate}
+                          기안자 : {doc.eName} · {doc.deptName} · {doc.appDocDate}
                         </div>
                       </div>
                     </div>
 
                     <span
                       className={`text-xs font-semibold px-2 py-0.5 rounded
-            ${
-              doc.appIsFinalized
-                ? "text-green-700 bg-green-100"
-                : "text-yellow-700 bg-yellow-100"
-            }`}
+            ${doc.appIsFinalized ? "text-green-700 bg-green-100" : "text-yellow-700 bg-yellow-100"}`}
                     >
                       {doc.appIsFinalized ? "완료" : "대기"}
                     </span>
@@ -137,10 +122,7 @@ const ApprovalList = () => {
             {pageInfo && (
               <div className="flex justify-center mt-8 gap-1">
                 {pageInfo.prev && (
-                  <button
-                    onClick={() => setPage(pageInfo.prevPage)}
-                    className="px-2 py-1 text-xs text-gray-500"
-                  >
+                  <button onClick={() => setPage(pageInfo.prevPage)} className="px-2 py-1 text-xs text-gray-500">
                     이전
                   </button>
                 )}
@@ -149,19 +131,14 @@ const ApprovalList = () => {
                     key={num}
                     onClick={() => setPage(num)}
                     className={`px-3 py-1 rounded text-sm font-semibold ${
-                      num === page
-                        ? "bg-purple-600 text-white"
-                        : "bg-gray-100 text-gray-600"
+                      num === page ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600"
                     }`}
                   >
                     {num}
                   </button>
                 ))}
                 {pageInfo.next && (
-                  <button
-                    onClick={() => setPage(pageInfo.nextPage)}
-                    className="px-2 py-1 text-xs text-gray-500"
-                  >
+                  <button onClick={() => setPage(pageInfo.nextPage)} className="px-2 py-1 text-xs text-gray-500">
                     다음
                   </button>
                 )}

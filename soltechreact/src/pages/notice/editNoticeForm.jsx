@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getNoticeById, updateNotice } from "../../api/noticeApi"; // ✅ API 모듈 import
 
-const NoticeEdit = () => {
+const EditNoticeForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -14,9 +15,9 @@ const NoticeEdit = () => {
 
   // ✅ 공지사항 정보 불러오기
   useEffect(() => {
-    fetch(`/api/notices/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchNotice = async () => {
+      try {
+        const data = await getNoticeById(id); // ✅ 분리된 API 사용
         setFormData({
           notiTitle: data.notiTitle,
           notiContent: data.notiContent,
@@ -24,7 +25,12 @@ const NoticeEdit = () => {
           deptNo: data.deptNo,
           notiRegDate: data.notiRegDate,
         });
-      });
+      } catch (err) {
+        alert("공지사항을 불러오는 데 실패했습니다.");
+      }
+    };
+
+    fetchNotice();
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -35,24 +41,17 @@ const NoticeEdit = () => {
     };
 
     try {
-      const res = await fetch(`/api/notices/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("수정 실패");
+      await updateNotice(id, payload); // ✅ 분리된 API 사용
       alert("수정되었습니다.");
-      navigate(`/notices/${id}`);
+      navigate("/intrasoltech/notices");
     } catch (err) {
-      alert("오류 발생: " + err.message);
+      alert("수정 실패: " + err.message);
     }
   };
 
   return (
     <div style={{ width: "100%", minHeight: "100vh" }}>
-      <h2 style={{ backgroundColor: "#A855F7", color: "white", padding: "16px 24px", fontSize: "24px" }}>
-        회사 공지사항 수정
-      </h2>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">공지사항 - 수정</div>
       <div style={{ padding: "16px" }}>
         <p style={{ fontSize: "18px", marginBottom: 20 }}>회사 공지사항을 수정합니다.</p>
         <form onSubmit={handleSubmit}>
@@ -76,7 +75,6 @@ const NoticeEdit = () => {
                 <td style={cellStyleTitle}>부서번호</td>
                 <td style={cellStyle}>{formData.deptNo}</td>
               </tr>
-
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>
                 <td style={cellStyle}>
@@ -103,6 +101,7 @@ const NoticeEdit = () => {
               resize: "none",
               whiteSpace: "pre-wrap",
               marginBottom: "24px",
+              background: "white"
             }}
           />
 
@@ -146,4 +145,4 @@ const buttonStyle = {
   cursor: "pointer",
 };
 
-export default NoticeEdit;
+export default EditNoticeForm;

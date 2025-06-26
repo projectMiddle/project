@@ -8,24 +8,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.project.dto.EmployeeDTO;
-import com.example.project.dto.EmployeeDTO_c;
-import com.example.project.dto.EmployeeUpdateDTO;
-import com.example.project.service.EmployeeService;
+import com.example.project.dto.employee.EmployeeDTO_c;
+import com.example.project.dto.employee.EmployeeUpdateDTO;
+import com.example.project.service.EmployeeProfileService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.PostMapping;
+
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @Log4j2
-@RequestMapping("/empinfo")
+@RequestMapping("/intrasoltech/empinfo")
 @RequiredArgsConstructor
-public class EmployeeController {
+public class EmployeeProfileController {
 
-    private final EmployeeService employeeService;
+    private final EmployeeProfileService employeeService;
 
     @GetMapping("/{empNo}")
     public ResponseEntity<EmployeeDTO_c> getEmployee(@PathVariable Long empNo) {

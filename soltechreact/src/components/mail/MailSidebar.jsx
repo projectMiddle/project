@@ -11,14 +11,13 @@ const MailSidebar = () => {
   const location = useLocation();
 
   const menu = [
-    { label: "메일작성", path: "/mail/compose", icon: <IoMailUnreadOutline /> },
-    { label: "받은메일함", path: "/mail", icon: <IoMailOpenOutline /> },
-    { label: "보낸메일함", path: "/mail/sent", icon: <IoSendOutline /> },
+    { label: "메일작성", path: "/mail/send", icon: <IoMailUnreadOutline /> },
+    { label: "받은메일함", path: "/mail/receiveList", icon: <IoMailOpenOutline /> },
+    { label: "보낸메일함", path: "/mail/sendList", icon: <IoSendOutline /> },
     { label: "휴지통", path: "/mail/trash", icon: <IoTrashOutline /> },
   ];
-
   return (
-    <aside className="w-56 bg-white shadow rounded-xl p-4 flex flex-col gap-3 mt-30">
+    <aside className="w-56 bg-white shadow h-full rounded-xl p-4 flex flex-col gap-3 mt-30">
       {menu.map((item) => {
         const isActive = location.pathname === item.path;
         return (

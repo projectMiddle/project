@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import EmpInfo from "../../components/intrhome/EmpInfo";
+import EmpInfo from "../../components/intrahome/EmpInfo";
+import useAuth from "../../hooks/useAuth";
 
 export default function EmployeeProfile() {
   const [employee, setEmployee] = useState(null);
-  const empNo = 1049; // 임시 사번
+  const { userInfo } = useAuth();
+  const empNo = userInfo.empNo;
 
   useEffect(() => {
     fetch(`/empinfo/${empNo}`)

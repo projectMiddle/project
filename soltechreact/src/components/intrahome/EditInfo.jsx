@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+
 import { formatDate } from "@fullcalendar/core/index.js";
+import { updateEmployeeInfo } from "../../api/employeeProfile";
 
 const EditInfo = ({ empNo, initialData, onUpdated }) => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const EditInfo = ({ empNo, initialData, onUpdated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/empinfo/${empNo}`, formData);
+      await updateEmployeeInfo(empNo, formData);
       alert("정보가 성공적으로 수정되었습니다.");
       onUpdated?.(); // 부모에서 재요청 등 후처리 가능
     } catch (err) {

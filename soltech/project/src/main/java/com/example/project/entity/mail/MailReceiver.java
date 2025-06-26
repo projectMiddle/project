@@ -23,7 +23,7 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"empNo", "mailNo"})
+@ToString(exclude = { "empNo", "mailNo" })
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -40,7 +40,7 @@ public class MailReceiver {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MAIL_EMP_NO", nullable = false)
-    private Employee empNo;  // 수신자
+    private Employee empNo; // 수신자
 
     @Enumerated(EnumType.STRING)
     @Column(name = "MAIL_RECEIVER_TYPE", nullable = false)
@@ -50,7 +50,9 @@ public class MailReceiver {
     private boolean mailIsRead;
 
     public void changeMailIsRead(boolean mailIsRead) {
+
         this.mailIsRead = mailIsRead;
+
     }
 
     public void changeMailReceiverType(MailReceiverType mailReceiverType) {

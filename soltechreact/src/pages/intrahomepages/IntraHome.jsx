@@ -1,15 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
 import "../../css/intrahome.css";
 import Information from "./Information";
 import Notice from "./Notice";
-import FixedBar from "../../components/intrhome/FixedBar";
+import FixedBar from "../../components/intrahome/FixedBar";
 
 import Calendar from "./Calendar";
 import dayjs from "dayjs";
+import useAuth from "../../hooks/useAuth";
 
 function IntraHome() {
   const events = JSON.parse(localStorage.getItem("calendarEvents") || "[]");
+
+  const { userInfo, isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    console.log("✅ 로그인 여부:", isLoggedIn);
+
+    if (userInfo) {
+      console.log("✅ 사용자 정보:", userInfo);
+      console.log("  🔹 역할(role):", userInfo.role);
+      console.log("  🔹 이메일(email):", userInfo.email); // 회원인 경우
+      console.log("  🔹 사번(empNo):", userInfo.empNo); // 사원인 경우
+      console.log("  🔹 부서번호(deptNo):", userInfo.deptNo);
+      console.log("  🔹 직책번호(jobNo):", userInfo.jobNo);
+    } else {
+      console.log("❌ 사용자 정보 없음 (userInfo is null)");
+    }
+  }, [isLoggedIn, userInfo]);
 
   return (
     <>
