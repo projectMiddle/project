@@ -4,9 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import { VscSave } from "react-icons/vsc";
 import { postMail } from "../../api/mailApi";
+import useAuth from "../../hooks/useAuth";
 import EmployeeSearchModal from "../../components/intrahome/EmployeeSearchModal";
 
 const MailCompose = () => {
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
   const navigate = useNavigate();
 
   const [to, setTo] = useState(""); // 이름<이메일> 형식으로 표시
@@ -43,7 +46,7 @@ const MailCompose = () => {
   // 메일 전송
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("📨 submit 호출됨");
+    console.log("submit 호출됨");
     if (receiverIds.length === 0) {
       alert("수신자를 선택해주세요.");
       return;
@@ -56,9 +59,9 @@ const MailCompose = () => {
     attachments.forEach((file) => formData.append("attachments", file));
 
     try {
-      await postMail(1049, formData);
+      await postMail(empNo, formData);
       alert("메일 전송 성공");
-      navigate("/mail/sendList");
+      navigate("/intrasoltech/mail/sendList");
     } catch (err) {
       console.error("메일 전송 실패", err);
       alert("메일 전송에 실패했습니다.");

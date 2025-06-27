@@ -38,14 +38,14 @@ export const getSendMails = async (empNo) => {
 
 //읽음 표시
 export const markMailAsRead = async (mailNo, empNo) => {
-  await axios.api(`${API_SERVER_HOST}/read`, null, {
+  await api.post(`${API_SERVER_HOST}/read`, null, {
     params: { mailNo, empNo },
   });
 };
 
 // 받은 메일 삭제
 export const deleteReceivedMail = async (mailNo, empNo) => {
-  await axios.api(`${API_SERVER_HOST}/receiveDelete`, {
+  await api.delete(`${API_SERVER_HOST}/receiveDelete`, {
     params: { mailNo, empNo },
   });
 };
@@ -64,4 +64,8 @@ export const getMailAttachments = async (mailNo) => {
     params: { mailNo },
   });
   return res.data;
+};
+// 첨부파일 다운로드
+export const getDownloadUrl = (mailNo, fileName) => {
+  return `${API_SERVER_HOST}/download?mailNo=${mailNo}&fileName=${encodeURIComponent(fileName)}`;
 };

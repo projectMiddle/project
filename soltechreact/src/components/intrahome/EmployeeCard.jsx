@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from "react";
-
+import axios from "axios";
 import { Mail, Phone } from "lucide-react";
 import { VscAccount } from "react-icons/vsc";
-import { fetchWorkingStatus } from "../../api/attendanceApi";
 
 const EmployeeCard = ({ employee }) => {
   const [isWorking, setIsWorking] = useState(false);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`/attendance/working/${employee.empNo}`)
-  //     .then((res) => setIsWorking((res.data?.attStatus || "OFF") === "WORK"))
-  //     .catch(() => setIsWorking(false));
-  // }, [employee.empNo]);
-
   useEffect(() => {
-    fetchWorkingStatus(employee.empNo)
-      .then((data) => {
-        const status = data?.attStatus ?? "OFF";
-        setIsWorking(status === "WORK");
-      })
-      .catch((err) => {
-        console.error("🚨 출근 상태 조회 실패:", err);
-        setIsWorking(false);
-      });
+    axios
+      .get(`/attendance/working/${employee.empNo}`)
+      .then((res) => setIsWorking(res.data.attStatus === "WORK"))
+      .catch(() => setIsWorking(false));
   }, [employee.empNo]);
+
   return (
     <div className="border rounded-lg p-3 shadow-sm flex gap-3 items-start text-sm">
       {/* 기본 프로필 아이콘 */}

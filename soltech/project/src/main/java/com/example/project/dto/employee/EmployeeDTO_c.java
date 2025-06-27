@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import com.example.project.entity.Department;
 import com.example.project.entity.JobRank;
 import com.example.project.entity.constant.Gender;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

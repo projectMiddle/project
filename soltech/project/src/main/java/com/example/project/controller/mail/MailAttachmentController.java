@@ -40,7 +40,7 @@ public class MailAttachmentController {
 
     }
 
-    @PostMapping("/deleteFile")
+    @PostMapping("/removeFile")
     public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName) {
         log.info("파일 삭제 요청 : {}", fileName);
 

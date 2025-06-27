@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { deleteReceivedMail, getMailAttachments, getMailDetail } from "../../api/mailApi";
+import { deleteReceivedMail, getDownloadUrl, getMailAttachments, getMailDetail } from "../../api/mailApi";
+import useAuth from "../../hooks/useAuth";
+// import useAuth from "../../hooks/useAuth";
 
 const MailRead = () => {
-  const empNo = 1049; // 로그인 사번으로 변경
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
+
   const { mailNo } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isReceiveView = location.pathname.includes("/mail/receive");
+  const isReceiveView = location.pathname.includes("/intrasoltech/mail/receive");
   const [mail, setMail] = useState(null);
 
   useEffect(() => {
@@ -20,11 +24,17 @@ const MailRead = () => {
         setMail(data);
 
         // 첨부파일
+        // const attachments = await getMailAttachments(mailNo);
+
+        // setMail((prev) => ({
+        //   ...prev,
+        //   attachments,
+        // }));
         const attachments = await getMailAttachments(mailNo);
 
         setMail((prev) => ({
           ...prev,
-          attachments,
+          attachments: attachments.map((name) => ({ mailFileName: name })),
         }));
 
         console.log("📩 메일 상세:", data);
@@ -44,7 +54,7 @@ const MailRead = () => {
     try {
       await deleteReceivedMail(mailNo, empNo);
       alert("삭제 완료");
-      navigate("/mail/receiveList");
+      navigate("/intrasoltech/mail/receiveList");
     } catch (err) {
       console.error("📛 삭제 실패:", err);
       alert("삭제 실패");
@@ -73,12 +83,8 @@ const MailRead = () => {
           <ul className="list-disc pl-5 text-sm text-gray-700">
             {mail.attachments.map((file, idx) => (
               <li key={idx}>
-                <a
-                  href={`http://localhost:8080/mail/download?mailNo=${mailNo}&fileName=${encodeURIComponent(file)}`}
-                  download={file}
-                  className="hover:underline"
-                >
-                  {file}
+                <a href={getDownloadUrl(mailNo, file.mailFileName)} download className="hover:underline">
+                  {file.mailFileName}
                 </a>
               </li>
             ))}
@@ -99,7 +105,7 @@ const MailRead = () => {
         )}
 
         <button
-          onClick={() => navigate(isReceiveView ? "/mail/receiveList" : "/mail/sendList")}
+          onClick={() => navigate(isReceiveView ? "/intrasoltech/mail/receiveList" : "/intrasoltech/mail/sendList")}
           className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
         >
           목록으로

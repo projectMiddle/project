@@ -6,11 +6,12 @@ import { useMail } from "../../contexts/MailContext";
 import axios from "axios";
 import { RiMailSendFill } from "react-icons/ri";
 import { getSendMails } from "../../api/mailApi";
-
+import useAuth from "../../hooks/useAuth";
 const PAGE_SIZE = 15;
-const empNo = 1049; // 로그인 사용자로 변경
 
 const MailSent = () => {
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
   // const { mails } = useMail();
   const [filterText, setFilterText] = useState("");
   const [sortOrderAsc, setSortOrderAsc] = useState(false);

@@ -1,4 +1,3 @@
-import axios from "axios";
 import api from "./axios";
 
 export const API_SERVER_HOST = "/intrasoltech/approval";
@@ -13,7 +12,7 @@ export const API_SERVER_HOST = "/intrasoltech/approval";
 // };
 
 // ============================ 테스트용 : 결재 서류 리스트 요청 ============================
-export const fetchApprovalList = async (status = "all", page = 1, size = 10, empNo = 1015) => {
+export const fetchApprovalList = async (status, page, size, empNo) => {
   const res = await api.get(`${API_SERVER_HOST}/list`, {
     params: { status, page, size, empNo },
     // 추후 empNo 삭제 예정, jwt 토큰 연동시

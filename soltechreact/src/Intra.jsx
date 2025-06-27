@@ -8,31 +8,28 @@ import CalenderRoute from "./routes/CalenderRoute";
 import NoticeRoute from "./routes/NoticeRoute";
 import MailRoute from "./routes/MailRoute";
 import AttendanceRoute from "./routes/AttendanceRoute";
+import DepartmentRoute from "./routes/DepartmentRoute";
 
 import useAuth from "./hooks/useAuth";
+import DashboardLayout from "./components/intrahome/DashboardLayout";
 const Intra = () => {
   const { isLoggedIn, userInfo } = useAuth();
 
   useEffect(() => {
-    console.log("✅ 로그인 여부:", isLoggedIn);
-
     if (userInfo) {
-      console.log("✅ 사용자 정보:", userInfo);
-      console.log("  🔹 역할(role):", userInfo.role);
-      console.log("  🔹 이메일(email):", userInfo.email); // 회원인 경우
-      console.log("  🔹 사번(empNo):", userInfo.empNo); // 사원인 경우
-      console.log("  🔹 부서번호(deptNo):", userInfo.deptNo);
-      console.log("  🔹 직책번호(jobNo):", userInfo.jobNo);
+      console.log("사용자 정보:", userInfo);
     } else {
-      console.log("❌ 사용자 정보 없음 (userInfo is null)");
+      console.log("사용자 정보 없음 (userInfo is null)");
     }
   }, [isLoggedIn, userInfo]);
   return (
     <Routes>
-      <Route element={<IntraLayout />}>
+      <Route element={<DashboardLayout />}>
         {/* 기본 홈 */}
         <Route index element={<IntraHome />} />
+      </Route>
 
+      <Route element={<IntraLayout />}>
         {/* 각 분기별 라우트 - 반드시 /* 를 붙여야 하위 경로 매칭됨 */}
         <Route path="approval/*" element={<ApprovalRoute />} />
         <Route path="emppay/*" element={<EmployeePayRoute />} />
@@ -40,6 +37,7 @@ const Intra = () => {
         <Route path="notices/*" element={<NoticeRoute />} />
         <Route path="mail/*" element={<MailRoute />} />
         <Route path="attendance/*" element={<AttendanceRoute />} />
+        <Route path="department/*" element={<DepartmentRoute />} />
       </Route>
     </Routes>
   );

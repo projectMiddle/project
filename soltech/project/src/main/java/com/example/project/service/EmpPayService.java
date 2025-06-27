@@ -110,6 +110,7 @@ public class EmpPayService {
                 return EmpPayDTO.builder()
                                 .payNo(empPay.getPayNo())
                                 .empNo(empPay.getEmpNo().getEmpNo())
+                                .jobName(empPay.getEmpNo().getJobNo().getJobName())
                                 .payMonth(empPay.getPayMonth().toString())
                                 .payBaseSalary(empPay.getPayBaseSalary())
                                 .payBonusWage(empPay.getPayBonusWage())
@@ -126,6 +127,8 @@ public class EmpPayService {
                                 .payNetSalary(empPay.getPayNetSalary())
                                 .eName(empPay.getEmpNo().getEName())
                                 .annualSalary(empPay.getEmpNo().getESalary())
+                                .departmentName(empPay.getEmpNo().getDeptNo().getDeptName())
+                                .accountNumber(empPay.getEmpNo().getEAccount())
                                 .build();
         }
 

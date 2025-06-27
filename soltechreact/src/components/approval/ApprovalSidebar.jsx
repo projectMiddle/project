@@ -3,10 +3,17 @@ import { ChevronDown, ChevronRight, Folder, FolderOpen } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { approvalCategories, isActiveRoute } from "../../utils/Approval";
 import { fetchApprovalCategoryCounts } from "../../api/approvalApi";
+import useAuth from "../../hooks/useAuth";
 
 const ApprovalSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
+
+  console.log("승인 쪽 : ", empNo, userInfo);
+
   const [openForms, setOpenForms] = useState(false);
   const [category, setCategory] = useState("기안서");
 
@@ -27,7 +34,7 @@ const ApprovalSidebar = () => {
     reference: 0,
   });
 
-  const myEmpNo = 1015; // 추후 JWT에서 대체
+  const myEmpNo = empNo; // 추후 JWT에서 대체
 
   // 카운트 조회
   useEffect(() => {
@@ -149,7 +156,7 @@ const ApprovalSidebar = () => {
                     className={`hover:text-purple-600 ${
                       isActiveRoute(location.pathname, item.path) ? "font-bold text-purple-800" : ""
                     }`}
-                    to={`/intrasoltech/approval/confirm/${item.path}`}
+                    to={`/intrasoltech/approval/confirm/${item.path}?category=${category}`}
                   >
                     {item.label}
                   </Link>

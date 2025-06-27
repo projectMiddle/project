@@ -34,13 +34,8 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
   }, []);
 
   const handleSearch = () => {
-    const result = filterEmployees(
-      employees,
-      searchTerm,
-      jobFilter,
-      selectedDept
-    );
-    console.log({ searchTerm, jobFilter, selectedDept, result })
+    const result = filterEmployees(employees, searchTerm, jobFilter, selectedDept);
+    console.log({ searchTerm, jobFilter, selectedDept, result });
     setFilteredEmployees(result);
   };
 
@@ -91,23 +86,24 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
 
     console.log("🟡 모달에서 선택된 결재자 리스트:", selectedApprovers);
 
-    const resultList = modalMode === "APPROVER"
-      ? selectedApprovers.map((emp, idx) => ({
-        empNo: emp.empNo,
-        appRoleJobNo: emp.jobNo,   // enum 이름
-        eName: emp.eName,
-        jobName: emp.jobName,
-        deptName: emp.deptName,
-        appOrder: idx + 1
-      }))
-      : selectedReferences.map((emp) => ({
-        empNo: emp.empNo,
-        appRoleJobNo: emp.jobNo,
-        eName: emp.eName,
-        jobName: emp.jobName,
-        deptName: emp.deptName,
-        appOrder: null
-      }));
+    const resultList =
+      modalMode === "APPROVER"
+        ? selectedApprovers.map((emp, idx) => ({
+            empNo: emp.empNo,
+            appRoleJobNo: emp.jobNo, // enum 이름
+            eName: emp.eName,
+            jobName: emp.jobName,
+            deptName: emp.deptName,
+            appOrder: idx + 1,
+          }))
+        : selectedReferences.map((emp) => ({
+            empNo: emp.empNo,
+            appRoleJobNo: emp.jobNo,
+            eName: emp.eName,
+            jobName: emp.jobName,
+            deptName: emp.deptName,
+            appOrder: null,
+          }));
 
     onSave(resultList); // ✅ 이제 배열로만 넘긴다!
     onClose();
@@ -121,9 +117,7 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
           <button className="absolute top-4 right-4" onClick={onClose}>
             <X className="w-5 h-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
           </button>
-          <Dialog.Title className="text-xl font-bold mb-4 text-gray-800">
-            결재선 지정
-          </Dialog.Title>
+          <Dialog.Title className="text-xl font-bold mb-4 text-gray-800">결재선 지정</Dialog.Title>
 
           <div className="grid grid-cols-2 gap-6 overflow-hidden">
             {/* 좌측 영역 */}
@@ -134,10 +128,9 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
                   {departments.map((dept) => (
                     <li
                       key={dept}
-                      className={`cursor-pointer px-2 py-1 rounded hover:bg-purple-100 ${selectedDept === dept
-                        ? "bg-purple-200 text-purple-500 font-semibold"
-                        : "text-gray-700"
-                        }`}
+                      className={`cursor-pointer px-2 py-1 rounded hover:bg-purple-100 ${
+                        selectedDept === dept ? "bg-purple-200 text-purple-500 font-semibold" : "text-gray-700"
+                      }`}
                       onClick={() => handleDeptClick(dept)}
                     >
                       {dept}
@@ -146,9 +139,7 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
                 </ul>
               </div>
 
-              <h3 className="font-semibold text-gray-700 mb-2">
-                직책/이름 검색
-              </h3>
+              <h3 className="font-semibold text-gray-700 mb-2">직책/이름 검색</h3>
               <div className="flex gap-2 mb-2">
                 <select
                   value={jobFilter}
@@ -189,10 +180,7 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
                   </thead>
                   <tbody>
                     {filteredEmployees.map((emp) => (
-                      <tr
-                        key={emp.empNo}
-                        className="border-t hover:bg-purple-50"
-                      >
+                      <tr key={emp.empNo} className="border-t hover:bg-purple-50">
                         <td className="p-2">{emp.eName}</td>
                         <td className="p-2">{emp.jobName}</td>
                         <td className="p-2">{emp.deptName}</td>
@@ -224,15 +212,10 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
             {/* 우측 영역 */}
             <div className="flex flex-col gap-4">
               <div className="border border-gray-300 rounded bg-white">
-                <h4 className="bg-gray-100 px-4 py-2 text-gray-800 font-semibold border-b">
-                  결재자
-                </h4>
+                <h4 className="bg-gray-100 px-4 py-2 text-gray-800 font-semibold border-b">결재자</h4>
                 <ul className="h-60 overflow-y-auto text-sm divide-y">
                   {selectedApprovers.map((a, idx) => (
-                    <li
-                      key={a.empNo}
-                      className="flex justify-between items-center px-4 py-2"
-                    >
+                    <li key={a.empNo} className="flex justify-between items-center px-4 py-2">
                       <span>
                         {idx + 1}순위 | {a.eName} | {a.jobName} | {a.deptName}
                       </span>
@@ -248,15 +231,10 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
               </div>
 
               <div className="border border-gray-300 rounded bg-white">
-                <h4 className="bg-gray-100 px-4 py-2 text-gray-800 font-semibold border-b">
-                  참조자
-                </h4>
+                <h4 className="bg-gray-100 px-4 py-2 text-gray-800 font-semibold border-b">참조자</h4>
                 <ul className="h-60 overflow-y-auto text-sm divide-y">
                   {selectedReferences.map((r) => (
-                    <li
-                      key={r.empNo}
-                      className="flex justify-between items-center px-4 py-2"
-                    >
+                    <li key={r.empNo} className="flex justify-between items-center px-4 py-2">
                       <span>
                         {r.eName} | {r.jobName} | {r.deptName}
                       </span>

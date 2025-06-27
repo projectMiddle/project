@@ -26,7 +26,8 @@ public class MailAttachmentDTO {
 
     public String getDownloadURL() {
         try {
-            return URLEncoder.encode("/upload/" + mailFilePath + "/" + mailFileUuid + "_" + mailFileName, "UTF-8");
+            return URLEncoder.encode("/mail/" + mailFilePath + "/" + mailFileUuid + "_" + mailFileName, "UTF-8");
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return "";

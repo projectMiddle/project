@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @Log4j2
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/intrasoltech/pay")
 @RequiredArgsConstructor
 public class EmpPayController {
 

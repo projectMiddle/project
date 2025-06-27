@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,10 +46,22 @@ public class AttendanceController {
     }
 
     // 불반짝 업그레이드
+    // @GetMapping("/working/{empNo}")
+    // public AttendanceDTO working(@PathVariable Long empNo) {
+    // Employee employee = employeeRepository.findById(empNo).orElseThrow();
+    // return attendanceService.working(employee);
+    // }
     @GetMapping("/working/{empNo}")
-    public AttendanceDTO working(@PathVariable Long empNo) {
-        Employee employee = employeeRepository.findById(empNo).orElseThrow();
-        return attendanceService.working(employee);
+    public ResponseEntity<AttendanceDTO> working(@PathVariable Long empNo) {
+        return employeeRepository.findById(empNo)
+                .map(employee -> {
+                    AttendanceDTO dto = attendanceService.working(employee);
+                    if (dto == null) {
+                        return ResponseEntity.ok(new AttendanceDTO()); // 안전하게 빈 DTO 반환
+                    }
+                    return ResponseEntity.ok(dto);
+                })
+                .orElseGet(() -> ResponseEntity.ok(new AttendanceDTO())); // 사원이 없으면 빈 DTO
     }
 
     // 연,월 필터링

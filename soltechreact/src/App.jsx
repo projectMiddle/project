@@ -1,10 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Yongjae from "./test/Yongjae";
-import Mikyung from "./test/Mikyung";
-import Byeongsun from "./test/Byeongsun";
-import Yongsung from "./test/Yongsung";
 import MainHome from "./pages/mainhomepages/MainHome";
 import MainSignUp from "./pages/mainhomepages/MainSignUp";
 import MainLogin from "./pages/mainhomepages/MainLogin";
@@ -19,7 +13,6 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext.jsx"; // ✅
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
-import Seungchan from "./test/Seungchan";
 
 function App() {
   const { isAuthReady } = useAuth();
@@ -30,11 +23,6 @@ function App() {
   return (
     // <AuthProvider>
     <Routes>
-      <Route path="/yongjae/*" element={<Yongjae />} />
-      <Route path="/mikyung" element={<Mikyung />} />
-      <Route path="/byeongsun" element={<Byeongsun />} />
-      <Route path="/notices/*" element={<Seungchan />} />
-      <Route path="/yongsung" element={<Yongsung />} />
       {/* 메인화면 관련 기능들 */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<MainHome />} />

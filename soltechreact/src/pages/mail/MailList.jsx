@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 import { IoMdMailOpen } from "react-icons/io";
 import { getReceivedMails, markMailAsRead, deleteReceivedMail } from "../../api/mailApi";
-
-const PAGE_SIZE = 15;
-const empNo = 1049; // 로그인 사용자로 변경
+import useAuth from "../../hooks/useAuth";
 
 const MailList = () => {
+  const { userInfo } = useAuth();
+  const PAGE_SIZE = 15;
+  const empNo = userInfo?.empNo; // 로그인 사용자로 변경
   const [filterText, setFilterText] = useState("");
   const [sortOrderAsc, setSortOrderAsc] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +59,7 @@ const MailList = () => {
 
     markMailAsRead(id, empNo).catch((err) => console.error("읽음 처리 실패", err));
 
-    navigate(`/mail/receive/${id}`);
+    navigate(`/intrasoltech/mail/receive/${id}`);
   };
 
   const handleDeleteSelected = async () => {

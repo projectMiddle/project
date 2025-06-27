@@ -12,9 +12,9 @@ const Attendance = () => {
   const [year, setYear] = useState(2025);
   const [month, setMonth] = useState(6);
   const navigate = useNavigate();
-
   const { userInfo } = useAuth();
-  const empNo = userInfo.empNo;
+
+  const empNo = userInfo?.empNo; // 임시 사번
 
   const fetchAttendance = () => {
     fetchAttendanceList(empNo, year, month)

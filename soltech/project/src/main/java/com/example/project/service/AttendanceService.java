@@ -51,14 +51,31 @@ public class AttendanceService {
     }
 
     // 불 반짝 업그레이드
+    // public AttendanceDTO working(Employee employee) {
+    // Attendance attendance =
+    // attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
+
+    // return AttendanceDTO.builder()
+    // .empNo(employee.getEmpNo())
+    // .eName(employee.getEName())
+    // .deptName(employee.getDeptNo().getDeptName())
+    // .attStatus(attendance.getAttStatus())
+    // .build();
+    // }
+
     public AttendanceDTO working(Employee employee) {
-        Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
+        Attendance att = attendanceRepository.findTodayByEmp(employee);
+        if (att == null) {
+            System.out.println("❗ 출근 기록 없음 - empNo: " + employee.getEmpNo());
+            return null;
+        }
 
         return AttendanceDTO.builder()
+                .attNo(att.getAttNo())
                 .empNo(employee.getEmpNo())
+                .attStatus(att.getAttStatus())
                 .eName(employee.getEName())
                 .deptName(employee.getDeptNo().getDeptName())
-                .attStatus(attendance.getAttStatus())
                 .build();
     }
 

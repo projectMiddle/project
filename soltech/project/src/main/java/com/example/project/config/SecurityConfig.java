@@ -84,8 +84,6 @@ public class SecurityConfig {
                                 "/api/member/**",
                                 "/api/employee/**",
                                 "/member/login",
-                                "/attendance/**", // 🔥 반드시 추가
-                                "/empinfo/**", // 🔥 반드시 추가
                                 "/employee/**", // 필요한 경우
                                 "/pay/**", // 필요한 경우
 

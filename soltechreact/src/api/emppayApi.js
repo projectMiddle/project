@@ -1,5 +1,5 @@
-import axios from "axios";
 import api from "./axios";
+
 export const API_SERVER_HOST = "/intrasoltech/pay";
 
 export const getPayList = ({ empNo, year, month }) =>

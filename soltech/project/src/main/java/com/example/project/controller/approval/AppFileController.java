@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping("/approval")
+@RequestMapping("/intrasoltech/approval")
 @RequiredArgsConstructor
 @Log4j2
 public class AppFileController {

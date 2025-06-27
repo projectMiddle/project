@@ -21,7 +21,7 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
   useEffect(() => {
     fetchAllEmployees()
       .then((data) => {
-        console.log("📦 백엔드 응답 데이터:", data);
+        // console.log("📦 백엔드 응답 데이터:", data);
         setEmployeeList(data);
       })
       .catch((err) => {

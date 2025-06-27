@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping("/approval")
+@RequestMapping("/intrasoltech/approval")
 @RequiredArgsConstructor
 @Log4j2
 public class ApprovalController {
@@ -59,8 +59,8 @@ public class ApprovalController {
     @GetMapping("/list")
     public ResponseEntity<PageResultDTO<ApprovalDocumentDTO>> getApprovalList(
             @ModelAttribute PageRequestDTO requestDTO,
-            @RequestParam(required = false, defaultValue = "all") String status,
-            @RequestParam(required = false) Long empNo) {
+            @RequestParam("status") String status,
+            @RequestParam("empNo") Long empNo) {
 
         log.info("문서 목록 조회 요청 - status: {}, empNo: {}", status, empNo);
 
