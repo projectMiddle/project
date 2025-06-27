@@ -124,7 +124,7 @@ const MailSent = () => {
                   <td className="p-2">{mail.to}</td>
                   <td
                     className="p-2 underline hover:text-blue-500"
-                    onClick={() => navigate(`/mail/send/${mail.id}`, { state: { mail } })}
+                    onClick={() => navigate(`/intrasoltech/mail/send/${mail.id}`, { state: { mail } })}
                   >
                     {mail.title}
                   </td>
