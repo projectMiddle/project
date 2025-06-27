@@ -1,0 +1,11 @@
+<form th:object="${member}" th:action="@{/member/signup}" method="post">
+  <input th:field="*{mName}"    placeholder="이름"/>
+  <input th:field="*{mEmail}" placeholder="이메일" type="password"/>
+  <input th:field="*{mPassword}" placeholder="비밀번호" type="password"/>
+  <input th:field="*{mPassword}" placeholder="비밀번호 확인" type="password"/>
+  <input th:field="*{mMobile}" placeholder="핸드폰번호" type="password"/>
+  <input th:field="*{mAddress}" placeholder="주소" type="password"/>
+  <input th:field="*{mBirthday}" placeholder="생년월일" type="password"/>
+  <input th:field="*{mGender}" placeholder="성별" type="password"/>
+  <button type="submit">회원가입</button>
+</form>

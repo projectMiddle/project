@@ -1,0 +1,212 @@
+[
+  {
+    "id": 1,
+    "from": "김재현 <ni@soltech.co.kr>",
+    "title": "계약서 검토 요청",
+    "date": "2025-06-02",
+    "isRead": false
+  },
+  {
+    "id": 2,
+    "from": "이예지 <di@soltech.co.kr>",
+    "title": "외근 일정 보고",
+    "date": "2025-05-24",
+    "isRead": false
+  },
+  {
+    "id": 3,
+    "from": "강정숙 <pbag@soltech.co.kr>",
+    "title": "회의자료 전달드립니다.",
+    "date": "2025-05-30",
+    "isRead": false
+  },
+  {
+    "id": 4,
+    "from": "이숙자 <gimhaeun@soltech.co.kr>",
+    "title": "외근 일정 보고",
+    "date": "2025-06-11",
+    "isRead": true
+  },
+  {
+    "id": 5,
+    "from": "김재현 <yeonghyii@soltech.co.kr>",
+    "title": "회의 일정 관련 건",
+    "date": "2025-06-05",
+    "isRead": true
+  },
+  {
+    "id": 6,
+    "from": "이현정 <sangho93@soltech.co.kr>",
+    "title": "파일 첨부 드립니다.",
+    "date": "2025-06-03",
+    "isRead": true
+  },
+  {
+    "id": 7,
+    "from": "이정수 <hyeonji95@soltech.co.kr>",
+    "title": "팀 회식 일정 조율",
+    "date": "2025-05-22",
+    "isRead": true
+  },
+  {
+    "id": 8,
+    "from": "김현주 <yeongsujeon@soltech.co.kr>",
+    "title": "업무 인수인계 관련",
+    "date": "2025-05-28",
+    "isRead": false
+  },
+  {
+    "id": 9,
+    "from": "김은서 <ejo@soltech.co.kr>",
+    "title": "6월 업무 계획안",
+    "date": "2025-05-30",
+    "isRead": false
+  },
+  {
+    "id": 10,
+    "from": "김재현 <ni@soltech.co.kr>",
+    "title": "연차 신청 관련",
+    "date": "2025-05-24",
+    "isRead": true
+  },
+  {
+    "id": 11,
+    "from": "이현숙 <dohyeonjo@soltech.co.kr>",
+    "title": "문서 검토 부탁드립니다.",
+    "date": "2025-06-17",
+    "isRead": false
+  },
+  {
+    "id": 12,
+    "from": "서진우 <ti@soltech.co.kr>",
+    "title": "계약서 검토 요청",
+    "date": "2025-06-10",
+    "isRead": false
+  },
+  {
+    "id": 13,
+    "from": "진진우 <gimyeongsu@soltech.co.kr>",
+    "title": "이슈 사항 공유",
+    "date": "2025-06-08",
+    "isRead": false
+  },
+  {
+    "id": 14,
+    "from": "서진우 <ti@soltech.co.kr>",
+    "title": "업무 보고 드립니다.",
+    "date": "2025-06-12",
+    "isRead": false
+  },
+  {
+    "id": 15,
+    "from": "이현숙 <dohyeonjo@soltech.co.kr>",
+    "title": "문서 검토 부탁드립니다.",
+    "date": "2025-06-06",
+    "isRead": false
+  },
+  {
+    "id": 16,
+    "from": "주영일 <yunseo50@soltech.co.kr>",
+    "title": "연차 신청 관련",
+    "date": "2025-05-21",
+    "isRead": true
+  },
+  {
+    "id": 17,
+    "from": "김정호 <bagjieun@soltech.co.kr>",
+    "title": "결재 요청드립니다.",
+    "date": "2025-05-30",
+    "isRead": true
+  },
+  {
+    "id": 18,
+    "from": "양채원 <jeongnam71@soltech.co.kr>",
+    "title": "문서 검토 부탁드립니다.",
+    "date": "2025-05-27",
+    "isRead": true
+  },
+  {
+    "id": 19,
+    "from": "송순자 <jiyeong94@soltech.co.kr>",
+    "title": "파일 첨부 드립니다.",
+    "date": "2025-05-31",
+    "isRead": false
+  },
+  {
+    "id": 20,
+    "from": "고은지 <jieunhan@soltech.co.kr>",
+    "title": "파일 첨부 드립니다.",
+    "date": "2025-06-17",
+    "isRead": true
+  },
+  {
+    "id": 21,
+    "from": "강주원 <sgim@soltech.co.kr>",
+    "title": "파일 첨부 드립니다.",
+    "date": "2025-06-16",
+    "isRead": true
+  },
+  {
+    "id": 22,
+    "from": "김성수 <mgim@soltech.co.kr>",
+    "title": "문서 검토 부탁드립니다.",
+    "date": "2025-06-12",
+    "isRead": false
+  },
+  {
+    "id": 23,
+    "from": "이정수 <hyeonji95@soltech.co.kr>",
+    "title": "외근 일정 보고",
+    "date": "2025-05-25",
+    "isRead": true
+  },
+  {
+    "id": 24,
+    "from": "이현정 <sangho93@soltech.co.kr>",
+    "title": "연차 신청 관련",
+    "date": "2025-05-21",
+    "isRead": false
+  },
+  {
+    "id": 25,
+    "from": "이은영 <junhyeoggang@soltech.co.kr>",
+    "title": "팀 회식 일정 조율",
+    "date": "2025-05-28",
+    "isRead": true
+  },
+  {
+    "id": 26,
+    "from": "민상현 <khwang@soltech.co.kr>",
+    "title": "6월 업무 계획안",
+    "date": "2025-05-28",
+    "isRead": true
+  },
+  {
+    "id": 27,
+    "from": "박지혜 <jungsu97@soltech.co.kr>",
+    "title": "외근 일정 보고",
+    "date": "2025-05-23",
+    "isRead": true
+  },
+  {
+    "id": 28,
+    "from": "김성호 <csim@soltech.co.kr>",
+    "title": "파일 첨부 드립니다.",
+    "date": "2025-06-15",
+    "isRead": false
+  },
+  {
+    "id": 29,
+    "from": "이숙자 <gimhaeun@soltech.co.kr>",
+    "title": "외근 일정 보고",
+    "date": "2025-06-05",
+    "isRead": false
+  },
+  {
+    "id": 30,
+    "from": "강정숙 <pbag@soltech.co.kr>",
+    "title": "계약서 검토 요청",
+    "date": "2025-06-16",
+    "isRead": false
+  }
+]
