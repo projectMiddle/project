@@ -32,12 +32,7 @@ const MainHome = () => {
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {images.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`slide-${i}`}
-                className="w-full flex-shrink-0 object-cover h-[500px]"
-              />
+              <img key={i} src={src} alt={`slide-${i}`} className="w-full flex-shrink-0 object-cover h-[500px]" />
             ))}
           </div>
 
@@ -56,23 +51,8 @@ const MainHome = () => {
         </section>
 
         <section className="mt-16">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-10">
-            SOLTech 주요 서비스
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 서비스 카드 1 */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 p-6 text-center">
-              <img
-                src="/mainImages/ae9e9904-846e-4010-a70f-0ae7683f5017.png"
-                alt="전자결재"
-                className="mx-auto h-32 object-contain mb-4"
-              />
-              <h3 className="text-lg font-semibold mb-2">전자결재 시스템</h3>
-              <p className="text-sm text-gray-600">
-                사내 문서를 빠르고 정확하게 결재할 수 있는 시스템
-              </p>
-            </div>
-
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-10">SOLTech 주요 서비스</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
             {/* 서비스 카드 2 */}
             <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 p-6 text-center">
               <img
@@ -81,9 +61,7 @@ const MainHome = () => {
                 className="mx-auto h-32 object-contain mb-4"
               />
               <h3 className="text-lg font-semibold mb-2">출퇴근 관리</h3>
-              <p className="text-sm text-gray-600">
-                직원들의 출퇴근 기록을 통합 관리하고 확인할 수 있어요
-              </p>
+              <p className="text-sm text-gray-600">직원들의 출퇴근 기록을 통합 관리하고 확인할 수 있어요</p>
             </div>
 
             {/* 서비스 카드 3 */}
@@ -94,9 +72,7 @@ const MainHome = () => {
                 className="mx-auto h-32 object-contain mb-4"
               />
               <h3 className="text-lg font-semibold mb-2">통합 인트라넷</h3>
-              <p className="text-sm text-gray-600">
-                모든 업무를 한 눈에! 부서 및 문서 정보 통합 플랫폼
-              </p>
+              <p className="text-sm text-gray-600">모든 업무를 한 눈에! 부서 및 문서 정보 통합 플랫폼</p>
             </div>
           </div>
         </section>

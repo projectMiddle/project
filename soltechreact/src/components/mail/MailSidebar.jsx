@@ -17,7 +17,7 @@ const MailSidebar = () => {
     { label: "휴지통", path: "/intrasoltech/mail/trash", icon: <IoTrashOutline /> },
   ];
   return (
-    <aside className="w-56 bg-white shadow h-full rounded-xl p-4 flex flex-col gap-3 mt-30">
+    <aside className="w-56 bg-white shadow h-full rounded-xl p-4 flex flex-col gap-3">
       {menu.map((item) => {
         const isActive = location.pathname === item.path;
         return (

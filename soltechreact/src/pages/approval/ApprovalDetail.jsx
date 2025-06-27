@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { fetchApprovalDetail, processApproval } from "../../api/approvalApi";
 import useAuth from "../../hooks/useAuth";
 
@@ -252,12 +252,14 @@ const ApprovalDetail = () => {
           {/* 하단 버튼 */}
           {isApprover && !isDrafter && !isReference ? (
             <div className="absolute bottom-0 left-0 w-full bg-gray-100 px-4 py-3 border-t border-gray-300 flex justify-end gap-2">
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded"
-                onClick={() => handleApproval("APPROVED")}
-              >
-                승인
-              </button>
+              <Link to={"/intrasoltech/approval"}>
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded"
+                  onClick={() => handleApproval("APPROVED")}
+                >
+                  승인
+                </button>
+              </Link>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded"
                 onClick={() => handleApproval("REJECTED")}
