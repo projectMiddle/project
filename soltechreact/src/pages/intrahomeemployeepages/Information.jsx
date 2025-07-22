@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Mail, PenLine, Bell, BarChart3, User2 } from "lucide-react";
 import { fetchEmployeeInfo } from "../../api/employeeProfile";
 import { fetchAttendanceStatus } from "../../api/attendanceApi";
-import EmpInfoModal from "./EmpInfoModal";
 import EditInfoModal from "./EditInfoModal";
+import EmpInfoModal from "./EmpInfoModal"; // ✅ 상세 팝업 추가
 import useAuth from "../../hooks/useAuth";
 
 const Information = () => {
@@ -47,7 +47,7 @@ const Information = () => {
 
   return (
     <div className="info-all-container">
-      <div className="information-container ">
+      <div className="information-container">
         {/* 프로필 사진 클릭 → 상세 모달 열기 */}
         <div className="avatar-box cursor-pointer" onClick={() => setIsProfileModalOpen(true)}>
           <User2 className="avatar-icon" />

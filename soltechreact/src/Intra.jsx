@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import IntraHome from "./pages/intrahomepages/IntraHome";
-import IntraLayout from "./components/intrahome/IntraLayout";
 import ApprovalRoute from "./routes/ApprovalRoute";
 import EmployeePayRoute from "./routes/EmployeePayRoute";
 import CalenderRoute from "./routes/CalenderRoute";
@@ -11,7 +9,8 @@ import AttendanceRoute from "./routes/AttendanceRoute";
 import DepartmentRoute from "./routes/DepartmentRoute";
 
 import useAuth from "./hooks/useAuth";
-import DashboardLayout from "./components/intrahome/DashboardLayout";
+import IntraMainComponent from "./components/intrahomecomponents/IntraMainComponent";
+import IntraLayout from "./components/intracomponents/IntraLayout";
 const Intra = () => {
   const { isLoggedIn, userInfo } = useAuth();
 
@@ -24,10 +23,8 @@ const Intra = () => {
   }, [isLoggedIn, userInfo]);
   return (
     <Routes>
-      <Route element={<DashboardLayout />}>
-        {/* 기본 홈 */}
-        <Route index element={<IntraHome />} />
-      </Route>
+      {/* 기본 홈 */}
+      <Route index element={<IntraMainComponent />} />
 
       <Route element={<IntraLayout />}>
         {/* 각 분기별 라우트 - 반드시 /* 를 붙여야 하위 경로 매칭됨 */}
