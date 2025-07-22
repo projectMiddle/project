@@ -1,7 +1,10 @@
 package com.example.project.dto;
 
 import java.time.YearMonth;
-import com.example.project.entity.Employee;
+
+import com.example.project.entity.EmpPay;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,12 +19,15 @@ import lombok.ToString;
 @Getter
 @Setter
 public class EmpPayDTO {
-    
+
     private Long payNo;
 
-    private Employee empNo;
+    // private Employee empNo;
+    private Long empNo;
 
-    private YearMonth payMonth; // 급여 대상 월 (예: 2025-06)
+    private String payMonth; // 급여 대상 월 (예: 2025-06)
+
+    private Long annualSalary; // 연봉
 
     private int payBaseSalary; // 기본급
 
@@ -43,4 +49,35 @@ public class EmpPayDTO {
 
     private int payLongtermCare; // 장기요양보험
 
+    // 추가 항목
+
+    private int payTotalSalary; // 총 수령액
+    private int payTotalDeduction; // 총 공제액
+    private int payNetSalary; // 실 수령액
+
+    @JsonProperty("eName")
+    private String eName;
+
+    private String departmentName;
+    private String jobName;
+    private String accountNumber;
+
+    public EmpPay toEntity() {
+        return EmpPay.builder()
+                .payMonth(YearMonth.parse(this.payMonth))
+                .payBaseSalary(this.payBaseSalary)
+                .payBonusWage(this.payBonusWage)
+                .payPositionWage(this.payPositionWage)
+                .payBenefits(this.payBenefits)
+                .payIncomeTax(this.payIncomeTax)
+                .payResidentTax(this.payResidentTax)
+                .payHealthInsurance(this.payHealthInsurance)
+                .payNationalPension(this.payNationalPension)
+                .payEmpInsurance(this.payEmpInsurance)
+                .payLongtermCare(this.payLongtermCare)
+                .payTotalSalary(this.payTotalSalary)
+                .payTotalDeduction(this.payTotalDeduction)
+                .payNetSalary(this.payNetSalary)
+                .build();
+    }
 }

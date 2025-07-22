@@ -47,7 +47,16 @@ public class MailAttachment {
     @Column(nullable = false)
     private int mailFileSize;
 
-    @Column(nullable = false)
     private LocalDate mailUploadDate;
-    
+
+    public void updateFileInfo(String fileName, String filePath, String uuid) {
+        this.mailFileName = fileName;
+        this.mailFilePath = filePath;
+        this.mailFileUuid = uuid;
+    }
+
+    public void changeMailNo(MailSend mno) {
+        this.mailNo = mno;
+    }
+
 }

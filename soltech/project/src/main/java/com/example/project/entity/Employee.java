@@ -3,6 +3,7 @@ package com.example.project.entity;
 import java.time.LocalDate;
 
 import com.example.project.entity.constant.Gender;
+import com.example.project.entity.constant.MemberRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"deptNo", "jobNo"})
+@ToString(exclude = { "deptNo", "jobNo" })
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -39,7 +40,7 @@ public class Employee {
     private Gender eGender;
 
     @Column(nullable = false)
-    private LocalDate eBirth;
+    private LocalDate eBirthday;
 
     @Column(nullable = false, unique = true)
     private String eEmail;
@@ -64,6 +65,9 @@ public class Employee {
     @Column(nullable = false)
     private Long eSalary;
 
+    @Enumerated(EnumType.STRING)
+    private MemberRole eMemberRole;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "E_DEPT_NO", nullable = false)
     private Department deptNo;
@@ -82,6 +86,10 @@ public class Employee {
 
     public void changeeAccount(String eAccount) {
         this.eAccount = eAccount;
+    }
+
+    public void changeePassword(String ePassword) {
+        this.ePassword = ePassword;
     }
 
 }

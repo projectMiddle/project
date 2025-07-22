@@ -1,0 +1,70 @@
+.profile-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-main {
+  background-color: #6366f1;
+  color: white;
+}
+
+.btn-sub {
+  background-color: #e5e7eb;
+}
+
+.profile-fields {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-field {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.field-label {
+  width: 100px;
+  font-weight: bold;
+}
+
+.field-value {
+  flex: 1;
+}

@@ -1,5 +1,7 @@
 package com.example.project.entity.approval;
 
+import java.time.LocalDate;
+
 import com.example.project.entity.Department;
 import com.example.project.entity.Employee;
 
@@ -53,6 +55,9 @@ public class ApprovalDocument {
 
     @Column(nullable = false, columnDefinition = "VARCHAR2(1) DEFAULT '0'")
     private boolean appIsFinalized;
+
+    @Column(nullable = false)
+    private LocalDate appDocDate;
 
     public void changeAppDocContent(String appDocContent) {
         this.appDocContent = appDocContent;

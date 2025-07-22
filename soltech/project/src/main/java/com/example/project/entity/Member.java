@@ -1,8 +1,13 @@
 package com.example.project.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
 
 import com.example.project.entity.constant.Gender;
+import com.example.project.entity.constant.MemberRole;
+import com.example.project.entity.constant.Provider;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -46,6 +51,18 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "M_GENDER", nullable = false)
     private Gender mGender;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole mMemberRole;
+    
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    private String providerId;  // Google OAuth2의 sub 값
+
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime createdDateTime;
 
     public void changemAddress(String mAddress) {
         this.mAddress = mAddress;
