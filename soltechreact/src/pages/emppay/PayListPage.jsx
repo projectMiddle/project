@@ -9,7 +9,7 @@ import useAuth from "../../hooks/useAuth";
 const PayListPage = () => {
   const [payList, setPayList] = useState([]);
   const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(6);
+  const [month, setMonth] = useState(7);
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const { userInfo } = useAuth();
@@ -30,11 +30,13 @@ const PayListPage = () => {
   }, [year, month]);
 
   useEffect(() => {
-    // 로그인한 사원번호가 1021
-    getEmployee(1021)
+    if (!empNo) return; // 로그인 정보 없으면 중단
+
+    getEmployee(empNo)
       .then((res) => setEmployee(res.data))
       .catch(console.error);
-  }, []);
+  }, [empNo]);
+
   if (!employee) return <div>사원정보 로딩중…</div>;
   return (
     <div className="w-full flex flex-col">

@@ -11,8 +11,8 @@ import Intra from "./Intra";
 
 import { AuthProvider, useAuth } from "./contexts/AuthContext.jsx"; // ✅
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import Unauthorized from "./pages/Unauthorized";
+import Unauthorized from "./pages/errorpages/Unauthorized.jsx";
+import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 
 function App() {
   const { isAuthReady } = useAuth();

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { VscSave } from "react-icons/vsc";
 import { postMail } from "../../api/mailApi";
 import useAuth from "../../hooks/useAuth";
-import EmployeeSearchModal from "../../components/intrahome/EmployeeSearchModal";
+import EmployeeSearchModal from "../intrahomeemployeepages/EmployeeSearchModal";
 
 const MailCompose = () => {
   const { userInfo } = useAuth();
