@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { getPayDetail } from "../../api/emppayApi";
+import { useNavigate } from "react-router-dom";
+import PaySlipPDFButton from "./PaySlipPDFButton";
 
 export default function PayDetailPage() {
   const { id } = useParams();
   const [pay, setPay] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPayDetail(id).then((res) => {
@@ -21,9 +24,10 @@ export default function PayDetailPage() {
   return (
     <div>
       <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">급여명세서 - 상세</div>
+      <PaySlipPDFButton pay={pay} />
       <div className="p-6">
         <div className=" mx-auto bg-white shadow-2xl p-8 rounded-xl border border-gray-300">
-          <h2 className="text-center text-2xl font-bold mb-6">2024년 11월 급여명세서</h2>
+          <h2 className="text-center text-2xl font-bold mb-6">2025년 7월 급여명세서</h2>
           {/* 기본 정보 */}
           <section className="grid grid-cols-3 gap-4 text-sm mb-6">
             <div>
