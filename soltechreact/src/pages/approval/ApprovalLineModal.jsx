@@ -2,18 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { appLineEmployees } from "../../api/approvalApi";
-import {
-  filterEmployees,
-  filterByDepartment,
-  canAddApprover,
-  isFinalApproverValid,
-  isAlreadySelected,
-} from "../../utils/Approval";
+import { filterEmployees, filterByDepartment, canAddApprover, isAlreadySelected } from "../../utils/Approval";
 
 const jobOrder = ["AM", "AD_AM", "ASSI_MGR", "AD_MGR"];
 const departments = ["세무팀", "인사팀", "지원팀", "마케팅팀", "영업팀"];
 
-const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
+const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave, category }) => {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
@@ -80,17 +74,39 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    if (!isFinalApproverValid(selectedApprovers, jobOrder)) {
-      return alert("최종 결재자는 부장 이상이어야 합니다");
+    const finalApprover = selectedApprovers[selectedApprovers.length - 1];
+
+    // 부장 이상인지 검사 (부장: ASSI_MGR, 본부장: AD_MGR)
+    const isManagerLevel = ["ASSI_MGR", "AD_MGR"].includes(finalApprover.jobNo);
+
+    // 문서에 따른 부서 조건 체크
+    const docDeptRules = {
+      영수증: "세무팀",
+      연차신청서: "인사팀",
+      출장신청서: "인사팀",
+    };
+
+    const requiredDept = docDeptRules[category]; // 문서 종류에 따라 요구 부서
+    const isCorrectDept = requiredDept ? finalApprover.deptName === requiredDept : true;
+
+    // 부장 이상 아니면 경고
+    if (!isManagerLevel) {
+      return alert("최종 결재자는 반드시 부장급 이상이어야 합니다.");
     }
 
-    console.log("🟡 모달에서 선택된 결재자 리스트:", selectedApprovers);
+    // 부서 조건 안 맞으면 경고
+    if (!isCorrectDept) {
+      return alert(`${category}은(는) ${requiredDept} 부장 이상만 최종 결재 가능합니다.`);
+    }
+
+    // 조건 통과 후 처리
+    console.log("최종 결재자 조건 통과:", finalApprover);
 
     const resultList =
       modalMode === "APPROVER"
         ? selectedApprovers.map((emp, idx) => ({
             empNo: emp.empNo,
-            appRoleJobNo: emp.jobNo, // enum 이름
+            appRoleJobNo: emp.jobNo,
             eName: emp.eName,
             jobName: emp.jobName,
             deptName: emp.deptName,
@@ -105,7 +121,7 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave }) => {
             appOrder: null,
           }));
 
-    onSave(resultList); // ✅ 이제 배열로만 넘긴다!
+    onSave(resultList);
     onClose();
   };
 

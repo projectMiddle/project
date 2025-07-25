@@ -12,8 +12,6 @@ const ApprovalSidebar = () => {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
 
-  console.log("승인 쪽 : ", empNo, userInfo);
-
   const [openForms, setOpenForms] = useState(false);
   const [category, setCategory] = useState("기안서");
 
@@ -32,16 +30,26 @@ const ApprovalSidebar = () => {
     list: 0,
     history: 0,
     reference: 0,
+    temporary: 0,
+    retrieved: 0,
+    enforced: 0,
   });
 
-  const myEmpNo = empNo; // 추후 JWT에서 대체
+  const myEmpNo = empNo;
 
-  // 카운트 조회
+  // 뱃지 카운트 조회
   useEffect(() => {
-    fetchApprovalCategoryCounts(myEmpNo)
+    fetchApprovalCategoryCounts(empNo)
       .then((data) => {
-        console.log("사이드바 카운트", data);
-        setCounts(data);
+        console.log("사이드바 카운트 : ", data);
+        setCounts({
+          list: data.list,
+          history: data.history,
+          reference: data.reference,
+          temporary: data.temporary,
+          retrieved: data.retrieved,
+          enforced: data.enforced,
+        });
       })
       .catch((err) => {
         console.error("카운트 조회 실패", err);
@@ -101,6 +109,7 @@ const ApprovalSidebar = () => {
                 { label: "결재상신", path: "submitted" },
                 { label: "결재진행", path: "processing" },
                 { label: "결재완료", path: "completed" },
+                { label: "결재반려", path: "rejected" },
               ].map((item) => (
                 <li
                   key={item.path}
@@ -175,12 +184,6 @@ const ApprovalSidebar = () => {
           )}
         </div>
 
-        {/* 시행 */}
-        <div className="mt-2 flex items-center justify-between px-1 py-2 text-[13px] cursor-pointer hover:bg-gray-200 rounded">
-          <span>시행</span>
-          <span className="ml-2 text-[12px] text-[#6b46c1]">1</span>
-        </div>
-
         {/* 보관함 */}
         <div className="mt-2">
           <div
@@ -201,8 +204,12 @@ const ApprovalSidebar = () => {
                 ) : (
                   <Folder className="w-4 h-4 mr-1 text-[#248CFF]" />
                 )}
-                SolTech 공유보관함
-                <span className="ml-auto bg-[#248CFF] text-white rounded-full px-[7px] text-[11px]">10</span>
+                <Link to={"/intrasoltech/approval/confirm/temporary"}>임시저장함</Link>
+                {counts.temporary > 0 && (
+                  <span className="ml-auto bg-[#248CFF] text-white rounded-full px-[7px] text-[11px]">
+                    {counts.temporary}
+                  </span>
+                )}
               </li>
               <li
                 className="flex items-center py-1 cursor-pointer"
@@ -213,8 +220,12 @@ const ApprovalSidebar = () => {
                 ) : (
                   <Folder className="w-4 h-4 mr-1 text-[#6b46c1]" />
                 )}
-                새로운 보관함
-                <span className="ml-auto bg-[#6b46c1] text-white rounded-full px-[7px] text-[11px]">1</span>
+                <Link to={"/intrasoltech/approval/confirm/retrieved"}>회수함</Link>
+                {counts.retrieved > 0 && (
+                  <span className="ml-auto bg-[#6b46c1] text-white rounded-full px-[7px] text-[11px]">
+                    {counts.retrieved}
+                  </span>
+                )}
               </li>
             </ul>
           )}

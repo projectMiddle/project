@@ -154,7 +154,7 @@ const IntraMainComponent = () => {
           <div className="grid grid-cols-37 w-full bg-gradient-to-b from-[#6b46c1] to-purple-400">
             {/* 사이드 탑 */}
             <aside className="col-span-9 h-full bg-gradient-to-b from-[#6b46c1] to-purple-400 border-b border-gray-300">
-              <div className="justify-center px-6 py-4">
+              <div className="p-10 pt-15">
                 <Information />
               </div>
             </aside>

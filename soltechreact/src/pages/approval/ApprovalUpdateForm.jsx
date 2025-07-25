@@ -1,153 +1,86 @@
+// ApprovalUpdateForm.jsx
 import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { fetchApprovalDocNoCounts, postApproval, removeAppFile } from "../../api/approvalApi"; // 백엔드에 FormData 전송/삭제용 API
+import { fetchApprovalDetail, updateApproval } from "../../api/approvalApi";
 import ApprovalLineModal from "./ApprovalLineModal";
+import { X } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
-import { fetchAllEmployeeInfo } from "../../api/informationApi";
 
-const ApprovalForm = () => {
+const ApprovalUpdateForm = () => {
   const [searchParams] = useSearchParams();
+  const appDocNo = searchParams.get("docNo");
   const navigate = useNavigate();
-  const category = searchParams.get("category") || "";
+
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
-  const [uploadFiles, setUploadFiles] = useState([]); // 첨부파일 상태 추가
+  const [uploadFiles, setUploadFiles] = useState([]);
+  const [information, setInformation] = useState({});
 
-  const [modalMode, setModalMode] = useState("APPROVER"); // or "REFERENCE" 모달 재사용
+  const [approvalLine, setApprovalLine] = useState({
+    approvers: [],
+    references: [],
+  });
 
-  // 문서번호 자동생성용
-  const [appDocNo, setappDocNo] = useState(null);
+  const [showLineModal, setShowLineModal] = useState(false);
+  const [modalMode, setModalMode] = useState("APPROVER");
 
-  // jwt 토큰 값
-  const { userInfo } = useAuth();
-  const empNo = userInfo?.empNo;
-  const deptNo = userInfo?.deptNo;
-
-  const [information, setEmployee] = useState([]); // 첨부파일 상태 추가
-
-  // 전체 정보 출력용
+  // 기존 문서 데이터 fetch
   useEffect(() => {
-    if (!empNo) return;
+    const fetchData = async () => {
+      try {
+        const data = await fetchApprovalDetail(appDocNo);
+        setTitle(data.appDocTitle || "");
+        setContent(data.appDocContent || "");
+        setCategory(data.appDocCategory || "");
+        setIsUrgent(data.appIsUrgent || false);
+        setInformation({ eName: data.eName, deptName: data.deptName });
+        setApprovalLine({
+          approvers: data.approvers || [],
+          references: data.references || [],
+        });
+        setUploadFiles(data.files || []);
+      } catch (err) {
+        console.error("수정용 문서 불러오기 실패", err);
+      }
+    };
+    fetchData();
+  }, [appDocNo]);
 
-    fetchAllEmployeeInfo(empNo).then((info) => {
-      setEmployee(info);
-    });
-  }, [empNo]);
-
-  // 카테고리별 내용 변경
-  const categoryTemplates = {
-    기안서: `※ 기안 목적:\n\n※ 관련 내용:\n\n※ 요청 사항:\n`,
-    보고서: `※ 주요 내용:\n\n※ 결론 및 제안:\n`,
-    연차신청서: `※ 연차 기간: yyyy-mm-dd ~ yyyy-mm-dd\n\n※ 사유:\n`,
-    출장신청서: `※ 출장 일자:\n\n※ 출장 지역:\n\n※ 출장 목적:\n\n※ 비고:\n`,
-    영수증: `※ 영수증 내역을 첨부파일로 반드시 첨부\n\n※ 결재 일자:\n\n※ 사용 내역:\n\n※ 비고:\n`,
-  };
-
-  // 본문 내용 저장용
-  useEffect(() => {
-    setContent(categoryTemplates[category] || "");
-  }, [category]);
-
-  // 문서 번호용
-  useEffect(() => {
-    // 문서번호 미리 불러오기
-    fetchApprovalDocNoCounts().then((res) => {
-      setappDocNo(res); // 문서번호 상태에 저장
-    });
-  }, []);
-
-  // 전자결재 생성용
-  const handleSubmit = async () => {
-    if (!empNo || !deptNo) return alert("사번과 부서번호를 입력하세요");
-    if (!title) return alert("제목을 입력하세요");
-
-    if (approvalLine.approvers.length === 0) return alert("결재선을 지정해 주세요");
-
+  const handleUpdateSubmit = async () => {
     const formData = new FormData();
-    formData.append("appDocCategory", category);
     formData.append("appDocTitle", title);
     formData.append("appDocContent", content);
-
-    console.log("긴급 여부 : ", isUrgent);
+    formData.append("appDocCategory", category);
     formData.append("appIsUrgent", isUrgent);
-
-    formData.append("appIsFinalized", false);
-    formData.append("appIsTemporary", false);
-    formData.append("empNo", empNo);
-    formData.append("deptNo", deptNo);
-
+    formData.append("appIsTemporary", false); // 수정은 항상 상신용
     uploadFiles.forEach((file) => formData.append("uploadFiles", file));
 
-    // 결재선 데이터 같이 전송
     approvalLine.approvers.forEach((approver, idx) => {
       formData.append(`approvers[${idx}].empNo`, approver.empNo);
       formData.append(`approvers[${idx}].appRoleJobNo`, approver.appRoleJobNo);
       formData.append(`approvers[${idx}].appOrder`, approver.appOrder);
     });
 
-    approvalLine.references.forEach((reference, idx) => {
-      formData.append(`references[${idx}].empNo`, reference.empNo);
-      formData.append(`references[${idx}].appRoleJobNo`, reference.appRoleJobNo);
-
-      // null 또는 undefined면 아예 추가 X
-      if (reference.appOrder !== null && reference.appOrder !== undefined) {
-        formData.append(`references[${idx}].appOrder`, reference.appOrder);
+    approvalLine.references.forEach((ref, idx) => {
+      formData.append(`references[${idx}].empNo`, ref.empNo);
+      formData.append(`references[${idx}].appRoleJobNo`, ref.appRoleJobNo);
+      if (ref.appOrder !== null && ref.appOrder !== undefined) {
+        formData.append(`references[${idx}].appOrder`, ref.appOrder);
       }
     });
 
     try {
-      await postApproval(empNo, formData);
-      alert("문서가 성공적으로 제출되었습니다");
+      await updateApproval(appDocNo, formData);
+      alert("문서 수정이 완료되었습니다.");
       navigate("/intrasoltech/approval/request/submitted");
-    } catch (error) {
-      console.error("문서 제출 실패", error);
-      alert("제출 중 오류 발생");
-    }
-  };
-
-  // 임시저장용
-  // ✅ 1. 임시저장 처리 함수 추가
-  const handleSaveAsTemporary = async () => {
-    if (!empNo || !deptNo) return alert("사번과 부서번호를 입력하세요");
-    if (!title) return alert("제목을 입력하세요");
-
-    const formData = new FormData();
-    formData.append("appDocCategory", category);
-    formData.append("appDocTitle", title);
-    formData.append("appDocContent", content);
-    formData.append("appIsUrgent", isUrgent);
-    formData.append("appIsFinalized", false);
-    formData.append("appIsTemporary", "true"); // ✅ 임시저장 표시
-    formData.append("empNo", empNo);
-    formData.append("deptNo", deptNo);
-
-    uploadFiles.forEach((file) => formData.append("uploadFiles", file));
-
-    // 결재선이 없어도 저장 가능하게끔 → optional
-    approvalLine.approvers.forEach((approver, idx) => {
-      formData.append(`approvers[${idx}].empNo`, approver.empNo);
-      formData.append(`approvers[${idx}].appRoleJobNo`, approver.appRoleJobNo);
-      formData.append(`approvers[${idx}].appOrder`, approver.appOrder);
-    });
-
-    approvalLine.references.forEach((reference, idx) => {
-      formData.append(`references[${idx}].empNo`, reference.empNo);
-      if (reference.appRoleJobNo) formData.append(`references[${idx}].appRoleJobNo`, reference.appRoleJobNo);
-      if (reference.appOrder !== null && reference.appOrder !== undefined)
-        formData.append(`references[${idx}].appOrder`, reference.appOrder);
-    });
-
-    try {
-      await postApproval(empNo, formData);
-      alert("임시저장 완료되었습니다.");
-      navigate("/intrasoltech/approval/confirm/temporary");
-    } catch (error) {
-      console.error("임시저장 실패", error);
-      alert("임시저장 중 오류 발생");
+    } catch (err) {
+      console.error("문서 수정 실패", err);
+      alert("수정 중 오류 발생");
     }
   };
 
@@ -156,13 +89,6 @@ const ApprovalForm = () => {
     updated.splice(index, 1);
     setUploadFiles(updated);
   };
-
-  // 결재선 지정
-  const [approvalLine, setApprovalLine] = useState({
-    approvers: [],
-    references: [],
-  });
-  const [showLineModal, setShowLineModal] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-[13px] text-black">
@@ -453,17 +379,9 @@ const ApprovalForm = () => {
               </label>
             </div>
 
-            {/* ✅ 임시저장 버튼 추가 */}
-            <button
-              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2.5 rounded cursor-pointer transition-colors"
-              onClick={handleSaveAsTemporary}
-            >
-              임시저장
-            </button>
-
             <button
               className="bg-[#7e5be3] hover:bg-[#6b46c1] text-white px-6 py-2.5 rounded cursor-pointer transition-colors"
-              onClick={handleSubmit}
+              onClick={handleUpdateSubmit}
             >
               기안
             </button>
@@ -488,4 +406,4 @@ const ApprovalForm = () => {
   );
 };
 
-export default ApprovalForm;
+export default ApprovalUpdateForm;

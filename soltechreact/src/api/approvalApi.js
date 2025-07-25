@@ -2,20 +2,10 @@ import api from "./axios";
 
 export const API_SERVER_HOST = "/intrasoltech/approval";
 
-// 결재 서류 리스트 요청
-// export const fetchApprovalList = async (status = "all", page = 1, size = 10) => {
-//   const res = await axios.get(`${API_SERVER_HOST}/list`, {
-//     params: { status, page, size },
-//     // 추후 empNo 삭제 예정, jwt 토큰 연동시
-//   });
-//   return res.data;
-// };
-
-// ============================ 테스트용 : 결재 서류 리스트 요청 ============================
+// 결재 문서 리스트 조회 (상신함 / 수신함 / 시행함 / 보관함)
 export const fetchApprovalList = async (status, page, size, empNo) => {
   const res = await api.get(`${API_SERVER_HOST}/list`, {
     params: { status, page, size, empNo },
-    // 추후 empNo 삭제 예정, jwt 토큰 연동시
   });
   return res.data;
 };
@@ -80,6 +70,16 @@ export const processApproval = async ({ appDocNo, empNo, status, comment }) => {
   return res.data;
 };
 
+// 문서 수정 API - FormData 기반 PUT 요청
+export const updateApproval = async (appDocNo, formData) => {
+  const res = await api.put(`${API_SERVER_HOST}/modify/${appDocNo}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};
+
 // 삭제 요청
 export const deleteApproval = async (appDocNo) => {
   const response = await api.delete(`${API_SERVER_HOST}/delete/${appDocNo}`);
@@ -91,5 +91,11 @@ export const fetchApprovalCategoryCounts = async (empNo) => {
   const res = await api.get(`${API_SERVER_HOST}/categorycount`, {
     params: { empNo },
   });
+  return res.data;
+};
+
+// 전자결재 문서번호용
+export const fetchApprovalDocNoCounts = async () => {
+  const res = await api.get(`${API_SERVER_HOST}/app-doc-auto-no`);
   return res.data;
 };

@@ -50,56 +50,91 @@ public class ApprovalService {
 
         private final AppFileService appFileService;
 
-        // ======================= 읽기 10개씩 (실제 사용예정) =======================
-        // public PageResultDTO<ApprovalDocumentDTO> getApprovalList(PageRequestDTO
-        // pageRequestDTO, String status) {
-
-        // Pageable pageable = PageRequest.of(
-        // pageRequestDTO.getPage() - 1,
-        // pageRequestDTO.getSize(),
-        // Sort.by("appDocNo").descending());
-
-        // Page<ApprovalDocument> result;
-
-        // // 상태 분기 처리
-        // if ("submitted".equalsIgnoreCase(status)) {
-        // result = approvalDocumentRepository.findByAppIsFinalizedFalse(pageable);
-        // } else if ("processing".equalsIgnoreCase(status)) {
-        // result = approvalDocumentRepository.findProcessingDocs(pageable);
-        // } else if ("completed".equalsIgnoreCase(status)) {
-        // result = approvalDocumentRepository.findByAppIsFinalizedTrue(pageable);
-        // } else {
-        // result = approvalDocumentRepository.findAll(pageable); // 기본 전체 조회
-        // }
-
-        // List<ApprovalDocumentDTO> dtoList = result.stream()
-        // .map(this::entityToDto)
-        // .collect(Collectors.toList());
-
-        // return PageResultDTO.<ApprovalDocumentDTO>withAll()
-        // .dtoList(dtoList)
-        // .totalCount(result.getTotalElements())
-        // .pageRequestDTO(pageRequestDTO)
-        // .build();
-        // }
-        // ======================================================================
-
-        // ======================= 테스트용, 추후 삭제 예정 =======================
-        public PageResultDTO<ApprovalDocumentDTO> getApprovalList(PageRequestDTO pageRequestDTO, String status,
-                        Long empNo) {
-                Pageable pageable = PageRequest.of(
-                                pageRequestDTO.getPage() - 1,
-                                pageRequestDTO.getSize(),
-                                Sort.by("appDocNo").descending());
-
+        // 상신함
+        public PageResultDTO<ApprovalDocumentDTO> getMyDraftBoxList(PageRequestDTO dto, String status, Long empNo) {
+                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize(), Sort.by("appDocNo").descending());
                 Page<ApprovalDocument> result;
 
                 if ("submitted".equalsIgnoreCase(status)) {
-                        result = approvalDocumentRepository.findByAppIsFinalizedFalseAndEmpNoEmpNo(empNo, pageable);
+                        result = approvalDocumentRepository.findSubmittedDocsByEmpNoAndAppStatusNot(empNo, pageable);
                 } else if ("processing".equalsIgnoreCase(status)) {
-                        result = approvalDocumentRepository.findProcessingDocsByEmpNo(empNo, pageable);
+                        result = approvalDocumentRepository.findProcessingDocsByEmpNoAndAppStatusNot(empNo, pageable);
                 } else if ("completed".equalsIgnoreCase(status)) {
                         result = approvalDocumentRepository.findByAppIsFinalizedTrueAndEmpNoEmpNo(empNo, pageable);
+                } else if ("rejected".equalsIgnoreCase(status)) {
+                        result = approvalDocumentRepository.findRejectedDocsByEmpNo(empNo, pageable);
+                } else {
+                        result = approvalDocumentRepository.findByEmpNoEmpNo(empNo, pageable);
+                }
+
+                List<ApprovalDocumentDTO> dtoList = result.stream()
+                                .map(this::entityToDto)
+                                .filter(doc -> doc.getAppIsTemporary() != null && !doc.getAppIsTemporary())
+                                .collect(Collectors.toList());
+
+                return PageResultDTO.<ApprovalDocumentDTO>withAll()
+                                .dtoList(dtoList)
+                                .totalCount(result.getTotalElements())
+                                .pageRequestDTO(dto)
+                                .build();
+        }
+
+        // 수신함
+        public PageResultDTO<ApprovalDocumentDTO> getMyReceiveBoxList(PageRequestDTO dto, String status, Long empNo) {
+                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+
+                Page<AppProcessing> result;
+
+                if ("list".equalsIgnoreCase(status)) {
+                        result = appProcessingRepository.findInboxByApprover(empNo, AppRoleType.APPROVER,
+                                        AppStatus.PENDING, pageable);
+                } else if ("history".equalsIgnoreCase(status)) {
+                        List<AppStatus> statuses = List.of(AppStatus.APPROVED, AppStatus.REJECTED);
+                        result = appProcessingRepository.findApprovalHistoryByApprover(empNo, AppRoleType.APPROVER,
+                                        statuses, pageable);
+                } else { // reference
+                        result = appProcessingRepository.findReferencesByEmpNo(empNo, AppRoleType.REFERENCE, pageable);
+                }
+
+                List<ApprovalDocumentDTO> dtoList = result.stream()
+                                .map(proc -> this.entityToDto(proc.getAppDocNo()))
+                                .collect(Collectors.toList());
+
+                return PageResultDTO.<ApprovalDocumentDTO>withAll()
+                                .dtoList(dtoList)
+                                .totalCount(result.getTotalElements())
+                                .pageRequestDTO(dto)
+                                .build();
+        }
+
+        // 시행함
+        public PageResultDTO<ApprovalDocumentDTO> getMyEnforcedBoxList(PageRequestDTO dto, Long empNo) {
+                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+
+                Page<ApprovalDocument> result = approvalDocumentRepository.findByAppIsFinalizedTrueAndEmpNoEmpNo(empNo,
+                                pageable);
+
+                List<ApprovalDocumentDTO> dtoList = result.stream()
+                                .map(this::entityToDto)
+                                .collect(Collectors.toList());
+
+                return PageResultDTO.<ApprovalDocumentDTO>withAll()
+                                .dtoList(dtoList)
+                                .totalCount(result.getTotalElements())
+                                .pageRequestDTO(dto)
+                                .build();
+        }
+
+        // 보관함
+        public PageResultDTO<ApprovalDocumentDTO> getMyStorageBoxList(PageRequestDTO dto, String status, Long empNo) {
+                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+
+                Page<ApprovalDocument> result;
+
+                if ("temporary".equalsIgnoreCase(status)) {
+                        result = approvalDocumentRepository.findTemporaryDocsByEmpNo(empNo, pageable);
+                } else if ("retrieved".equalsIgnoreCase(status)) {
+                        result = approvalDocumentRepository.findRetrievedDocsByEmpNo(empNo, pageable);
                 } else {
                         result = approvalDocumentRepository.findByEmpNoEmpNo(empNo, pageable);
                 }
@@ -111,104 +146,9 @@ public class ApprovalService {
                 return PageResultDTO.<ApprovalDocumentDTO>withAll()
                                 .dtoList(dtoList)
                                 .totalCount(result.getTotalElements())
-                                .pageRequestDTO(pageRequestDTO)
-                                .build();
-        }
-        // ======================================================================
-
-        // ======================= 결재자 / 참조자 기준 수신함 내역 =======================
-        // 수신결재함
-        public PageResultDTO<ApprovalDocumentDTO> getInboxList(PageRequestDTO dto, Long empNo) {
-                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
-
-                log.info("수신결재함 조회 - empNo: {}, page: {}", empNo, dto.getPage());
-
-                Page<AppProcessing> result = appProcessingRepository.findInboxByApprover(
-                                empNo, AppRoleType.APPROVER, AppStatus.PENDING, pageable);
-
-                List<ApprovalDocumentDTO> dtoList = result.get().map(proc -> {
-                        ApprovalDocument doc = proc.getAppDocNo();
-                        return ApprovalDocumentDTO.builder()
-                                        .appDocNo(doc.getAppDocNo())
-                                        .appDocTitle(doc.getAppDocTitle())
-                                        .appDocCategory(doc.getAppDocCategory())
-                                        .appIsUrgent(doc.isAppIsUrgent())
-                                        .appIsFinalized(doc.isAppIsFinalized())
-                                        .appDocDate(doc.getAppDocDate())
-                                        .eName(doc.getEmpNo().getEName())
-                                        .deptName(doc.getEmpNo().getDeptNo().getDeptName())
-                                        .build();
-                }).collect(Collectors.toList());
-
-                return PageResultDTO.<ApprovalDocumentDTO>withAll()
-                                .dtoList(dtoList)
-                                .totalCount(result.getTotalElements())
                                 .pageRequestDTO(dto)
                                 .build();
         }
-
-        // 결재내역
-        public PageResultDTO<ApprovalDocumentDTO> getApprovalHistory(PageRequestDTO dto, Long empNo) {
-                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
-
-                log.info("결재내역 조회 - empNo: {}, page: {}", empNo, dto.getPage());
-
-                List<AppStatus> statuses = List.of(AppStatus.APPROVED, AppStatus.REJECTED);
-
-                Page<AppProcessing> result = appProcessingRepository.findApprovalHistoryByApprover(
-                                empNo, AppRoleType.APPROVER, statuses, pageable);
-
-                List<ApprovalDocumentDTO> dtoList = result.get().map(proc -> {
-                        ApprovalDocument doc = proc.getAppDocNo();
-                        return ApprovalDocumentDTO.builder()
-                                        .appDocNo(doc.getAppDocNo())
-                                        .appDocTitle(doc.getAppDocTitle())
-                                        .appDocCategory(doc.getAppDocCategory())
-                                        .appIsUrgent(doc.isAppIsUrgent())
-                                        .appIsFinalized(doc.isAppIsFinalized())
-                                        .appDocDate(doc.getAppDocDate())
-                                        .eName(doc.getEmpNo().getEName())
-                                        .deptName(doc.getEmpNo().getDeptNo().getDeptName())
-                                        .build();
-                }).collect(Collectors.toList());
-
-                return PageResultDTO.<ApprovalDocumentDTO>withAll()
-                                .dtoList(dtoList)
-                                .totalCount(result.getTotalElements())
-                                .pageRequestDTO(dto)
-                                .build();
-        }
-
-        // 수신참조함
-        public PageResultDTO<ApprovalDocumentDTO> getReferenceList(PageRequestDTO dto, Long empNo) {
-                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
-
-                log.info("수신참조함 조회 - empNo: {}, page: {}", empNo, dto.getPage());
-
-                Page<AppProcessing> result = appProcessingRepository.findReferencesByEmpNo(
-                                empNo, AppRoleType.REFERENCE, pageable);
-
-                List<ApprovalDocumentDTO> dtoList = result.get().map(proc -> {
-                        ApprovalDocument doc = proc.getAppDocNo();
-                        return ApprovalDocumentDTO.builder()
-                                        .appDocNo(doc.getAppDocNo())
-                                        .appDocTitle(doc.getAppDocTitle())
-                                        .appDocCategory(doc.getAppDocCategory())
-                                        .appIsUrgent(doc.isAppIsUrgent())
-                                        .appIsFinalized(doc.isAppIsFinalized())
-                                        .appDocDate(doc.getAppDocDate())
-                                        .eName(doc.getEmpNo().getEName())
-                                        .deptName(doc.getEmpNo().getDeptNo().getDeptName())
-                                        .build();
-                }).collect(Collectors.toList());
-
-                return PageResultDTO.<ApprovalDocumentDTO>withAll()
-                                .dtoList(dtoList)
-                                .totalCount(result.getTotalElements())
-                                .pageRequestDTO(dto)
-                                .build();
-        }
-        // ======================================================================
 
         // 생성
         public Long createAppDocument(AppDocWithFileDTO dto) {
@@ -227,6 +167,7 @@ public class ApprovalService {
                                                 .appDocContent(dto.getAppDocContent())
                                                 .appIsUrgent(dto.isAppIsUrgent())
                                                 .appIsFinalized(false)
+                                                .appIsTemporary(dto.getAppIsTemporary())
                                                 .empNo(emp)
                                                 .deptNo(dept)
                                                 .appDocDate(LocalDate.now())
@@ -239,21 +180,100 @@ public class ApprovalService {
                 }
 
                 // 결재선 저장
-                List<AppProcessingDTO> approvers = dto.getApprovers();
-                if (approvers == null || approvers.size() != 3) {
-                        throw new IllegalArgumentException("결재자는 반드시 3명이어야 합니다.");
-                }
-                saveAppLine(approvers, savedDoc, AppRoleType.APPROVER);
+                if (!dto.getAppIsTemporary()) { // 임시저장이 아닐 경우만 결재자 저장
+                        List<AppProcessingDTO> approvers = dto.getApprovers();
+                        if (approvers == null || approvers.size() != 3) {
+                                throw new IllegalArgumentException("결재자는 반드시 3명이어야 합니다.");
+                        }
+                        saveAppLine(approvers, savedDoc, AppRoleType.APPROVER);
 
-                List<AppProcessingDTO> references = dto.getReferences();
-                if (references != null && references.size() > 3) {
-                        throw new IllegalArgumentException("참조자는 최대 3명까지 가능합니다.");
-                }
-                if (references != null && !references.isEmpty()) {
-                        saveAppLine(references, savedDoc, AppRoleType.REFERENCE);
+                        List<AppProcessingDTO> references = dto.getReferences();
+                        if (references != null && references.size() > 3) {
+                                throw new IllegalArgumentException("참조자는 최대 3명까지 가능합니다.");
+                        }
+                        if (references != null && !references.isEmpty()) {
+                                saveAppLine(references, savedDoc, AppRoleType.REFERENCE);
+                        }
                 }
 
                 return savedDoc.getAppDocNo();
+        }
+
+        // 임시저장 문서 조회 후 생성
+        public void modifyAppDocument(Long appDocNo, AppDocWithFileDTO dto) {
+
+                log.info("문서 수정 시작 - appDocNo: {}", appDocNo);
+
+                // 1. 기존 문서 조회
+                ApprovalDocument old = approvalDocumentRepository.findById(appDocNo)
+                                .orElseThrow(() -> new IllegalArgumentException("문서가 존재하지 않음"));
+
+                // 2. 새로운 문서 객체 생성 (builder 기반)
+                ApprovalDocument updated = ApprovalDocument.builder()
+                                .appDocNo(old.getAppDocNo()) // PK 유지
+                                .appDocTitle(dto.getAppDocTitle())
+                                .appDocContent(dto.getAppDocContent())
+                                .appDocCategory(dto.getAppDocCategory())
+                                .appIsUrgent(dto.isAppIsUrgent())
+                                .appIsTemporary(dto.getAppIsTemporary())
+                                .appIsFinalized(false)
+                                .appDocDate(old.getAppDocDate()) // 기존 날짜 유지
+                                .empNo(old.getEmpNo()) // 기안자 유지
+                                .deptNo(old.getDeptNo()) // 부서 유지
+                                .build();
+
+                // 3. 기존 결재선 삭제
+                appProcessingRepository.deleteByAppDocNo(old);
+                log.info("기존 결재선 삭제 완료");
+
+                // 4. 결재선 재등록
+                if (dto.getApprovers() != null) {
+                        dto.getApprovers().forEach(approver -> {
+                                AppProcessing proc = AppProcessing.builder()
+                                                .appDocNo(updated)
+                                                .empNo(Employee.builder().empNo(approver.getEmpNo()).build())
+                                                .appRoleJobNo(approver.getAppRoleJobNo())
+                                                .appRoleType(AppRoleType.APPROVER)
+                                                .appOrder(approver.getAppOrder())
+                                                .appStatus(AppStatus.PENDING)
+                                                .build();
+                                appProcessingRepository.save(proc);
+                        });
+                }
+
+                if (dto.getReferences() != null) {
+                        dto.getReferences().forEach(ref -> {
+                                AppProcessing proc = AppProcessing.builder()
+                                                .appDocNo(updated)
+                                                .empNo(Employee.builder().empNo(ref.getEmpNo()).build())
+                                                .appRoleJobNo(ref.getAppRoleJobNo())
+                                                .appRoleType(AppRoleType.REFERENCE)
+                                                .appStatus(AppStatus.PENDING)
+                                                .build();
+                                appProcessingRepository.save(proc);
+                        });
+                }
+
+                log.info("결재선 등록 완료");
+
+                // 5. 기존 첨부파일 삭제
+                List<AppFile> files = appFileRepository.findByAppDocNo(updated);
+                for (AppFile file : files) {
+                        String fullPath = file.getAppFilePath() + "/" + file.getAppFileUuid() + "_"
+                                        + file.getAppFileName();
+                        appFileService.deleteFile(fullPath);
+                }
+                log.info("기존 첨부파일 삭제 완료");
+
+                // 6. 첨부파일 재등록
+                if (dto.getUploadFiles() != null) {
+                        appFileService.saveFiles(appDocNo, dto.getUploadFiles());
+                        log.info("첨부파일 재등록 완료");
+                }
+
+                // 7. 문서 저장
+                approvalDocumentRepository.save(updated);
+                log.info("문서 저장 완료 - appDocNo: {}", appDocNo);
         }
 
         // 삭제
@@ -364,6 +384,7 @@ public class ApprovalService {
                                 .files(files.stream().map(AppFileDTO::new).toList())
                                 .approvers(approvers)
                                 .references(references)
+                                .appIsTemporary(doc.getAppIsTemporary())
                                 .build();
         }
 
@@ -429,8 +450,20 @@ public class ApprovalService {
 
         }
 
+        // 결재 문서 번호 가져오기
+        @Transactional
+        public Long getNextAppDocNo() {
+                Long maxDocNo = approvalDocumentRepository.findMaxAppDocNo();
+                return (maxDocNo != null) ? maxDocNo + 1 : 1L;
+        }
+
         // 결재서류 entity -> dto
         private ApprovalDocumentDTO entityToDto(ApprovalDocument entity) {
+                List<AppProcessing> processingList = appProcessingRepository.findByAppDocNo(entity);
+
+                boolean isRejected = processingList.stream()
+                                .anyMatch(proc -> proc.getAppStatus() == AppStatus.REJECTED);
+
                 return ApprovalDocumentDTO.builder()
                                 .appDocNo(entity.getAppDocNo())
                                 .appDocTitle(entity.getAppDocTitle())
@@ -438,11 +471,11 @@ public class ApprovalService {
                                 .appIsUrgent(entity.isAppIsUrgent())
                                 .appIsFinalized(entity.isAppIsFinalized())
                                 .appDocDate(entity.getAppDocDate())
+                                .appIsTemporary(entity.getAppIsTemporary())
                                 .eName(entity.getEmpNo().getEName())
                                 .deptName(entity.getDeptNo().getDeptName())
+                                .isRejected(isRejected)
                                 .build();
         }
-
-        // 결재자/참조자 처리 entity -> dto
 
 }

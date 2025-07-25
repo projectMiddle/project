@@ -41,9 +41,6 @@ const ApprovalDetail = () => {
     return <div className="flex justify-center items-center h-[400px] text-gray-500 text-lg">문서 로딩 중...</div>;
   }
 
-  // 조건 분기 : 결재자 / 기안자, 참조자
-  const isApprover = doc?.approvers?.some((approver) => approver.empNo === myEmpNo && approver.status === "PENDING");
-
   const isDrafter = doc?.empNo === myEmpNo;
 
   const isReference = doc?.references?.some((ref) => ref.empNo === myEmpNo);
@@ -66,13 +63,30 @@ const ApprovalDetail = () => {
     }
   };
 
+  // 결재 승인 or 반려
+  const isMyTurn = () => {
+    const myIndex = doc.approvers.findIndex((a) => a.empNo === myEmpNo);
+    if (myIndex === -1) return false;
+
+    // 앞 순번 중 하나라도 반려면 내 결재 불가
+    const hasRejectionBefore = doc.approvers.slice(0, myIndex).some((a) => a.status === "REJECTED");
+    if (hasRejectionBefore) return false;
+
+    // 앞 순번 중 승인되지 않은 사람 있으면 내 차례가 아님
+    const allBeforeApproved = doc.approvers.slice(0, myIndex).every((a) => a.status === "APPROVED");
+    return allBeforeApproved && doc.approvers[myIndex].status === "PENDING";
+  };
+
+  // 조건 분기 : 결재자 / 기안자, 참조자
+  const isApprover = isMyTurn();
+
   // 코멘트
   const approverCommentsText = doc.approvers.map((a) => `${a.empName}: ${a.comment || ""}`).join("\n");
 
   const currentApprover = doc.approvers.find((a) => a.empNo === myEmpNo && a.status === "PENDING");
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full min-h-screen">
       <div className="bg-[#9776eb] text-white font-bold text-[17px] text-center py-[14px]">&nbsp;</div>
 
       <div className="flex flex-row flex-1">
@@ -250,22 +264,37 @@ const ApprovalDetail = () => {
             })}
           </div>
           {/* 하단 버튼 */}
-          {isApprover && !isDrafter && !isReference ? (
-            <div className="absolute bottom-0 left-0 w-full bg-gray-100 px-4 py-3 border-t border-gray-300 flex justify-end gap-2">
-              <Link to={"/intrasoltech/approval"}>
-                <button
-                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded"
-                  onClick={() => handleApproval("APPROVED")}
-                >
-                  승인
-                </button>
-              </Link>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded"
-                onClick={() => handleApproval("REJECTED")}
-              >
-                반려
-              </button>
+          {/* 하단 버튼 영역 통합 */}
+          {(isApprover && !isDrafter && !isReference) || (isDrafter && doc.appIsTemporary) ? (
+            <div className="absolute bottom-0 left-0 w-full bg-gray-100 px-4 py-3 border-t border-gray-300 flex justify-end gap-2 z-10">
+              {/* 승인/반려 버튼 */}
+              {isApprover && !isDrafter && !isReference && (
+                <>
+                  <Link to={"/intrasoltech/approval"}>
+                    <button
+                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded"
+                      onClick={() => handleApproval("APPROVED")}
+                    >
+                      승인
+                    </button>
+                  </Link>
+                  <Link to={"/intrasoltech/approval"}>
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded"
+                      onClick={() => handleApproval("REJECTED")}
+                    >
+                      반려
+                    </button>
+                  </Link>
+                </>
+              )}
+
+              {/* 수정 버튼 */}
+              {isDrafter && doc.appIsTemporary && (
+                <Link to={`/intrasoltech/approval/form/update?docNo=${doc.appDocNo}`}>
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded">수정</button>
+                </Link>
+              )}
             </div>
           ) : null}
         </aside>
