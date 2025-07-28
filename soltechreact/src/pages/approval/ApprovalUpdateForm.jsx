@@ -78,6 +78,7 @@ const ApprovalUpdateForm = () => {
       await updateApproval(appDocNo, formData);
       alert("문서 수정이 완료되었습니다.");
       navigate("/intrasoltech/approval/request/submitted");
+      window.location.reload();
     } catch (err) {
       console.error("문서 수정 실패", err);
       alert("수정 중 오류 발생");

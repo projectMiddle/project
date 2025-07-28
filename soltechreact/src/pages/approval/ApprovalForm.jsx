@@ -103,6 +103,7 @@ const ApprovalForm = () => {
       await postApproval(empNo, formData);
       alert("문서가 성공적으로 제출되었습니다");
       navigate("/intrasoltech/approval/request/submitted");
+      window.location.reload();
     } catch (error) {
       console.error("문서 제출 실패", error);
       alert("제출 중 오류 발생");
@@ -145,6 +146,7 @@ const ApprovalForm = () => {
       await postApproval(empNo, formData);
       alert("임시저장 완료되었습니다.");
       navigate("/intrasoltech/approval/confirm/temporary");
+      window.location.reload();
     } catch (error) {
       console.error("임시저장 실패", error);
       alert("임시저장 중 오류 발생");

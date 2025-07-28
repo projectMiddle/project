@@ -58,6 +58,7 @@ const ApprovalDetail = () => {
 
       const res = await processApproval(payload);
       console.log("결재 처리 성공:", res.data);
+      window.location.reload();
     } catch (err) {
       console.error("결재 처리 실패", err);
     }
@@ -277,7 +278,7 @@ const ApprovalDetail = () => {
               {/* 승인/반려 버튼 */}
               {isApprover && !isDrafter && !isReference && (
                 <>
-                  <Link to={"/intrasoltech/approval"}>
+                  <Link to={"/intrasoltech/approval/confirm/list?category=전체문서"}>
                     <button
                       className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded"
                       onClick={() => handleApproval("APPROVED")}
@@ -285,7 +286,7 @@ const ApprovalDetail = () => {
                       승인
                     </button>
                   </Link>
-                  <Link to={"/intrasoltech/approval"}>
+                  <Link to={"/intrasoltech/approval/confirm/list?category=전체문서"}>
                     <button
                       className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded"
                       onClick={() => handleApproval("REJECTED")}
