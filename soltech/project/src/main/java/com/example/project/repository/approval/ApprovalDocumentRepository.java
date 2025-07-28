@@ -9,9 +9,11 @@ import org.springframework.data.repository.query.Param;
 import com.example.project.entity.Employee;
 import com.example.project.entity.approval.ApprovalDocument;
 import com.example.project.repository.approval.impl.ApprovalCountRepository;
+import com.example.project.repository.approval.impl.ApprovalDocumentRepositoryCustom;
 
 public interface ApprovalDocumentRepository
-                extends JpaRepository<ApprovalDocument, Long>, ApprovalCountRepository {
+                extends JpaRepository<ApprovalDocument, Long>, ApprovalCountRepository,
+                ApprovalDocumentRepositoryCustom {
 
         // 결재 완료된 문서
         Page<ApprovalDocument> findByAppIsFinalizedTrue(Pageable pageable);

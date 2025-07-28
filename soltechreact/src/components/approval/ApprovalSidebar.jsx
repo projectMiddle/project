@@ -35,8 +35,6 @@ const ApprovalSidebar = () => {
     enforced: 0,
   });
 
-  const myEmpNo = empNo;
-
   // 뱃지 카운트 조회
   useEffect(() => {
     fetchApprovalCategoryCounts(empNo)

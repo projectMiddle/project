@@ -52,8 +52,9 @@ public class ApprovalService {
 
         // 상신함
         public PageResultDTO<ApprovalDocumentDTO> getMyDraftBoxList(PageRequestDTO dto, String status, Long empNo) {
-                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize(), Sort.by("appDocNo").descending());
-                Page<ApprovalDocument> result;
+                Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+                Page<ApprovalDocument> result = approvalDocumentRepository.findDocsWithUrgentSorted(empNo, status,
+                                pageable);
 
                 if ("submitted".equalsIgnoreCase(status)) {
                         result = approvalDocumentRepository.findSubmittedDocsByEmpNoAndAppStatusNot(empNo, pageable);
@@ -83,21 +84,29 @@ public class ApprovalService {
         public PageResultDTO<ApprovalDocumentDTO> getMyReceiveBoxList(PageRequestDTO dto, String status, Long empNo) {
                 Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
 
-                Page<AppProcessing> result;
+                Page<AppProcessing> procPage;
 
                 if ("list".equalsIgnoreCase(status)) {
-                        result = appProcessingRepository.findInboxByApprover(empNo, AppRoleType.APPROVER,
+                        procPage = appProcessingRepository.findInboxByApprover(empNo, AppRoleType.APPROVER,
                                         AppStatus.PENDING, pageable);
                 } else if ("history".equalsIgnoreCase(status)) {
                         List<AppStatus> statuses = List.of(AppStatus.APPROVED, AppStatus.REJECTED);
-                        result = appProcessingRepository.findApprovalHistoryByApprover(empNo, AppRoleType.APPROVER,
+                        procPage = appProcessingRepository.findApprovalHistoryByApprover(empNo, AppRoleType.APPROVER,
                                         statuses, pageable);
-                } else { // reference
-                        result = appProcessingRepository.findReferencesByEmpNo(empNo, AppRoleType.REFERENCE, pageable);
+                } else {
+                        procPage = appProcessingRepository.findReferencesByEmpNo(empNo, AppRoleType.REFERENCE,
+                                        pageable);
                 }
 
+                List<Long> appDocNos = procPage.stream()
+                                .map(proc -> proc.getAppDocNo().getAppDocNo())
+                                .collect(Collectors.toList());
+
+                Page<ApprovalDocument> result = approvalDocumentRepository.findDocsForReceiveSorted(appDocNos,
+                                pageable);
+
                 List<ApprovalDocumentDTO> dtoList = result.stream()
-                                .map(proc -> this.entityToDto(proc.getAppDocNo()))
+                                .map(this::entityToDto)
                                 .collect(Collectors.toList());
 
                 return PageResultDTO.<ApprovalDocumentDTO>withAll()
@@ -111,7 +120,7 @@ public class ApprovalService {
         public PageResultDTO<ApprovalDocumentDTO> getMyEnforcedBoxList(PageRequestDTO dto, Long empNo) {
                 Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
 
-                Page<ApprovalDocument> result = approvalDocumentRepository.findByAppIsFinalizedTrueAndEmpNoEmpNo(empNo,
+                Page<ApprovalDocument> result = approvalDocumentRepository.findDocsWithUrgentSorted(empNo, "enforced",
                                 pageable);
 
                 List<ApprovalDocumentDTO> dtoList = result.stream()
@@ -129,7 +138,8 @@ public class ApprovalService {
         public PageResultDTO<ApprovalDocumentDTO> getMyStorageBoxList(PageRequestDTO dto, String status, Long empNo) {
                 Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
 
-                Page<ApprovalDocument> result;
+                Page<ApprovalDocument> result = approvalDocumentRepository.findDocsWithUrgentSorted(empNo, status,
+                                pageable);
 
                 if ("temporary".equalsIgnoreCase(status)) {
                         result = approvalDocumentRepository.findTemporaryDocsByEmpNo(empNo, pageable);

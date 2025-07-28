@@ -107,8 +107,15 @@ const ApprovalDetail = () => {
                   <div className="flex">
                     {doc.approvers.map((approver, index) => (
                       <div key={index} className="flex flex-col items-center">
-                        {/* 정사각형 도장 자리 */}
-                        <div className="w-[90px] h-[90px] border border-gray-300 bg-white rounded-r-none rounded-l-none"></div>
+                        <div className="w-[90px] h-[90px] border border-gray-300 bg-white rounded-r-none rounded-l-none overflow-hidden">
+                          {approver.status === "APPROVED" && (
+                            <img src="/approval/approve.jpg" alt="승인" className="w-full h-full object-cover" />
+                          )}
+                          {approver.status === "REJECTED" && (
+                            <img src="/approval/reject.jpg" alt="반려" className="w-full h-full object-cover" />
+                          )}
+                        </div>
+
                         {/* 이름 출력 */}
                         <div className="text-[13px] text-center mt-1 w-[90px]">{approver.empName}</div>
                       </div>
@@ -182,7 +189,7 @@ const ApprovalDetail = () => {
                       <div className="flex items-center gap-2">
                         <span className="text-[12px] text-gray-500 w-4">{i + 1}</span>
                         <img
-                          src={`https://placehold.co/28x28?text=${i + 1}`}
+                          src="/mainImages/soltech_character_3d_profile.png"
                           alt="profile"
                           className="w-6 h-6 rounded-full"
                         />
