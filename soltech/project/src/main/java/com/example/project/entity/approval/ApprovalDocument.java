@@ -59,6 +59,8 @@ public class ApprovalDocument {
     @Column(nullable = false)
     private LocalDate appDocDate;
 
+    private Boolean appIsTemporary;
+
     public void changeAppDocContent(String appDocContent) {
         this.appDocContent = appDocContent;
     }

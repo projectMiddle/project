@@ -2,6 +2,7 @@ package com.example.project.dto.approval;
 
 import java.time.LocalDate;
 
+import com.example.project.entity.constant.AppStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +26,8 @@ public class ApprovalDocumentDTO {
     private boolean appIsUrgent;
     private boolean appIsFinalized;
     private LocalDate appDocDate;
+    private Boolean appIsTemporary;
+    private Boolean isRejected;
     @JsonProperty("eName")
     private String eName;
     private String deptName;

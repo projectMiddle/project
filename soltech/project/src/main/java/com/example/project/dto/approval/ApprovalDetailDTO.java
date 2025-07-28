@@ -27,6 +27,7 @@ public class ApprovalDetailDTO {
     private LocalDate appDocDate;
     private boolean appIsUrgent;
     private boolean appIsFinalized;
+    private boolean appIsTemporary;
 
     @JsonProperty("eName")
     private String eName;
@@ -37,5 +38,5 @@ public class ApprovalDetailDTO {
 
     private List<AppProcessingDTO> approvers;
     private List<AppProcessingDTO> references;
-    
+
 }

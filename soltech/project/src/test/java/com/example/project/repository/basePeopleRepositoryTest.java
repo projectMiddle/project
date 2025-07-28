@@ -212,7 +212,7 @@ public class basePeopleRepositoryTest {
                                 .eGender(Gender.MALE)
                                 .eBirthday(LocalDate.of(2005, Month.JULY, 31))
                                 .eEmail("seungchan@soltech.co.kr")
-                                .eAddress("강원도 원주시")
+                                .eAddress("강원도 인제군")
                                 .eMobile("010-5571-2417")
                                 .eAccount("110-999-999999")
                                 .ePassword(passwordEncoder.encode("2417"))
