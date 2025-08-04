@@ -10,22 +10,13 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
   const [filteredList, setFilteredList] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("/data/employees.json")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setEmployeeList(data);
-  //       setFilteredList(data);
-  //     });
-  // }, []);
   useEffect(() => {
     fetchAllEmployees()
       .then((data) => {
-        // console.log("📦 백엔드 응답 데이터:", data);
         setEmployeeList(data);
       })
       .catch((err) => {
-        console.error("🚨 사원 목록 불러오기 실패:", err);
+        console.error("사원 목록 불러오기 실패:", err);
       });
   }, []);
   //  타이핑할 때마다 자동 필터링
@@ -45,14 +36,16 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
     setSelected((prev) =>
       prev.some((e) => e.empNo === emp.empNo) ? prev.filter((e) => e.empNo !== emp.empNo) : [...prev, emp]
     );
+    // console.log(emp);
   };
   //선택완료
   const handleConfirm = () => {
     const simplified = selected.map((emp) => ({
       id: emp.empNo,
       name: emp.ename,
-      email: emp.eemail,
+      deptName: emp.deptName,
     }));
+
     onSelect && onSelect(simplified);
     onClose();
   };

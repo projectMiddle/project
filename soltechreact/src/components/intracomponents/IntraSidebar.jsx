@@ -22,7 +22,7 @@ export default function IntraSidebar() {
     { label: "홈", icon: <FaHome />, to: "/intrasoltech" },
     { label: "공지사항", icon: <FaBullhorn />, to: "/intrasoltech/notices" },
     { label: "메일", icon: <FaMailBulk />, to: "/intrasoltech/mail" },
-    { label: "메시지", icon: <MdOutlineMessage /> },
+    { label: "메시지", icon: <MdOutlineMessage />, to: "/intrasoltech/note" },
     { label: "스케줄", icon: <FaCalendarAlt />, to: "/intrasoltech/calendar" },
     { label: "출퇴근기록", icon: <FaClipboardList />, to: "/intrasoltech/attendance" },
     { label: "전자결재", icon: <FaFileContract />, to: "/intrasoltech/approval" },
