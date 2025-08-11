@@ -121,13 +121,14 @@ const IntraMainComponent = () => {
         </nav>
 
         <div className="flex gap-6 text-gray-600 items-center pr-8">
-          <Link
-            to="https://www.coupang.com/"
+          <a
+            href="/intrasoltech/welfaremall"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
           >
             <ShoppingCart className="w-5 h-5" />
-          </Link>
+          </a>
           <button
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
             onClick={() => setShowModal(true)}
