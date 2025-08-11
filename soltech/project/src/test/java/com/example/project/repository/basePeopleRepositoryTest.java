@@ -76,38 +76,52 @@ public class basePeopleRepositoryTest {
 
         @Test
         public void insertDepartmentTest() {
+                // Department department = Department.builder()
+                // .deptNo(101L)
+                // .deptName("세무팀")
+                // .deptPhone("110, 111")
+                // .build();
+                // departmentRepository.save(department);
+
+                // department = Department.builder()
+                // .deptNo(201L)
+                // .deptName("인사팀")
+                // .deptPhone("216, 217")
+                // .build();
+                // departmentRepository.save(department);
+
+                // department = Department.builder()
+                // .deptNo(301L)
+                // .deptName("지원팀")
+                // .deptPhone("302, 303, 305")
+                // .build();
+                // departmentRepository.save(department);
+
+                // department = Department.builder()
+                // .deptNo(401L)
+                // .deptName("마케팅팀")
+                // .deptPhone("423, 424, 425, 426")
+                // .build();
+                // departmentRepository.save(department);
+
+                // department = Department.builder()
+                // .deptNo(501L)
+                // .deptName("영업팀")
+                // .deptPhone("501, 502, 503, 504, 511, 512")
+                // .build();
+                // departmentRepository.save(department);
+
                 Department department = Department.builder()
-                                .deptNo(101L)
-                                .deptName("세무팀")
-                                .deptPhone("110, 111")
+                                .deptNo(601L)
+                                .deptName("개발팀")
+                                .deptPhone("601, 602, 603, 604, 611, 612, 613, 621, 622")
                                 .build();
                 departmentRepository.save(department);
 
                 department = Department.builder()
-                                .deptNo(201L)
-                                .deptName("인사팀")
-                                .deptPhone("216, 217")
-                                .build();
-                departmentRepository.save(department);
-
-                department = Department.builder()
-                                .deptNo(301L)
-                                .deptName("지원팀")
-                                .deptPhone("302, 303, 305")
-                                .build();
-                departmentRepository.save(department);
-
-                department = Department.builder()
-                                .deptNo(401L)
-                                .deptName("마케팅팀")
-                                .deptPhone("423, 424, 425, 426")
-                                .build();
-                departmentRepository.save(department);
-
-                department = Department.builder()
-                                .deptNo(501L)
-                                .deptName("영업팀")
-                                .deptPhone("501, 502, 503, 504, 511, 512")
+                                .deptNo(901L)
+                                .deptName("감사팀")
+                                .deptPhone("901")
                                 .build();
                 departmentRepository.save(department);
 
