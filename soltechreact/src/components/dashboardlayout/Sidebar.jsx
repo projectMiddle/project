@@ -1,12 +1,47 @@
-import React, { useEffect, useState } from "react";
 import { Mail, Bell, Users, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { loginAttendance } from "./../../api/attendanceApi";
-
+import { loginAttendance, logoutAttendance } from "../../api/attendanceApi";
+import useAuth from "../../hooks/useAuth";
+import { fetchEmployeeInfo } from "../../api/employeeProfile";
+import Information from "../../pages/intrahomeemployeepages/Information";
 export default function Sidebar() {
-  const empNo = 1049;
   const [weekDays, setWeekDays] = useState(0);
   const [monthDays, setMonthDays] = useState(0);
+  const { userInfo } = useAuth();
+  const empNo = userInfo?.empNo;
+  const [profile, setProfile] = useState(null);
+
+  const handleGoToWork = async () => {
+    try {
+      const data = await loginAttendance(empNo);
+      alert("출근 완료", data);
+      window.location.reload();
+    } catch (err) {
+      console.error("출근 실패", err);
+      alert("출근 실패");
+    }
+  };
+  const handleLeaveWork = async () => {
+    try {
+      const data = await logoutAttendance(empNo);
+      alert("퇴근 완료", data);
+      window.location.reload();
+    } catch (err) {
+      console.error("퇴근 실패", err);
+      alert("퇴근 실패");
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeInfo(empNo)
+      .then((datas) => {
+        setProfile(datas);
+      })
+      .catch((err) => {
+        console.log("사원정보 조회 실패", err);
+      });
+  }, [empNo]);
 
   useEffect(() => {
     const today = new Date();
@@ -39,31 +74,22 @@ export default function Sidebar() {
 
   return (
     <aside className="w-100 text-white bg-gray-200 flex flex-col">
-      <div className="px-6 py-4 h-2/5 bg-gradient-to-b from-[#6b46c1] to-purple-400 mt-20 border-b-1 border-gray-300">
-        <div className="px-6 py-4 flex flex-col items-center">
-          <div className="w-30 h-30 rounded-full bg-gray-400 mb-3 mt-10" />
-          <div className="text-lg font-semibold ">장미</div>
-          <div className="text-sm text-blue-100">마케팅팀</div>
-          <button className="mt-3 w-full rounded bg-white/1 py-1 text-sm">정보 변경</button>
-        </div>
+      <div className="justify-center px-6 py-4 h-2/5 bg-gradient-to-b from-[#6b46c1] to-purple-400 mt-20 border-b-1">
+        <Information />
       </div>
 
       <div className="flex-1 px-6 space-y-2 pt-5 bg-[#f5f5f5] h-15">
         <div className="flex gap-5 p-3">
           <button
-            onClick={() => {
-              loginAttendance(empNo)
-                .then(() => {
-                  // 로그인 후 전체 앱 리로드 → Information.jsx의 불빛 로직 재실행
-                  window.location.reload();
-                })
-                .catch((err) => console.error("출근 실패:", err));
-            }}
+            onClick={handleGoToWork}
             className="w-full py-2 rounded-4xl text-[18px] border-1 border-gray-300 font-bold bg-blue-500 cursor-pointer hover:bg-blue-600"
           >
             출근
           </button>
-          <button className="w-full py-2 rounded-4xl text-[18px] border-1 border-gray-300 font-bold bg-red-600 cursor-pointer hover:bg-red-700">
+          <button
+            onClick={handleLeaveWork}
+            className="w-full py-2 rounded-4xl text-[18px] border-1 border-gray-300 font-bold bg-red-600 cursor-pointer hover:bg-red-700"
+          >
             퇴근
           </button>
         </div>
@@ -100,8 +126,8 @@ export default function Sidebar() {
 
         <nav className="mt-6 space-y-3 text-sm grid grid-cols-2">
           <SideLink Icon={Bell} label="알림" />
-          <SideLink Icon={Mail} label="메일" />
-          <SideLink Icon={MessageSquare} label="메시지" />
+          <SideLink Icon={Mail} label="메일" to={"/intrasoltech/mail"} />
+          <SideLink Icon={MessageSquare} label="메시지" to="{/intrasoltech/note}" />
           <SideLink Icon={Users} label="부서목록" to="/intrasoltech/department" />
         </nav>
       </div>

@@ -12,6 +12,7 @@ import WelfareMallRoute from "./routes/WelfareMallRoute";
 import useAuth from "./hooks/useAuth";
 import IntraMainComponent from "./components/intrahomecomponents/IntraMainComponent";
 import IntraLayout from "./components/intracomponents/IntraLayout";
+import NoteRoute from "./routes/NoteRoute";
 const Intra = () => {
   const { isLoggedIn, userInfo } = useAuth();
 
@@ -34,6 +35,7 @@ const Intra = () => {
         <Route path="calendar/*" element={<CalenderRoute />} />
         <Route path="notices/*" element={<NoticeRoute />} />
         <Route path="mail/*" element={<MailRoute />} />
+        <Route path="note/*" element={<NoteRoute />} />
         <Route path="attendance/*" element={<AttendanceRoute />} />
         <Route path="department/*" element={<DepartmentRoute />} />
       </Route>
