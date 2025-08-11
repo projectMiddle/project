@@ -138,30 +138,9 @@ const MainHeader = () => {
 
             {/* FAQ 드롭다운 */}
             <li className="relative group">
-              <Link to="/faq/notice" className="hover:text-purple-600 hover:underline relative z-10">
+              <Link to="/faq" className="hover:text-purple-600 hover:underline relative z-10">
                 FAQs
               </Link>
-              {showHeader && (
-                <div
-                  className="absolute left-1/2 -translate-x-1/2 top-[40px] mt-2 w-[5000px] bg-white border-t border-gray-200 shadow-md opacity-0 max-h-0 overflow-hidden group-hover:opacity-100 group-hover:max-h-[220px] transition-all duration-300 ease-in-out z-40"
-                  style={{ transitionProperty: "all, max-height" }}
-                >
-                  <div className="flex flex-col items-center py-3">
-                    <Link
-                      to="/faq"
-                      className="block text-gray-400 py-2 w-56 text-center hover:text-purple-700 hover:underline hover:decoration-purple-800 hover:decoration-solid"
-                    >
-                      FAQ
-                    </Link>
-                    <Link
-                      to="/faq/notice"
-                      className="block text-gray-400 py-2 w-56 text-center hover:text-purple-700 hover:underline hover:decoration-purple-800 hover:decoration-solid"
-                    >
-                      공지사항
-                    </Link>
-                  </div>
-                </div>
-              )}
             </li>
 
             {/* 임직원 메뉴 */}

@@ -1,12 +1,15 @@
 package com.example.project.entity.mainhome;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.example.project.entity.Employee;
-import com.example.project.entity.constant.FAQCategory;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,25 +29,35 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 
-@Table(name = "MAIN_FAQ")
+@Table(name = "MAIN_JOBS")
 @Entity
-public class MainFAQ {
+@EntityListeners(AuditingEntityListener.class)
+public class MainJobs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long faqNo;
+    private Long jobsNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FAQ_EMP_NO", nullable = false)
+    @JoinColumn(name = "JOBS_EMP_NO", nullable = false)
     private Employee empNo;
 
     @Column(nullable = false)
-    private String faqTitle;
+    private String jobsTitle;
 
     @Column(nullable = false, length = 2000)
-    private String faqContent;
+    private String jobsContent;
 
-    @Enumerated(EnumType.STRING)
-    private FAQCategory faqCategory;
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime jobsRegDate;
 
+    public void changeJobsTitle(String jobsTitle) {
+        this.jobsTitle = jobsTitle;
+    }
+
+    public void changeJobsContent(String jobsContent) {
+        this.jobsContent = jobsContent;
+    }
+    
 }

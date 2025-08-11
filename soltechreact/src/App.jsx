@@ -16,9 +16,8 @@ import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import MainOurTeams from "./pages/mainhomepages/company/MainOurTeams.jsx";
 import MainApplyInformation from "./pages/mainhomepages/jobs/MainApplyInformation";
 import MainApplyProcess from "./pages/mainhomepages/jobs/MainApplyProcess";
-import MainApplyRecruit from "./pages/mainhomepages/jobs/MainApplyRecruit";
+import MainApplyRecruitList from "./pages/mainhomepages/jobs/MainApplyRecruitList";
 import MainFaq from "./pages/mainhomepages/faq/MainFaq";
-import MainNotice from "./pages/mainhomepages/faq/MainNotice";
 import MainLocationJongro from "./pages/mainhomepages/location/MainLocationJongro.jsx";
 import MainLocationGangnam from "./pages/mainhomepages/location/MainLocationGangnam.jsx";
 import Report from "./pages/bimatrix/Report.jsx";
@@ -34,8 +33,8 @@ function App() {
     // <AuthProvider>
     <Routes>
       {/* 메인화면 관련 기능들 */}
+      <Route path="/" element={<MainHome />} />
       <Route element={<MainLayout />}>
-        <Route path="/" element={<MainHome />} />
         {/* 로그인 관련 */}
         <Route path="signup" element={<MainSignUp />} />
         <Route path="login" element={<MainLogin />} />
@@ -52,7 +51,7 @@ function App() {
         {/* Jobs 관련 */}
         <Route path="/apply/information" element={<MainApplyInformation />} />
         <Route path="/apply/process" element={<MainApplyProcess />} />
-        <Route path="/apply/recruit" element={<MainApplyRecruit />} />
+        <Route path="/apply/recruit" element={<MainApplyRecruitList />} />
 
         {/* Location 관련 */}
         <Route path="/location/jongro" element={<MainLocationJongro />} />
@@ -60,7 +59,6 @@ function App() {
 
         {/* Faq 관련 */}
         <Route path="/faq" element={<MainFaq />} />
-        <Route path="/faq/notice" element={<MainNotice />} />
       </Route>
       <Route
         path="/"

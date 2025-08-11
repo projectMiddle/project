@@ -91,6 +91,7 @@ public class SecurityConfig {
                                 "/test",
                                 "/report",
                                 "/WEB-INF/**",
+                                "/apply/**",
                                 "/error")
                         .permitAll()
                         .requestMatchers("/member/**").hasRole("MEMBER")
