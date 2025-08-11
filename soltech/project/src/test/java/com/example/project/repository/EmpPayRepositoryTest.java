@@ -13,14 +13,14 @@ import com.example.project.entity.Employee;
 @SpringBootTest
 public class EmpPayRepositoryTest {
 
-    @Autowired
-    private EmpPayRepository empPayRepository;
+    // @Autowired
+    // private EmpPayRepository empPayRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    // @Autowired
+    // private EmployeeRepository employeeRepository;
 
-    public void insertEmpTest() {
+    // public void insertEmpTest() {
 
-    }
+    // }
 
 }
