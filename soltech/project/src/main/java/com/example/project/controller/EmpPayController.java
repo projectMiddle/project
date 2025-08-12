@@ -65,19 +65,18 @@ public class EmpPayController {
 
     // 월 명세서 리스트
     @GetMapping("/list")
-    public ResponseEntity<List<EmpPayDTO>> getListByMonth(
+    public ResponseEntity<List<EmpPayDTO>> list(
             @RequestParam Long empNo,
-            @RequestParam int year,
-            @RequestParam int month) {
-        return ResponseEntity.ok(empPayService.getPayListByMonth(year, month));
+            @RequestParam int year) {
+        return ResponseEntity.ok(empPayService.getPayListByEmpNoAndYear(empNo, year));
     }
 
     // 명세서 수정
-    @PutMapping("/update/{empPayId}")
-    public ResponseEntity<?> updateEmpPay(
-            @PathVariable Long empPayId, @RequestBody EmpPayDTO dto) {
-        EmpPay updated = empPayService.updatePay(empPayId, dto);
-        return ResponseEntity.ok(EmpPayResponseDTO.from(updated));
+    @PutMapping("/{payNo}")
+    public ResponseEntity<EmpPayDTO> updateEmpPay(
+            @PathVariable Long payNo,
+            @RequestBody EmpPayDTO dto) {
+        return ResponseEntity.ok(empPayService.updatePay(payNo, dto));
     }
 
     // 명세서 삭제

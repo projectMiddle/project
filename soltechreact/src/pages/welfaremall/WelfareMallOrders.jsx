@@ -3,6 +3,14 @@ import { Link, useSearchParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { getOrderList, getOrderDetail } from "../../api/mallApi";
 
+/** 이미지 깜빡임 방지: onError 시 fallback 상태 유지 */
+function ImgWithFallback({ src, fallback = "/welfimages/fallback.jpg", alt = "", ...rest }) {
+  const [useFallback, setUseFallback] = useState(false);
+  const finalSrc = useFallback ? fallback : src;
+
+  return <img src={finalSrc} alt={alt} onError={() => setUseFallback(true)} loading="lazy" {...rest} />;
+}
+
 export default function WelfareMallOrders() {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
@@ -126,7 +134,7 @@ export default function WelfareMallOrders() {
   const normalizeRow = (o) => {
     const id = o.orderId ?? o.id ?? o.orderNo ?? o.order_no ?? "";
     const when = o.orderedAt ?? o.orderDate ?? o.createdAt ?? o.reg_dt ?? "";
-    const total = o.total ?? o.totalAmount ?? o.amount ?? 0;
+    const total = o.total ?? o.totalPrice ?? o.amount ?? 0;
     const status = o.status ?? o.orderStatus ?? "COMPLETED";
     const count =
       o.items?.length ??
@@ -260,6 +268,7 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
       try {
         const d = await getOrderDetail(empNo, orderId);
         if (mounted) setData(d);
+        console.log("주문 상세 정보", d);
       } catch (e) {
         console.error("주문 상세 불러오기 실패", e);
         if (mounted) setErr("주문 상세를 불러오지 못했습니다.");
@@ -275,7 +284,7 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
   const shipping = order.shipping || {};
   const receiver = shipping.receiver || order.receiver || "";
   const phone = shipping.phone || order.phone || "";
-  const address1 = shipping.address1 || order.address1 || "";
+  const address1 = shipping.address1 || order.address1 || "서울특별시 종로구 종로12길 15";
   const address2 = shipping.address2 || order.address2 || "";
   const requestMessage = shipping.requestMessage || order.requestMessage || "";
 
@@ -303,11 +312,13 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
               </div>
               <div>
                 <div className="text-sm text-gray-500">주문일시</div>
-                <div className="font-medium">{formatDate(order.orderedAt || order.orderDate || order.createdAt)}</div>
+                <div className="font-medium">
+                  {formatDate(order.orderedAt || order.orderDate || order.createdAt || order.date)}
+                </div>
               </div>
               <div>
                 <div className="text-sm text-gray-500">총 결제금액</div>
-                <div className="font-medium">{currency(order.total || order.totalAmount)}</div>
+                <div className="font-medium">{currency(order.totalPrice ?? order.totalAmount ?? order.total)}</div>
               </div>
               <div>
                 <div className="text-sm text-gray-500">상태</div>
@@ -318,7 +329,8 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
             <div className="bg-gray-50 rounded p-4 mb-6">
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">수령인</span> <div className="font-medium">{receiver}</div>
+                  <span className="text-gray-500">수령인</span>{" "}
+                  <div className="font-medium">{order.name || receiver}</div>
                 </div>
                 <div>
                   <span className="text-gray-500">연락처</span> <div className="font-medium">{formatPhone(phone)}</div>
@@ -348,24 +360,35 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((it, idx) => (
-                    <tr key={it.cartItemId || it.productId || idx} className="border-t">
-                      <td className="px-3 py-2">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={it.imageUrl || `/welfimages/${it.productId}.jpg`}
-                            onError={(e) => (e.currentTarget.src = "/welfimages/fallback.jpg")}
-                            alt={it.productName}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                          <div className="truncate">{it.productName}</div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 text-right">{it.quantity}</td>
-                      <td className="px-3 py-2 text-right">{currency(it.price)}</td>
-                      <td className="px-3 py-2 text-right">{currency(it.price * it.quantity)}</td>
-                    </tr>
-                  ))}
+                  {items.map((it, idx) => {
+                    const pidRaw = it.sku ?? it.productId ?? it.id ?? it.productNo;
+                    const pid = typeof pidRaw === "string" ? pidRaw.trim() : pidRaw;
+                    const base = import.meta.env.BASE_URL || "/";
+                    const imgSrc = pid ? `${base}welfimages/${pid}.jpg` : `${base}welfimages/fallback.jpg`;
+                    const qty = Number(it.quantity || it.qty || 0);
+                    const lineTotal =
+                      it.totalPrice ?? it.lineTotal ?? (typeof it.price === "number" ? it.price * qty : 0);
+                    const unit = typeof it.price === "number" ? it.price : qty > 0 ? lineTotal / qty : 0;
+
+                    return (
+                      <tr key={pid ?? it.cartItemId ?? idx} className="border-t">
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-3">
+                            <ImgWithFallback
+                              src={imgSrc}
+                              fallback={`${base}welfimages/fallback.jpg`}
+                              alt={it.productName || it.name || "상품"}
+                              className="w-10 h-10 rounded object-cover"
+                            />
+                            <div className="truncate">{it.productName || it.name || pid}</div>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 text-right">{qty}</td>
+                        <td className="px-3 py-2 text-right">{currency(unit)}</td>
+                        <td className="px-3 py-2 text-right">{currency(lineTotal)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
