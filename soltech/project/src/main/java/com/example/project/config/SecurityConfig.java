@@ -86,7 +86,12 @@ public class SecurityConfig {
                                 "/member/login",
                                 "/employee/**", // 필요한 경우
                                 "/pay/**", // 필요한 경우
-
+                                "/faq/**",
+                                "/faq",
+                                "/test",
+                                "/report",
+                                "/WEB-INF/**",
+                                "/apply/**",
                                 "/error")
                         .permitAll()
                         .requestMatchers("/member/**").hasRole("MEMBER")
@@ -97,6 +102,8 @@ public class SecurityConfig {
                             response.setContentType("application/json;charset=UTF-8");
                             response.getWriter().write("{\"error\": \"Unauthorized\"}");
                         }))
+
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
 
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth

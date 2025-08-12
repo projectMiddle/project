@@ -111,7 +111,6 @@ const ApprovalForm = () => {
   };
 
   // 임시저장용
-  // ✅ 1. 임시저장 처리 함수 추가
   const handleSaveAsTemporary = async () => {
     if (!empNo || !deptNo) return alert("사번과 부서번호를 입력하세요");
     if (!title) return alert("제목을 입력하세요");
@@ -122,7 +121,7 @@ const ApprovalForm = () => {
     formData.append("appDocContent", content);
     formData.append("appIsUrgent", isUrgent);
     formData.append("appIsFinalized", false);
-    formData.append("appIsTemporary", "true"); // ✅ 임시저장 표시
+    formData.append("appIsTemporary", "true");
     formData.append("empNo", empNo);
     formData.append("deptNo", deptNo);
 
@@ -173,8 +172,6 @@ const ApprovalForm = () => {
         {/* 중앙 영역 */}
         <div className="flex-1">
           <main className="flex-1 bg-white px-10 py-6 relative overflow-auto pb-16">
-            {/* 테스트용 임시 입력란 (추후 삭제 예정) */}
-
             <div className="w-auto mx-auto">
               <div className="mb-1 text-[14px] font-semibold">결재 작성</div>
               <p className="text-[12px] text-gray-500 mb-6">진행중인 결재내역을 확인하고 관리합니다</p>

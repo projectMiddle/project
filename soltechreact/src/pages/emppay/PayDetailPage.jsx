@@ -1,30 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getPayDetail } from "../../api/emppayApi";
-import { useNavigate } from "react-router-dom";
 import PaySlipPDFButton from "./PaySlipPDFButton";
+import useAuth from "../../hooks/useAuth";
+import { useLocation } from "react-router-dom";
 
 export default function PayDetailPage() {
   const { id } = useParams();
   const [pay, setPay] = useState({});
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getPayDetail(id).then((res) => {
-      setPay(res.data);
-      console.log("정보 :", res.data);
-    });
-  }, [id]);
+  const { userInfo } = useAuth();
+  const isHR = Number(userInfo?.deptNo) === 201;
+  const location = useLocation();
 
   const format = (num) => (num != null ? Number(num).toLocaleString("ko-KR") + " 원" : "");
-
   const [year, month] = pay.payMonth ? pay.payMonth.split("-") : [];
+
+  // ✅ HR만 수정 가능: 폼으로 이동 (edit 모드)
+  const goEdit = () => {
+    if (!pay) return;
+    navigate("/intrasoltech/emppay/form", {
+      state: {
+        mode: "edit",
+        payNo: id, // 상세 PK
+        empNo: pay.empNo, // 상세 응답의 사번
+        returnTo: location.pathname,
+      },
+    });
+  };
+  useEffect(() => {
+    getPayDetail(id).then((res) => setPay(res.data));
+  }, [id, location.state?.refresh]);
 
   return (
     <div>
-      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">급여명세서 - 상세</div>
-      <PaySlipPDFButton pay={pay} />
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px] flex items-center justify-between">
+        <span>급여명세서 - 상세</span>
+
+        {/* 우측 버튼 영역 */}
+        <div className="pr-5 flex items-center gap-2">
+          {/* HR만 노출 */}
+          {isHR && pay?.payNo !== undefined && (
+            <button type="button" onClick={goEdit} className="px-3 py-2 rounded bg-white text-black text-sm">
+              수정
+            </button>
+          )}
+          <PaySlipPDFButton pay={pay} />
+        </div>
+      </div>
+
       <div className="p-6">
         <div className=" mx-auto bg-white shadow-2xl p-8 rounded-xl border border-gray-300">
           <h2 className="text-center text-2xl font-bold mb-6">2025년 7월 급여명세서</h2>

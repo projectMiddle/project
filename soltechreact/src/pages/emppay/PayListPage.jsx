@@ -1,68 +1,69 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PayListTable from "./PayListTable";
-import { getPayList } from "../../api/emppayApi";
-import { getEmployee } from "../../api/emppayApi";
+import { getPayList, getEmployee } from "../../api/emppayApi";
 import useAuth from "../../hooks/useAuth";
 
 const PayListPage = () => {
   const [payList, setPayList] = useState([]);
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(7);
+  const [year, setYear] = useState(new Date().getFullYear());
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const { userInfo } = useAuth();
+  const { empNo: empNoFromParam } = useParams();
 
-  const empNo = userInfo?.empNo;
+  const isHR = Number(userInfo?.deptNo) === 201;
+  const empNo = empNoFromParam ?? userInfo?.empNo;
 
-  const fetchPayList = () => {
-    getPayList({ empNo, year, month })
-      .then((res) => {
-        setPayList(res.data);
-      })
-      .catch((err) => {
-        console.error("급여 리스트 조회 실패", err);
-      });
-  };
+  // empNo 바뀔 때 잔상 제거
   useEffect(() => {
-    fetchPayList();
-  }, [year, month]);
+    setPayList([]);
+    setEmployee(null);
+  }, [empNo]);
 
+  // 연간 급여 리스트
   useEffect(() => {
-    if (!empNo) return; // 로그인 정보 없으면 중단
+    if (!empNo) return;
+    getPayList({ empNo, year })
+      .then((res) => setPayList(res.data))
+      .catch((err) => console.error("급여 리스트 조회 실패", err));
+  }, [empNo, year]);
 
+  // 사원 정보
+  useEffect(() => {
+    if (!empNo) return;
     getEmployee(empNo)
       .then((res) => setEmployee(res.data))
       .catch(console.error);
   }, [empNo]);
 
+  // HR만 수정 가능
+  const handleEdit = (pay) => {
+    navigate("/intrasoltech/emppay/form", {
+      state: { mode: "edit", payNo: pay.payNo, empNo },
+    });
+  };
+
   if (!employee) return <div>사원정보 로딩중…</div>;
+
   return (
     <div className="w-full flex flex-col">
       <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-6 py-[14px]">급여 명세서</div>
 
       {/* 테이블 */}
       <div className="p-6 flex-1 overflow-auto border border-gray-200 rounded-4xl m-3 h-full shadow">
-        <PayListTable payList={payList} year={year} />
+        {/* 디자인 변경 없음 */}
+        <PayListTable payList={payList} year={year} isHR={isHR} onEdit={handleEdit} />
+
         {/* 연도 필터 */}
         <div className="flex items-center gap-2 mt-6 h-auto">
           <label className="text-gray-700">연도: </label>
           <input
             type="number"
             value={year}
-            onChange={(e) => setYear(parseInt(e.target.value))}
+            onChange={(e) => setYear(Number(e.target.value))}
             className="border px-3 py-1 rounded w-24"
           />
-        </div>
-        <div className="flex justify-end mt-4">
-          <button
-            type="button"
-            onClick={() => navigate("form", { state: { empNo } })}
-            className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 mt-6"
-          >
-            + 급여명세서 작성
-          </button>
         </div>
       </div>
     </div>

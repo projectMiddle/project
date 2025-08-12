@@ -11,6 +11,14 @@ function ImgWithFallback({ src, fallback = "/welfimages/fallback.jpg", alt = "",
   return <img src={finalSrc} alt={alt} onError={() => setUseFallback(true)} loading="lazy" {...rest} />;
 }
 
+/** 이미지 깜빡임 방지: onError 시 fallback 상태 유지 */
+function ImgWithFallback({ src, fallback = "/welfimages/fallback.jpg", alt = "", ...rest }) {
+  const [useFallback, setUseFallback] = useState(false);
+  const finalSrc = useFallback ? fallback : src;
+
+  return <img src={finalSrc} alt={alt} onError={() => setUseFallback(true)} loading="lazy" {...rest} />;
+}
+
 export default function WelfareMallOrders() {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
@@ -134,6 +142,7 @@ export default function WelfareMallOrders() {
   const normalizeRow = (o) => {
     const id = o.orderId ?? o.id ?? o.orderNo ?? o.order_no ?? "";
     const when = o.orderedAt ?? o.orderDate ?? o.createdAt ?? o.reg_dt ?? "";
+    const total = o.total ?? o.totalPrice ?? o.amount ?? 0;
     const total = o.total ?? o.totalPrice ?? o.amount ?? 0;
     const status = o.status ?? o.orderStatus ?? "COMPLETED";
     const count =
@@ -269,6 +278,7 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
         const d = await getOrderDetail(empNo, orderId);
         if (mounted) setData(d);
         console.log("주문 상세 정보", d);
+        console.log("주문 상세 정보", d);
       } catch (e) {
         console.error("주문 상세 불러오기 실패", e);
         if (mounted) setErr("주문 상세를 불러오지 못했습니다.");
@@ -295,6 +305,7 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
   const items = order.items || order.orderItems || order.details || [];
   const receiver = shipping.receiver || order.receiver || "";
   const phone = shipping.phone || order.phone || "";
+  const address1 = shipping.address1 || order.address1 || "서울특별시 종로구 종로12길 15";
   const address1 = shipping.address1 || order.address1 || "서울특별시 종로구 종로12길 15";
   const address2 = shipping.address2 || order.address2 || "";
   const requestMessage = shipping.requestMessage || order.requestMessage || "";
@@ -326,9 +337,13 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
                 <div className="font-medium">
                   {formatDate(order.orderedAt || order.orderDate || order.createdAt || order.date)}
                 </div>
+                <div className="font-medium">
+                  {formatDate(order.orderedAt || order.orderDate || order.createdAt || order.date)}
+                </div>
               </div>
               <div>
                 <div className="text-sm text-gray-500">총 결제금액</div>
+                <div className="font-medium">{currency(order.totalPrice ?? order.totalAmount ?? order.total)}</div>
                 <div className="font-medium">{currency(order.totalPrice ?? order.totalAmount ?? order.total)}</div>
               </div>
               <div>
@@ -340,6 +355,8 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
             <div className="bg-gray-50 rounded p-4 mb-6">
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
+                  <span className="text-gray-500">수령인</span>{" "}
+                  <div className="font-medium">{order.name || receiver}</div>
                   <span className="text-gray-500">수령인</span>{" "}
                   <div className="font-medium">{order.name || receiver}</div>
                 </div>

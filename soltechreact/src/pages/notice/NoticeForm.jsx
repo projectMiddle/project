@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createNotice } from "../../api/noticeApi"; // ✅ API 분리된 함수 import
+import { createNotice } from "../../api/board/noticeApi"; // ✅ API 분리된 함수 import
 import useAuth from "../../hooks/useAuth";
 import { useEffect } from "react";
 
@@ -44,6 +44,13 @@ const NoticeForm = () => {
     }
   };
 
+  const deptMap = {
+    201: "개발부",
+    202: "영업부",
+    203: "기획부",
+    // 필요시 추가
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">공지사항 - 작성</div>
@@ -71,31 +78,14 @@ const NoticeForm = () => {
                 </td>
               </tr>
               <tr>
-                <td style={cellStyleTitle}>사원번호</td>
-                <td style={cellStyle}>
-                  <input
-                    type="number"
-                    name="empNo"
-                    value={formData.empNo}
-                    onChange={handleChange}
-                    required
-                    style={inputStyle}
-                  />
-                </td>
+                <td style={cellStyleTitle}>사원명</td>
+                <td style={cellStyle}>{userInfo?.name || "로딩 중..."}</td>
               </tr>
               <tr>
-                <td style={cellStyleTitle}>부서번호</td>
-                <td style={cellStyle}>
-                  <input
-                    type="number"
-                    name="deptNo"
-                    value={formData.deptNo}
-                    onChange={handleChange}
-                    required
-                    style={inputStyle}
-                  />
-                </td>
+                <td style={cellStyleTitle}>부서</td>
+                <td style={cellStyle}>{deptMap[formData.deptNo] || "로딩중..."}</td>
               </tr>
+
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>
                 <td style={cellStyle}>
