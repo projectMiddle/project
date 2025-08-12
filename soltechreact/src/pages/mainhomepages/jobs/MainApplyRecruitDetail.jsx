@@ -48,25 +48,31 @@ export default function MainApplyRecruitDetail() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-white">
-      <div className="max-w-7xl w-full mt-32">
+      <div className="max-w-7xl w-full mt-30 mb-20">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 cursor-pointer"
         >
           <ChevronLeft size={18} /> 목록으로
         </button>
 
-        <div className="mt-4 border-t border-black">
+        <div className="mt-4 border-t border-gray-300">
           <div className="flex flex-col border-b border-gray-300 p-5 bg-gray-100">
             <div className="flex justify-between items-start">
               <h1 className="text-xl font-semibold">{data.jobsTitle}</h1>
               <div className="text-sm text-gray-500">
-                {data.jobsRegDate ? new Date(data.jobsRegDate).toISOString().split("T")[0] : ""}
+                {data.jobsRegDate
+                  ? new Date(data.jobsRegDate).toISOString().split("T")[0]
+                  : ""}
               </div>
             </div>
           </div>
 
-          <div className="p-5 whitespace-pre-wrap text-gray-800 leading-7">{data.jobsContent}</div>
+          {/* HTML 내용 렌더링 */}
+          <div
+            className="p-5 text-gray-800 leading-7 min-h-200"
+            dangerouslySetInnerHTML={{ __html: data.jobsContent || "" }}
+          />
         </div>
 
         {isHR && (

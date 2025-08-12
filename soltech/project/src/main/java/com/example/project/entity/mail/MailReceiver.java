@@ -46,7 +46,7 @@ public class MailReceiver {
     @Column(name = "MAIL_RECEIVER_TYPE", nullable = false)
     private MailReceiverType mailReceiverType;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR2(1) DEFAULT '0'")
+    @Column(nullable = false)
     private boolean mailIsRead;
 
     public void changeMailIsRead(boolean mailIsRead) {

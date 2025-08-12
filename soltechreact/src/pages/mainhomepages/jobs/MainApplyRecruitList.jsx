@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
+import MainApplyJobModal from "./MainApplyJobModal";
 
 const PAGE_SIZE = 10;
 
@@ -149,7 +150,7 @@ export default function MainApplyRecruitList() {
           {isHR && (
             <button
               onClick={openCreate}
-              className="inline-flex items-center gap-2 rounded-md bg-violet-600 px-3 py-1.5 text-white text-sm hover:bg-violet-700 transition"
+              className="inline-flex items-center gap-2 rounded-md bg-violet-800 px-3 py-1.5 text-white text-sm hover:bg-violet-900 transition"
             >
               <Plus size={16} /> 글 작성
             </button>
@@ -174,7 +175,7 @@ export default function MainApplyRecruitList() {
             </div>
           ) : (
             <div>
-              {/* 헤더 라인 (디자인 유지) */}
+              {/* 헤더 라인 */}
               <div className="flex flex-col border-b border-gray-300 p-5 bg-gray-100">
                 <div className="flex flex-row justify-between items-start">
                   <h1 className="w-10 text-sm font-semibold">번호</h1>
@@ -200,7 +201,7 @@ export default function MainApplyRecruitList() {
                     </h2>
                   </div>
 
-                  {/* 관리 액션: hover 시 우측 상단 노출 (디자인 영향 최소화) */}
+                  {/* 관리 액션: hover 시 우측 상단 노출 */}
                   {isHR && (
                     <div className="absolute right-5 top-4 hidden group-hover:flex items-center gap-2">
                       <button
@@ -228,7 +229,7 @@ export default function MainApplyRecruitList() {
         </div>
       </div>
 
-      {/* 페이지네이션 (디자인 유지) */}
+      {/* 페이지네이션 */}
       <div className="flex justify-center items-center gap-1 py-8 mb-15">
         <button
           className="px-2 py-1 text-gray-400 hover:text-gray-600 transition disabled:opacity-40 cursor-pointer"
@@ -250,11 +251,10 @@ export default function MainApplyRecruitList() {
           pageResult.pageNumList.map((num) => (
             <button
               key={num}
-              className={`px-2 mx-1 text-lg transition ${
-                pageResult.current === num
+              className={`px-2 mx-1 text-lg transition ${pageResult.current === num
                   ? "text-purple-900 font-bold underline underline-offset-4"
                   : "text-gray-400 hover:text-gray-500 cursor-pointer"
-              }`}
+                }`}
               onClick={() => setPage(num)}
               disabled={isNoData || pageResult.current === num}
             >
@@ -280,69 +280,18 @@ export default function MainApplyRecruitList() {
       </div>
 
       {/* 등록/수정 모달 */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30" onClick={() => !saving && setModalOpen(false)} />
-          <div className="relative w-full max-w-2xl rounded-lg bg-white shadow-lg">
-            <div className="flex items-center justify-between border-b px-5 py-3">
-              <h3 className="text-lg font-semibold">
-                {mode === "create" ? "채용공고 작성" : `채용공고 수정 #${editingId}`}
-              </h3>
-              <button
-                onClick={() => !saving && setModalOpen(false)}
-                className="p-1 text-gray-500 hover:text-gray-700"
-                disabled={saving}
-              >
-                <X size={18} />
-              </button>
-            </div>
+      {/* 등록/수정 모달 */}
+      <MainApplyJobModal
+        open={modalOpen}
+        mode={mode}
+        editingId={editingId}
+        form={form}
+        onChange={handleChange}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleSubmit}
+        saving={saving}
+      />
 
-            <form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">제목</label>
-                <input
-                  type="text"
-                  name="jobsTitle"
-                  value={form.jobsTitle}
-                  onChange={handleChange}
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                  placeholder="채용공고 제목을 입력하세요"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">내용</label>
-                <textarea
-                  name="jobsContent"
-                  value={form.jobsContent}
-                  onChange={handleChange}
-                  className="mt-1 w-full min-h-40 rounded border border-gray-300 px-3 py-2 text-sm"
-                  placeholder="채용공고 내용을 입력하세요"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  onClick={() => setModalOpen(false)}
-                  disabled={saving}
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded bg-violet-600 px-4 py-2 text-sm text-white hover:bg-violet-700 disabled:opacity-60"
-                  disabled={saving}
-                >
-                  {saving && <Loader2 className="animate-spin" size={16} />}
-                  저장
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
