@@ -19,7 +19,11 @@ const EmpInfo = ({ employee }) => {
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-md">
       {/* 상단 프로필 영역 */}
       <div className="flex items-start gap-6 border-b pb-6">
-        <img src="/ljb.jpg" alt="프로필" className="w-[120px] h-[120px] object-cover rounded-full border shadow" />
+        <img
+          src="/mainImages/soltech_character_3d_profile.png"
+          alt="프로필"
+          className="w-[120px] h-[120px] object-cover rounded-full border shadow"
+        />
         <div className="flex flex-col justify-between flex-1">
           <div>
             <h2 className="text-2xl font-semibold text-gray-800">

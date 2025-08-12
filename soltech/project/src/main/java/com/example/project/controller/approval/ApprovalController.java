@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,25 +38,7 @@ public class ApprovalController {
     private final ApprovalService approvalService;
     private final ApprovalCountService approvalCountService;
 
-    // 리스트 요청
-    // @GetMapping("/list")
-    // public ResponseEntity<PageResultDTO<ApprovalDocumentDTO>> getApprovalList(
-    // PageRequestDTO requestDTO,
-    // @RequestParam(required = false, defaultValue = "all") String status) {
-
-    // log.info("GET list status: {}", status);
-    // PageResultDTO<ApprovalDocumentDTO> result = switch (status) {
-    // case "processing" -> approvalService.getInboxList(requestDTO);
-    // case "history" -> approvalService.getApprovalHistory(requestDTO);
-    // case "reference" -> approvalService.getReferenceList(requestDTO);
-    // default -> approvalService.getApprovalList(requestDTO, status); // ✅ empNo
-    // 포함!
-    // };
-
-    // return ResponseEntity.ok(result);
-    // }
-
-    // 테스트용 리스트 요청
+    // 상신함 리스트 요청
     @GetMapping("/list")
     public ResponseEntity<PageResultDTO<ApprovalDocumentDTO>> getApprovalList(
             @ModelAttribute PageRequestDTO requestDTO,
@@ -64,13 +47,19 @@ public class ApprovalController {
 
         log.info("문서 목록 조회 요청 - status: {}, empNo: {}", status, empNo);
 
-        PageResultDTO<ApprovalDocumentDTO> result = switch (status) {
-            case "list" -> approvalService.getInboxList(requestDTO, empNo);
-            case "processing" -> approvalService.getApprovalList(requestDTO, status, empNo);
-            case "history" -> approvalService.getApprovalHistory(requestDTO, empNo);
-            case "reference" -> approvalService.getReferenceList(requestDTO, empNo);
-            default -> approvalService.getApprovalList(requestDTO, status, empNo);
-        };
+        PageResultDTO<ApprovalDocumentDTO> result;
+
+        if (List.of("submitted", "processing", "completed", "rejected").contains(status)) {
+            result = approvalService.getMyDraftBoxList(requestDTO, status, empNo);
+        } else if (List.of("list", "history", "reference").contains(status)) {
+            result = approvalService.getMyReceiveBoxList(requestDTO, status, empNo);
+        } else if (List.of("temporary", "retrieved").contains(status)) {
+            result = approvalService.getMyStorageBoxList(requestDTO, status, empNo);
+        } else if ("enforced".equals(status)) {
+            result = approvalService.getMyEnforcedBoxList(requestDTO, empNo);
+        } else {
+            result = approvalService.getMyDraftBoxList(requestDTO, "all", empNo);
+        }
 
         return ResponseEntity.ok(result);
     }
@@ -83,6 +72,17 @@ public class ApprovalController {
         dto.setEmpNo(empNo); // 나중에 제거 예정
         Long appDocNo = approvalService.createAppDocument(dto);
         return ResponseEntity.ok(appDocNo);
+    }
+
+    // 임시저장 문서 조회 후 생성
+    @PutMapping("/modify/{appDocNo}")
+    public ResponseEntity<String> modifyApproval(
+            @PathVariable Long appDocNo,
+            @ModelAttribute AppDocWithFileDTO dto // 기존 생성 DTO 그대로 사용
+    ) {
+        log.info("수정 요청 - appDocNo: {}", appDocNo);
+        approvalService.modifyAppDocument(appDocNo, dto); // 신규 서비스 함수 호출
+        return ResponseEntity.ok("문서 수정 완료");
     }
 
     // 결재선 지정 : 사원 목록 불러오기
@@ -129,10 +129,19 @@ public class ApprovalController {
 
     // 배지용 카운트
     @GetMapping("/categorycount")
-    public ResponseEntity<Map<String, Integer>> getCategoryCounts(@RequestParam Long empNo) {
-        log.info("사이드바 카테고리 알림 조회 요청 - empNo: {}", empNo);
-        Map<String, Integer> counts = approvalCountService.getInboxCounts(empNo);
-        return ResponseEntity.ok(counts);
+    public Map<String, Long> getApprovalCategoryCounts(@RequestParam("empNo") Long empNo) {
+        log.info("뱃지 카운트 API 요청 - empNo: {}", empNo);
+        Map<String, Long> counts = approvalCountService.getApprovalCounts(empNo);
+        log.info("뱃지 카운트 응답 - {}", counts);
+        return counts;
+    }
+
+    // 전자결재 문서 번호용
+    @GetMapping("/app-doc-auto-no")
+    public ResponseEntity<Long> generateAppDocNo() {
+        Long nextDocNo = approvalService.getNextAppDocNo();
+        log.info("새 문서번호: {}", nextDocNo);
+        return ResponseEntity.ok(nextDocNo);
     }
 
 }

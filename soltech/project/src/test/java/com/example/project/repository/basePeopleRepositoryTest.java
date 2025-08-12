@@ -16,7 +16,7 @@ import com.example.project.entity.constant.JobNo;
 import com.example.project.entity.constant.MemberRole;
 
 @SpringBootTest
-public class basePeopleRepositoryTest {
+public class BasePeopleRepositoryTest {
 
         @Autowired
         private JobRankRepository jobRankRepository;
@@ -108,6 +108,20 @@ public class basePeopleRepositoryTest {
                                 .deptNo(501L)
                                 .deptName("영업팀")
                                 .deptPhone("501, 502, 503, 504, 511, 512")
+                                .build();
+                departmentRepository.save(department);
+
+                department = Department.builder()
+                                .deptNo(601L)
+                                .deptName("개발팀")
+                                .deptPhone("601, 602, 603, 604, 611, 612, 613, 621, 622")
+                                .build();
+                departmentRepository.save(department);
+
+                department = Department.builder()
+                                .deptNo(901L)
+                                .deptName("감사팀")
+                                .deptPhone("901")
                                 .build();
                 departmentRepository.save(department);
 
@@ -212,7 +226,7 @@ public class basePeopleRepositoryTest {
                                 .eGender(Gender.MALE)
                                 .eBirthday(LocalDate.of(2005, Month.JULY, 31))
                                 .eEmail("seungchan@soltech.co.kr")
-                                .eAddress("강원도 원주시")
+                                .eAddress("강원도 인제군")
                                 .eMobile("010-5571-2417")
                                 .eAccount("110-999-999999")
                                 .ePassword(passwordEncoder.encode("2417"))

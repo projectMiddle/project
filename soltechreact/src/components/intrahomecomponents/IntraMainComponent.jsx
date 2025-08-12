@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { loginAttendance, logoutAttendance } from "../../api/attendanceApi";
 import { fetchEmployeeInfo } from "../../api/employeeProfile";
+import { NavLink } from "react-router-dom";
 import IntraTopSection from "./IntraTopSection";
 import IntraBottomSection from "./IntraBottomSection";
 import EmployeeSearchModal from "../../pages/intrahomeemployeepages/EmployeeSearchModal";
 import Information from "../../pages/intrahomeemployeepages/Information";
-
+import useIsHR from "../../hooks/useIsHR";
 // 사이드바용
 function SideLink({ Icon, label, to }) {
   return (
@@ -24,6 +25,7 @@ const IntraMainComponent = () => {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
   const [profile, setProfile] = useState(null);
+  const isHR = useIsHR();
 
   const handleGoToWork = async () => {
     try {
@@ -117,17 +119,18 @@ const IntraMainComponent = () => {
           <Link to="/intrasoltech/approval">결재</Link>
           <Link to="/intrasoltech/calendar">스케줄</Link>
           <Link to="/intrasoltech/attendance">출퇴근기록</Link>
-          <Link to="/intrasoltech/emppay">급여명세서</Link>
+          <NavLink to={isHR ? "/intrasoltech/emppay/HRPayDepartmentList" : "/intrasoltech/emppay"}>급여명세서</NavLink>
         </nav>
 
         <div className="flex gap-6 text-gray-600 items-center pr-8">
-          <Link
-            to="https://www.coupang.com/"
+          <a
+            href="/intrasoltech/welfaremall"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
           >
             <ShoppingCart className="w-5 h-5" />
-          </Link>
+          </a>
           <button
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
             onClick={() => setShowModal(true)}
@@ -154,7 +157,7 @@ const IntraMainComponent = () => {
           <div className="grid grid-cols-37 w-full bg-gradient-to-b from-[#6b46c1] to-purple-400">
             {/* 사이드 탑 */}
             <aside className="col-span-9 h-full bg-gradient-to-b from-[#6b46c1] to-purple-400 border-b border-gray-300">
-              <div className="justify-center px-6 py-4">
+              <div className="p-10 pt-15">
                 <Information />
               </div>
             </aside>
@@ -221,7 +224,7 @@ const IntraMainComponent = () => {
                 <nav className="mt-6 space-y-3 text-sm grid grid-cols-2">
                   <SideLink Icon={Bell} label="알림" />
                   <SideLink Icon={Mail} label="메일" to={"/intrasoltech/mail"} />
-                  <SideLink Icon={MessageSquare} label="메시지" />
+                  <SideLink Icon={MessageSquare} label="쪽지" to={"/intrasoltech/note"} />
                   <SideLink Icon={Users} label="부서목록" to="/intrasoltech/department" />
                 </nav>
               </div>

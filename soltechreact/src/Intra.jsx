@@ -7,10 +7,12 @@ import NoticeRoute from "./routes/NoticeRoute";
 import MailRoute from "./routes/MailRoute";
 import AttendanceRoute from "./routes/AttendanceRoute";
 import DepartmentRoute from "./routes/DepartmentRoute";
+import WelfareMallRoute from "./routes/WelfareMallRoute";
 
 import useAuth from "./hooks/useAuth";
 import IntraMainComponent from "./components/intrahomecomponents/IntraMainComponent";
 import IntraLayout from "./components/intracomponents/IntraLayout";
+import NoteRoute from "./routes/NoteRoute";
 const Intra = () => {
   const { isLoggedIn, userInfo } = useAuth();
 
@@ -25,14 +27,15 @@ const Intra = () => {
     <Routes>
       {/* 기본 홈 */}
       <Route index element={<IntraMainComponent />} />
-
       <Route element={<IntraLayout />}>
         {/* 각 분기별 라우트 - 반드시 /* 를 붙여야 하위 경로 매칭됨 */}
+        <Route path="welfaremall/*" element={<WelfareMallRoute />} />
         <Route path="approval/*" element={<ApprovalRoute />} />
         <Route path="emppay/*" element={<EmployeePayRoute />} />
         <Route path="calendar/*" element={<CalenderRoute />} />
         <Route path="notices/*" element={<NoticeRoute />} />
         <Route path="mail/*" element={<MailRoute />} />
+        <Route path="note/*" element={<NoteRoute />} />
         <Route path="attendance/*" element={<AttendanceRoute />} />
         <Route path="department/*" element={<DepartmentRoute />} />
       </Route>

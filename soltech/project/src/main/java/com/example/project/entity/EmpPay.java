@@ -95,4 +95,51 @@ public class EmpPay {
         this.empNo = empNo;
     }
 
+    public void setPayMonth(YearMonth payMonth) {
+        this.payMonth = payMonth;
+    }
+
+    public void setPayPositionWage(int payPositionWage) {
+        this.payPositionWage = payPositionWage;
+    }
+
+    public void setPayBenefits(int payBenefits) {
+        this.payBenefits = payBenefits;
+    }
+
+    public void setPayIncomeTax(int payIncomeTax) {
+        this.payIncomeTax = payIncomeTax;
+    }
+
+    public void setPayResidentTax(int payResidentTax) {
+        this.payResidentTax = payResidentTax;
+    }
+
+    public void setPayHealthInsurance(int payHealthInsurance) {
+        this.payHealthInsurance = payHealthInsurance;
+    }
+
+    public void setPayNationalPension(int payNationalPension) {
+        this.payNationalPension = payNationalPension;
+    }
+
+    public void setPayEmpInsurance(int payEmpInsurance) {
+        this.payEmpInsurance = payEmpInsurance;
+    }
+
+    public void setPayLongtermCare(int payLongtermCare) {
+        this.payLongtermCare = payLongtermCare;
+    }
+
+    public void setPayTotalSalary(int payTotalSalary) {
+        this.payTotalSalary = payTotalSalary;
+    }
+
+    public void setPayTotalDeduction(int payTotalDeduction) {
+        this.payTotalDeduction = payTotalDeduction;
+    }
+
+    public void setPayNetSalary(int payNetSalary) {
+        this.payNetSalary = payNetSalary;
+    }
 }

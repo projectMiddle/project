@@ -54,7 +54,7 @@ public class PageResultDTO<E> {
             this.nextPage = end + 1;
         }
 
-        totalPage = this.pageNumList.size();
+        this.totalPage = last;
         // 사용자가 요청한 페이지
         this.current = pageRequestDTO.getPage();
 

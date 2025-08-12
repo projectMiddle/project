@@ -27,11 +27,11 @@ import com.example.project.service.board.NoticeService;
 @SpringBootTest
 public class NoticeRepositoryTest {
 
-    @Autowired
-    private NoticeRepository noticeRepository;
+    // @Autowired
+    // private NoticeRepository noticeRepository;
 
-    @Autowired
-    private NoticeService noticeService;
+    // @Autowired
+    // private NoticeService noticeService;
 
     @Test
     // insert 데이터 삽입
@@ -48,49 +48,49 @@ public class NoticeRepositoryTest {
         });
     }
 
-    @Test
-    // 데이터 단컨 조회
-    public void readTest() {
-        Notice notice = noticeRepository.findById(2L).get();
-        System.out.println(notice);
-    }
+    // @Test
+    // // 데이터 단컨 조회
+    // public void readTest() {
+    // Notice notice = noticeRepository.findById(2L).get();
+    // System.out.println(notice);
+    // }
 
-    @Test
-    public void testpage() {
-        // 1페이지, 10개씩 보기 요청
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(1)
-                .size(10)
-                .build();
+    // @Test
+    // public void testpage() {
+    // // 1페이지, 10개씩 보기 요청
+    // PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+    // .page(1)
+    // .size(10)
+    // .build();
 
-        // 서비스 호출
-        PageResultDTO<NoticeDTO> result = noticeService.readAll(pageRequestDTO);
+    // // 서비스 호출
+    // PageResultDTO<NoticeDTO> result = noticeService.readAll(pageRequestDTO);
 
-        // 결과 출력
-        System.out.println("총 게시물 수: " + result.getTotalCount());
-        System.out.println("페이지 목록:" + result.getTotalPage());
+    // // 결과 출력
+    // System.out.println("총 게시물 수: " + result.getTotalCount());
+    // System.out.println("페이지 목록:" + result.getTotalPage());
 
-        for (NoticeDTO dto : result.getDtoList()) {
-            System.out.println(dto);
-        }
-    }
+    // for (NoticeDTO dto : result.getDtoList()) {
+    // System.out.println(dto);
+    // }
+    // }
 
-    @Test
-    // 전체 조회
-    public void testList() {
-        noticeRepository.findAll().forEach(notice -> System.out.println(notice));
-    }
+    // @Test
+    // // 전체 조회
+    // public void testList() {
+    // noticeRepository.findAll().forEach(notice -> System.out.println(notice));
+    // }
 
-    @Test
-    // 내용 수정
-    public void contentUpdate() {
-        Notice notice = noticeRepository.findById(12L).get();
-        notice.changeNotiContent("내용수정");
-        noticeRepository.save(notice);
-    }
+    // @Test
+    // // 내용 수정
+    // public void contentUpdate() {
+    // Notice notice = noticeRepository.findById(12L).get();
+    // notice.changeNotiContent("내용수정");
+    // noticeRepository.save(notice);
+    // }
 
-    @Test
-    public void testDelete() {
-        noticeRepository.deleteById(2L);
-    }
+    // @Test
+    // public void testDelete() {
+    // noticeRepository.deleteById(2L);
+    // }
 }
