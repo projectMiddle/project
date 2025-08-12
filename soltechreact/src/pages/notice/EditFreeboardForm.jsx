@@ -1,49 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNoticeById, updateNotice } from "../../api/board/noticeApi"; // ✅ API 모듈 import
+import { updateFreePost, fetchFreePost } from "../../api/board/noticeApi"; // 🔁 자유게시판 API
 
-const EditNoticeForm = () => {
+const EditFreeBoardForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    notiTitle: "",
-    notiContent: "",
+    frBdTitle: "",
+    frBdContent: "",
     empNo: "",
     deptNo: "",
-    notiRegDate: "",
+    frBdRegDate: "",
   });
 
-  // ✅ 공지사항 정보 불러오기
   useEffect(() => {
-    const fetchNotice = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getNoticeById(id); // ✅ 분리된 API 사용
+        const data = await fetchFreePost(id);
         setFormData({
-          notiTitle: data.notiTitle,
-          notiContent: data.notiContent,
+          frBdTitle: data.frBdTitle,
+          frBdContent: data.frBdContent,
           empNo: data.empNo,
           deptNo: data.deptNo,
-          notiRegDate: data.notiRegDate,
+          frBdRegDate: data.frBdRegDate,
         });
       } catch (err) {
-        alert("공지사항을 불러오는 데 실패했습니다.");
+        alert("게시글을 불러오는 데 실패했습니다.");
       }
     };
 
-    fetchNotice();
+    fetchData();
   }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
       ...formData,
-      notiUpdateDate: new Date().toISOString(),
+      frBdUpdateDate: new Date().toISOString(),
     };
 
     try {
-      await updateNotice(id, payload); // ✅ 분리된 API 사용
+      await updateFreePost(id, payload);
       alert("수정되었습니다.");
-      navigate("/intrasoltech/notices");
+      navigate("/intrasoltech/notices/freeboard");
     } catch (err) {
       alert("수정 실패: " + err.message);
     }
@@ -51,22 +50,19 @@ const EditNoticeForm = () => {
 
   return (
     <div style={{ width: "100%", minHeight: "100vh" }}>
-      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">공지사항 - 수정</div>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">자유게시판 - 수정</div>
       <div style={{ padding: "16px" }}>
-        <p style={{ fontSize: "18px", marginBottom: 20 }}>회사 공지사항을 수정합니다.</p>
+        <p style={{ fontSize: "18px", marginBottom: 20 }}>자유게시판 게시글을 수정합니다.</p>
         <form onSubmit={handleSubmit}>
           <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
             <tbody>
               <tr>
                 <td style={cellStyleTitle}>제목</td>
                 <td style={cellStyle}>
-                  <input
-                    type="text"
-                    value={formData.notiTitle ?? ""}
-                    onChange={(e) => setFormData({ ...formData, notiTitle: e.target.value })}
-                  />
+                  <div style={{ padding: "8px 0", fontSize: "16px" }}>{formData.frBdTitle}</div>
                 </td>
               </tr>
+
               <tr>
                 <td style={cellStyleTitle}>사원번호</td>
                 <td style={cellStyle}>{formData.empNo}</td>
@@ -78,7 +74,7 @@ const EditNoticeForm = () => {
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>
                 <td style={cellStyle}>
-                  {new Date(formData.notiRegDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
+                  {new Date(formData.frBdRegDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
                 </td>
               </tr>
               <tr>
@@ -89,8 +85,8 @@ const EditNoticeForm = () => {
           </table>
 
           <textarea
-            value={formData.notiContent}
-            onChange={(e) => setFormData({ ...formData, notiContent: e.target.value })}
+            value={formData.frBdContent}
+            onChange={(e) => setFormData({ ...formData, frBdContent: e.target.value })}
             required
             style={{
               width: "100%",
@@ -145,4 +141,4 @@ const buttonStyle = {
   cursor: "pointer",
 };
 
-export default EditNoticeForm;
+export default EditFreeBoardForm;

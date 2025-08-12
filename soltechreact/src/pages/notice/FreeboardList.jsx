@@ -1,31 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchNoticeList, deleteNotice } from "../../api/board/noticeApi";
+import { fetchFreeBoardList } from "../../api/board/noticeApi";
 
-const NoticeList = () => {
+const FreeBoardList = () => {
   const navigate = useNavigate();
-
-  const [notices, setNotices] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-
-  const [deleteMode, setDeleteMode] = useState(false);
-  const [selectedNotices, setSelectedNotices] = useState([]);
-
   const [keyword, setKeyword] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
-  const loadNotices = async () => {
-    try {
-      const data = await fetchNoticeList(page, 15, searchTerm);
-      setNotices(data.content || []);
-      setTotalPages(data.totalPages || 1);
-      setTotalCount(data.totalElements || 0);
-    } catch (err) {
-      console.error("공지사항 로딩 실패", err);
-    }
-  };
 
   const goToPage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -38,20 +22,32 @@ const NoticeList = () => {
     setSearchTerm(keyword.trim());
   };
 
-  useEffect(() => {
-    loadNotices();
-  }, [page, searchTerm]);
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return dateString.split("T")[0].replace(/-/g, ". ");
+  };
 
-  const formatDate = (dateString) => new Date(dateString).toLocaleDateString("ko-KR").replace(/\.$/, "");
+  // FreeBoardList.jsx 내부
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const size = 15; // 페이지당 글 수 명시
+        const data = await fetchFreeBoardList(page, size, searchTerm);
+        setPosts(data.content);
+        setTotalPages(data.totalPages);
+        setTotalCount(data.totalElements);
+      } catch (error) {
+        console.error("자유게시판 데이터를 불러오는 데 실패했습니다:", error);
+      }
+    };
+    loadPosts();
+  }, [page, searchTerm]);
 
   return (
     <div className="flex min-h-screen">
       {/* 사이드바 */}
       <aside className="w-[230px] bg-[#f4f4f4] border-r border-gray-300 text-gray-800 flex flex-col">
-        {/* 상단 타이틀 */}
-        <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">공지사항</div>
-
-        {/* 게시판 메뉴 항목 */}
+        <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">게시판</div>
         <nav className="flex-1 px-3 pt-4 text-sm">
           <div
             className="py-2 px-2 hover:bg-gray-200 rounded cursor-pointer"
@@ -70,10 +66,8 @@ const NoticeList = () => {
 
       {/* 본문 */}
       <main className="flex-1 bg-white">
-        {/* 제목 바 */}
-        <div className="bg-[#6b46c1] text-white font-bold text-[17px] p-5 py-[14px]">공지사항</div>
+        <div className="bg-[#6b46c1] text-white font-bold text-[17px] p-5 py-[14px]">자유게시판</div>
 
-        {/* 검색 바 */}
         <div className="w-full bg-gray-100 py-5 px-4">
           <div className="w-full flex items-center gap-3">
             <label className="font-semibold text-sm">제목</label>
@@ -103,17 +97,14 @@ const NoticeList = () => {
           </div>
         </div>
 
-        {/* 검색 결과 수 */}
-        <p className="mt-4.5 mb-2 text-sm px-10 ">
-          총 <span className="text-blue-600 font-bold">{totalCount}</span>건의 공지사항이 검색되었습니다.
+        <p className="mt-4.5 mb-2 text-sm px-10">
+          총 <span className="text-blue-600 font-bold">{totalCount}</span>건의 게시글이 검색되었습니다.
         </p>
 
-        {/* 리스트 */}
         <div className="bg-white px-6 py-4 rounded shadow-sm h-[650px]">
           <table className="w-full border border-gray-300 border-collapse text-sm text-center">
             <thead className="bg-gray-50">
               <tr>
-                {deleteMode && <th className="py-2 px-2 border">선택</th>}
                 <th className="py-2 px-2 border">번호</th>
                 <th className="py-2 px-2 border">제목</th>
                 <th className="py-2 px-2 border">작성자</th>
@@ -123,40 +114,25 @@ const NoticeList = () => {
               </tr>
             </thead>
             <tbody>
-              {notices.length === 0 ? (
+              {posts.length === 0 ? (
                 <tr>
-                  <td colSpan={deleteMode ? 7 : 6} className="py-6 text-center text-gray-500">
+                  <td colSpan={6} className="py-6 text-center text-gray-500">
                     총 0건의 게시글이 검색되었습니다.
                   </td>
                 </tr>
               ) : (
-                notices.map((notice) => (
+                posts.map((item, index) => (
                   <tr
-                    key={notice.notiNo}
+                    key={item.freeNo ?? `fallback-${index}`} // fallback
                     className="border-t border-black hover:bg-purple-50 transition cursor-pointer"
-                    onClick={() => navigate(`/intrasoltech/notices/read/${notice.notiNo}`)}
+                    onClick={() => navigate(`/intrasoltech/notices/freeboard/${item.freeBoardNo}`)}
                   >
-                    {deleteMode && (
-                      <td className="py-2 border-r" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={selectedNotices.includes(notice.notiNo)}
-                          onChange={() =>
-                            setSelectedNotices((prev) =>
-                              prev.includes(notice.notiNo)
-                                ? prev.filter((id) => id !== notice.notiNo)
-                                : [...prev, notice.notiNo]
-                            )
-                          }
-                        />
-                      </td>
-                    )}
-                    <td className="py-2 border-r">{notice.notiNo}</td>
-                    <td className="py-2 border-r">{notice.notiTitle}</td>
-                    <td className="py-2 border-r">{notice.name || "-"}</td>
-                    <td className="py-2 border-r">{notice.deptName || "-"}</td>
-                    <td className="py-2 border-r">{formatDate(notice.notiRegDate)}</td>
-                    <td className="py-2 border-r">{notice.notiUpdateDate ? formatDate(notice.notiUpdateDate) : "-"}</td>
+                    <td className="py-2 border-r">{(page - 1) * 10 + index + 1}</td>
+                    <td className="py-2 border-r text-left px-2">{item.frBdTitle}</td>
+                    <td className="py-2 border-r">{item.name || "-"}</td>
+                    <td className="py-2 border-r">{item.deptName || "-"}</td>
+                    <td className="py-2 border-r">{formatDate(item.frBdRegDate)}</td>
+                    <td className="py-2 border-r">{item.frBdUpdateDate ? formatDate(item.frBdUpdateDate) : "-"}</td>
                   </tr>
                 ))
               )}
@@ -164,10 +140,9 @@ const NoticeList = () => {
           </table>
         </div>
 
-        {/* 하단 버튼 */}
         <div className="flex items-center mt-6 justify-between px-6">
           <button
-            onClick={() => navigate("/intrasoltech/notices/Form")}
+            onClick={() => navigate("/intrasoltech/notices/freeboard/form")}
             className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
           >
             작성
@@ -182,17 +157,21 @@ const NoticeList = () => {
               &larr; Prev
             </button>
 
-            {[...Array(totalPages)].map((_, idx) => (
-              <button
-                key={idx + 1}
-                onClick={() => goToPage(idx + 1)}
-                className={`px-3 py-1 border rounded ${
-                  page === idx + 1 ? "bg-purple-700 text-white" : "hover:bg-gray-100"
-                }`}
-              >
-                {idx + 1}
-              </button>
-            ))}
+            {totalPages > 0 &&
+              [...Array(totalPages)].map((_, idx) => {
+                const pageNumber = idx + 1;
+                return (
+                  <button
+                    key={`page-${pageNumber}`}
+                    onClick={() => goToPage(pageNumber)}
+                    className={`px-3 py-1 border rounded ${
+                      page === pageNumber ? "bg-purple-700 text-white" : "hover:bg-gray-100"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
 
             <button
               onClick={() => goToPage(page + 1)}
@@ -208,4 +187,4 @@ const NoticeList = () => {
   );
 };
 
-export default NoticeList;
+export default FreeBoardList;

@@ -1,12 +1,13 @@
-package com.example.project.controller;
+package com.example.project.controller.board;
 
-import com.example.project.dto.NoticeDTO;
+import com.example.project.dto.board.NoticeDTO;
 import com.example.project.entity.Department;
 import com.example.project.entity.Employee;
-import com.example.project.entity.Notice;
+import com.example.project.entity.board.Notice;
 import com.example.project.repository.DepartmentRepository;
-import com.example.project.repository.NoticeRepository;
-import com.example.project.service.NoticeService;
+import com.example.project.repository.board.NoticeRepository;
+import com.example.project.service.board.NoticeService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

@@ -1,4 +1,4 @@
-package com.example.project.repository;
+package com.example.project.repository.board;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.project.entity.Notice;
+import com.example.project.entity.board.Notice;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
