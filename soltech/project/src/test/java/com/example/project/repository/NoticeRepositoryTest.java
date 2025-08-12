@@ -33,20 +33,20 @@ public class NoticeRepositoryTest {
     // @Autowired
     // private NoticeService noticeService;
 
-    @Test
-    // insert 데이터 삽입
-    public void insertTest() {
-        IntStream.rangeClosed(1, 50).forEach(i -> {
-            Notice notice = Notice.builder()
-                    .empNo(Employee.builder().empNo(1006L).build())
-                    .deptNo(Department.builder().deptNo(201L).build())
-                    .notiTitle("Test" + i)
-                    .notiContent("Test" + i)
-                    .notiRegDate(LocalDateTime.now())
-                    .build();
-            noticeRepository.save(notice);
-        });
-    }
+    // @Test
+    // // insert 데이터 삽입
+    // public void insertTest() {
+    // IntStream.rangeClosed(1, 50).forEach(i -> {
+    // Notice notice = Notice.builder()
+    // .empNo(Employee.builder().empNo(1006L).build())
+    // .deptNo(Department.builder().deptNo(201L).build())
+    // .notiTitle("Test" + i)
+    // .notiContent("Test" + i)
+    // .notiRegDate(LocalDateTime.now())
+    // .build();
+    // noticeRepository.save(notice);
+    // });
+    // }
 
     // @Test
     // // 데이터 단컨 조회
