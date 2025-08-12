@@ -1,7 +1,7 @@
 import api from "./axios";
 
 // 공통 base URL
-export const ATT_API_HOST = "intrasoltech/attendance";
+export const ATT_API_HOST = "/intrasoltech/attendance";
 
 // 출근 데이터 불러오기 함수
 export const fetchAttendanceList = async (empNo, year, month) => {
@@ -32,3 +32,9 @@ export const logoutAttendance = async (empNo) => {
   const res = await api.post(`${ATT_API_HOST}/logout/${empNo}`);
   return res.data;
 };
+
+// // 퇴근 에러
+// export const getWorking = async (empNo) => {
+//   const res = await api.get(`${ATT_API_HOST}/working/${empNo}`);
+//   return res.data;
+// };

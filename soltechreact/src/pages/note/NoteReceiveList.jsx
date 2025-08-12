@@ -61,11 +61,16 @@ const NoteReceiveList = () => {
   };
 
   const handleMarkAsRead = async () => {
-    const selected = notes.filter((note) => note.checked);
+    const selected = notes.filter((note) => note.checked).map((note) => note.noteReceiveNo);
     if (selected.length === 0) return alert("읽음 처리할 쪽지를 선택하세요.");
     try {
-      await Promise.all(selected.map((note) => markNoteAsRead(note.noteReceiveNo, empNo)));
-      setNotes((prev) => prev.map((note) => (note.checked ? { ...note, isRead: true } : note)));
+      await Promise.all(selected.map((id) => markNoteAsRead(id, empNo)));
+      setNotes((prev) =>
+        prev.map((note) => (selected.includes(note.noteReceiveNo) ? { ...note, isRead: true, checked: false } : note))
+      );
+
+      const headerCheckbox = document.querySelector("thead input[type=checkbox]");
+      if (headerCheckbox) headerCheckbox.checked = false;
     } catch (err) {
       console.error("읽음 처리 실패", err);
       alert("읽음 처리 실패");
@@ -136,7 +141,9 @@ const NoteReceiveList = () => {
             paged.map((note, i) => (
               <tr
                 key={note.noteReceiveNo}
-                className={`border-t cursor-pointer ${note.isRead ? "text-gray-500" : "font-semibold"}`}
+                className={`border-t cursor-pointer ${
+                  note.isRead ? "text-gray-500 font-normal" : "text-gray-900 font-semibold"
+                }`}
               >
                 <td className="p-2">
                   <input

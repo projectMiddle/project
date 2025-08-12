@@ -25,7 +25,24 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
 
     // 출근
+    @Transactional
     public AttendanceDTO login(Employee employee) {
+        LocalDate today = LocalDate.now();
+
+        // 1) 이미 출근 중이면: 기존 열린 세션 반환
+        if (attendanceRepository.existsByEmpNoAndAttEndTimeIsNull(employee)) {
+            Attendance open = attendanceRepository.findFirstByEmpNoAndAttEndTimeIsNullOrderByAttStartTimeDesc(employee)
+                    .orElse(null);
+
+            return (open != null) ? entityDto(open, employee) : new AttendanceDTO();
+        }
+
+        // 2) 오늘자 행이 있고 이미 퇴근 완료되었으면: 그대로 반환(하루 1회 규칙 유지용)
+        Attendance todayRow = attendanceRepository.findByEmpNoAndAttWorkDate(employee, today);
+        if (todayRow != null && todayRow.getAttEndTime() != null) {
+            return entityDto(todayRow, employee);
+        }
+
         Attendance attendance = Attendance.builder()
                 .empNo(employee)
                 .attWorkDate(LocalDate.now())
@@ -39,41 +56,34 @@ public class AttendanceService {
         return entityDto(saved, employee);
     }
 
+    @Transactional
     public AttendanceDTO logout(Employee employee) {
-        Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
-        attendance.changeAttEndTime(LocalTime.now());
-        attendance.changeAttStatus(AttStatus.OFF);
+        // 1) 열린 세션이 있으면 종료
+        Attendance open = attendanceRepository.findFirstByEmpNoAndAttEndTimeIsNullOrderByAttStartTimeDesc(employee)
+                .orElse(null);
 
-        Attendance saved = attendanceRepository.save(attendance);
+        if (open != null) {
+            open.changeAttEndTime(LocalTime.now());
+            open.changeAttStatus(AttStatus.OFF);
+            return entityDto(open, employee);
 
-        return entityDto(saved, employee);
+        }
+
+        // 2) 열린 세션은 없고, 오늘 행이 이미 완료된 경우: 그대로 반환
+        Attendance todayRow = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
+        if (todayRow != null && todayRow.getAttEndTime() != null) {
+            return entityDto(todayRow, employee);
+        }
+
+        return new AttendanceDTO();
 
     }
 
-    // 불 반짝 업그레이드
-    // public AttendanceDTO working(Employee employee) {
-    // Attendance attendance =
-    // attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
-
-    // return AttendanceDTO.builder()
-    // .empNo(employee.getEmpNo())
-    // .eName(employee.getEName())
-    // .deptName(employee.getDeptNo().getDeptName())
-    // .attStatus(attendance.getAttStatus())
-    // .build();
-    // }
-
     public AttendanceDTO working(Employee employee) {
-        Attendance att = attendanceRepository.findTodayByEmp(employee);
-        if (att == null) {
-            System.out.println("❗ 출근 기록 없음 - empNo: " + employee.getEmpNo());
-            return null;
-        }
-
+        boolean working = attendanceRepository.existsByEmpNoAndAttEndTimeIsNull(employee);
         return AttendanceDTO.builder()
-                .attNo(att.getAttNo())
                 .empNo(employee.getEmpNo())
-                .attStatus(att.getAttStatus())
+                .attStatus(working ? AttStatus.WORK : AttStatus.OFF)
                 .eName(employee.getEName())
                 .deptName(employee.getDeptNo().getDeptName())
                 .build();
