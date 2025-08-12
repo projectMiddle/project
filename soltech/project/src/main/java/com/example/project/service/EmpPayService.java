@@ -29,7 +29,6 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class EmpPayService {
 
-        private final EmpPayRepository empPayRepository;
         private final EmployeeRepository employeeRepository;
         private final SalaryCalculator salaryCalculator;
 
@@ -132,16 +131,30 @@ public class EmpPayService {
                                 .build();
         }
 
-        // 명세서 수정
-        public EmpPay updatePay(Long empPayId, EmpPayDTO dto) {
-                EmpPay empPay = empPayRepository.findById(empPayId)
+        @Transactional
+        public EmpPayDTO updatePay(Long empPayId, EmpPayDTO dto) {
+                EmpPay e = empPayRepository.findById(empPayId)
                                 .orElseThrow(() -> new RuntimeException("급여명세서를 찾을 수 없습니다."));
 
-                empPay.setPayBaseSalary(dto.getPayBaseSalary());
-                empPay.setPayBonusWage(dto.getPayBonusWage());
-                // 필요한 setter만 유지 (필드가 많다면 builder 재생성 고려)
+                // 필요한 필드 전부 반영 (payMonth/empNo는 일반적으로 수정 안 함)
+                e.setPayBaseSalary(dto.getPayBaseSalary());
+                e.setPayBonusWage(dto.getPayBonusWage());
+                e.setPayPositionWage(dto.getPayPositionWage());
+                e.setPayBenefits(dto.getPayBenefits());
 
-                return empPayRepository.save(empPay);
+                e.setPayIncomeTax(dto.getPayIncomeTax());
+                e.setPayResidentTax(dto.getPayResidentTax());
+                e.setPayHealthInsurance(dto.getPayHealthInsurance());
+                e.setPayNationalPension(dto.getPayNationalPension());
+                e.setPayEmpInsurance(dto.getPayEmpInsurance());
+                e.setPayLongtermCare(dto.getPayLongtermCare());
+
+                e.setPayTotalSalary(dto.getPayTotalSalary());
+                e.setPayTotalDeduction(dto.getPayTotalDeduction());
+                e.setPayNetSalary(dto.getPayNetSalary());
+
+                EmpPay saved = empPayRepository.save(e);
+                return toDto(saved); // 기존 DTO 매핑 메서드 사용
         }
 
         // 명세서 삭제
@@ -165,4 +178,45 @@ public class EmpPayService {
                 });
         }
 
+        private final EmpPayRepository empPayRepository;
+
+        public List<EmpPayDTO> getPayListByEmpNoAndYear(Long empNo, int year) {
+                YearMonth start = YearMonth.of(year, 1);
+                YearMonth end = YearMonth.of(year, 12);
+
+                List<EmpPay> list = empPayRepository
+                                .findByEmpNoEmpNoAndPayMonthBetween(empNo, start, end);
+
+                // ⬇ 기존에 쓰던 DTO 매핑 그대로 사용
+                return list.stream()
+                                .map(this::toDto) // 기존 매핑 메서드가 있으면 그거 사용
+                                .toList();
+        }
+
+        private EmpPayDTO toDto(EmpPay p) {
+                // 프로젝트에 있는 방식 그대로. (예시는 필드 일부)
+                return EmpPayDTO.builder()
+                                .payNo(p.getPayNo())
+                                .empNo(p.getEmpNo().getEmpNo())
+                                .eName(p.getEmpNo().getEName())
+                                .departmentName(p.getEmpNo().getDeptNo().getDeptName())
+                                .jobName(p.getEmpNo().getJobNo().getJobName())
+                                .payMonth(p.getPayMonth().toString())
+                                .payBaseSalary(p.getPayBaseSalary())
+                                .payBonusWage(p.getPayBonusWage())
+                                .payPositionWage(p.getPayPositionWage())
+                                .payBenefits(p.getPayBenefits())
+                                .payIncomeTax(p.getPayIncomeTax())
+                                .payResidentTax(p.getPayResidentTax())
+                                .payHealthInsurance(p.getPayHealthInsurance())
+                                .payNationalPension(p.getPayNationalPension())
+                                .payEmpInsurance(p.getPayEmpInsurance())
+                                .payLongtermCare(p.getPayLongtermCare())
+                                .payTotalSalary(p.getPayTotalSalary())
+                                .payTotalDeduction(p.getPayTotalDeduction())
+                                .payNetSalary(p.getPayNetSalary())
+                                .accountNumber(p.getEmpNo().getEAccount())
+                                .annualSalary(p.getEmpNo().getESalary())
+                                .build();
+        }
 }

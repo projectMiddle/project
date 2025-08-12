@@ -1,9 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { getProductList, addCart } from "../../api/mallApi";
 import useAuth from "../../hooks/useAuth";
 
 export default function WelfareMallList() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const { userInfo } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,6 +16,10 @@ export default function WelfareMallList() {
   }, []);
 
   const handleAddToCart = (product) => {
+    if (!userInfo?.empNo) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
     addCart(product.productId, userInfo.empNo, 1)
       .then(() => alert("장바구니에 담았습니다!"))
       .catch((err) => {
@@ -23,9 +28,23 @@ export default function WelfareMallList() {
       });
   };
 
-  const handleBuyNow = () => {
-    alert("바로구매는 아직 구현되지 않았습니다.");
+  // 바로구매 → 카트로 이동(+자동결제 신호)
+  const handleBuyNow = async (product) => {
+    if (!userInfo?.empNo) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    try {
+      await addCart(product.productId, userInfo.empNo, 1);
+    } catch (e) {
+      console.warn("장바구니 담기 실패(무시하고 진행):", e);
+    }
+    navigate("/intrasoltech/welfaremall/cart?autosubmit=1");
   };
+
+  // ❌ (삭제) checkoutData 관련 낙서 코드
+  // console.log("🛒 바로구매 데이터:", checkoutData);
+  // navigate("/intrasoltech/welfaremall/checkout", { state: checkoutData });
 
   // ======= 페이지네이션 (10개씩) =======
   const pageSize = 10;
@@ -89,6 +108,7 @@ export default function WelfareMallList() {
     );
   }, [page, totalPages]);
 
+  // ✅ 여기서 컴포넌트를 닫아야 함 (이 아래 코드들은 전부 return 내부)
   return (
     <div className="p-6">
       {/* 상품 그리드 */}
@@ -101,6 +121,7 @@ export default function WelfareMallList() {
                 src={`/welfimages/${product.productId}.jpg`}
                 alt={product.name}
                 className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
+                onError={(e) => (e.currentTarget.src = "/welfimages/fallback.jpg")}
               />
             </Link>
 
@@ -116,7 +137,7 @@ export default function WelfareMallList() {
                   장바구니
                 </button>
                 <button
-                  onClick={handleBuyNow}
+                  onClick={() => handleBuyNow(product)}
                   className="flex-1 rounded-sm bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 hover:scale-105"
                 >
                   바로구매

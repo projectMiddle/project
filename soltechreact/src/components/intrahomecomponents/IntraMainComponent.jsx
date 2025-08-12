@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { loginAttendance, logoutAttendance } from "../../api/attendanceApi";
 import { fetchEmployeeInfo } from "../../api/employeeProfile";
+import { NavLink } from "react-router-dom";
 import IntraTopSection from "./IntraTopSection";
 import IntraBottomSection from "./IntraBottomSection";
 import EmployeeSearchModal from "../../pages/intrahomeemployeepages/EmployeeSearchModal";
 import Information from "../../pages/intrahomeemployeepages/Information";
-
+import useIsHR from "../../hooks/useIsHR";
 // 사이드바용
 function SideLink({ Icon, label, to }) {
   return (
@@ -24,6 +25,7 @@ const IntraMainComponent = () => {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
   const [profile, setProfile] = useState(null);
+  const isHR = useIsHR();
 
   const handleGoToWork = async () => {
     try {
@@ -117,7 +119,7 @@ const IntraMainComponent = () => {
           <Link to="/intrasoltech/approval">결재</Link>
           <Link to="/intrasoltech/calendar">스케줄</Link>
           <Link to="/intrasoltech/attendance">출퇴근기록</Link>
-          <Link to="/intrasoltech/emppay">급여명세서</Link>
+          <NavLink to={isHR ? "/intrasoltech/emppay/HRPayDepartmentList" : "/intrasoltech/emppay"}>급여명세서</NavLink>
         </nav>
 
         <div className="flex gap-6 text-gray-600 items-center pr-8">

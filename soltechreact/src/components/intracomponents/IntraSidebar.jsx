@@ -29,7 +29,7 @@ export default function IntraSidebar() {
     { label: "리포트", icon: <FaChartBar /> },
     { label: "급여명세서", icon: <FaCalculator />, to: "/intrasoltech/emppay" },
     { label: "부서목록", icon: <FaUsers />, to: "/intrasoltech/department" },
-    { label: "복지몰", icon: <FaShoppingCart />, to: "https://www.coupang.com/" },
+    { label: "복지몰", icon: <FaShoppingCart />, to: "/intrasoltech/welfaremall" },
   ];
 
   const bottomItems = [

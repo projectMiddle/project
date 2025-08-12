@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   getCartList,
   deleteCart,
@@ -7,11 +7,13 @@ import {
   getEmployeeMobile, // /intrasoltech/empinfo/{empNo}
 } from "../../api/mallApi";
 import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function WelfareMallCart() {
   const { userInfo } = useAuth();
   const navigate = useNavigate();
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const autoSubmitted = useRef(false);
 
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]); // cartItemId[]
@@ -271,7 +273,6 @@ export default function WelfareMallCart() {
           </div>
         </div>
       </div>
-
       {/* 체크아웃 모달: 수령인/연락처 자동, 주소 고정 */}
       {openCheckout && (
         <CheckoutModal
