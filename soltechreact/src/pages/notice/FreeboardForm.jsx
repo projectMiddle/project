@@ -1,32 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createNotice } from "../../api/board/noticeApi"; // ✅ API 분리된 함수 import
+import { createFreePost } from "../../api/board/noticeApi";
 import useAuth from "../../hooks/useAuth";
-import { useEffect } from "react";
 
-const NoticeForm = () => {
+const FreeBoardForm = () => {
   const navigate = useNavigate();
-
   const { userInfo } = useAuth();
+  console.log("✅ userInfo:", userInfo);
+
   const [formData, setFormData] = useState({
-    notiTitle: "",
-    notiContent: "",
-    notiRegDate: new Date().toISOString(),
-    notiUpdateDate: new Date().toISOString(),
-    empNo: "",
-    deptNo: "",
+    frBdTitle: "", // ✅ 제목
+    frBdContent: "", // ✅ 본문 내용
+    empNo: "", // ✅ 사번
+    deptNo: "", // ✅ 부서 번호
   });
 
-  // userInfo가 로드되면 empNo/deptNo 자동 세팅
   useEffect(() => {
     if (userInfo) {
       setFormData((prev) => ({
         ...prev,
-        empNo: userInfo.empNo,
-        deptNo: userInfo.deptNo,
+        empNo: Number(userInfo.empNo),
+        deptNo: Number(userInfo.deptNo),
+        boardRegDate: new Date().toISOString(),
+        boardUpdateDate: new Date().toISOString(),
       }));
     }
   }, [userInfo]);
+
+  const deptMap = {
+    201: "개발부",
+    202: "인사부",
+    203: "총무부",
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,25 +40,22 @@ const NoticeForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await createNotice(formData); // ✅ 분리된 API 사용
-      alert("공지사항이 등록되었습니다.");
-      navigate("/intrasoltech/notices");
-    } catch (err) {
-      alert("오류 발생: " + err.message);
-    }
-  };
 
-  const deptMap = {
-    201: "개발부",
-    202: "영업부",
-    203: "기획부",
-    // 필요시 추가
+    console.log("📦 전송될 formData:", formData);
+
+    try {
+      await createFreePost(formData);
+      alert("게시글이 등록되었습니다.");
+      navigate("/intrasoltech/notices/freeboard/");
+    } catch (err) {
+      console.error("❌ 등록 실패:", err.response?.data || err.message);
+      alert("오류 발생: " + (err.response?.data?.message || err.message));
+    }
   };
 
   return (
     <div style={{ width: "100%" }}>
-      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">공지사항 - 작성</div>
+      <div className="bg-[#6b46c1] text-white font-bold text-[17px] pl-5 py-[14px]">자유게시판 - 글 작성</div>
       <form onSubmit={handleSubmit}>
         <div style={{ padding: "16px" }}>
           <table
@@ -69,8 +71,8 @@ const NoticeForm = () => {
                 <td style={cellStyle}>
                   <input
                     type="text"
-                    name="notiTitle"
-                    value={formData.notiTitle}
+                    name="frBdTitle" // ✅ name 수정
+                    value={formData.frBdTitle} // ✅ 바인딩된 값 수정
                     onChange={handleChange}
                     required
                     style={inputStyle}
@@ -78,25 +80,21 @@ const NoticeForm = () => {
                 </td>
               </tr>
               <tr>
-                <td style={cellStyleTitle}>사원명</td>
+                <td style={cellStyleTitle}>사원이름</td>
                 <td style={cellStyle}>{userInfo?.name || "로딩 중..."}</td>
               </tr>
               <tr>
-                <td style={cellStyleTitle}>부서</td>
-                <td style={cellStyle}>{deptMap[formData.deptNo] || "로딩중..."}</td>
+                <td style={cellStyleTitle}>부서명</td>
+                <td style={cellStyle}>{deptMap[userInfo?.deptNo] || "로딩 중..."}</td>
               </tr>
 
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>
-                <td style={cellStyle}>
-                  {new Date(formData.notiRegDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
-                </td>
+                <td style={cellStyle}>{new Date(formData.boardRegDate).toLocaleDateString("ko-KR")}</td>
               </tr>
               <tr>
                 <td style={cellStyleTitle}>수정일자</td>
-                <td style={cellStyle}>
-                  {new Date(formData.notiUpdateDate).toLocaleDateString("ko-KR").replace(/\.$/, "")}
-                </td>
+                <td style={cellStyle}>{new Date(formData.boardUpdateDate).toLocaleDateString("ko-KR")}</td>
               </tr>
             </tbody>
           </table>
@@ -110,8 +108,8 @@ const NoticeForm = () => {
             }}
           >
             <textarea
-              name="notiContent"
-              value={formData.notiContent}
+              name="frBdContent" // ✅ name 수정
+              value={formData.frBdContent} // ✅ 바인딩된 값 수정
               onChange={handleChange}
               placeholder="내용을 입력하세요"
               required
@@ -125,6 +123,7 @@ const NoticeForm = () => {
             />
           </div>
         </div>
+
         <div style={footerStyle}>
           <button type="button" onClick={() => navigate(-1)} style={buttonStyle}>
             취소
@@ -138,6 +137,7 @@ const NoticeForm = () => {
   );
 };
 
+// 스타일 정의
 const cellStyle = {
   border: "1px solid #ddd",
   padding: "14px 16px",
@@ -179,4 +179,4 @@ const buttonStyle = {
   cursor: "pointer",
 };
 
-export default NoticeForm;
+export default FreeBoardForm;

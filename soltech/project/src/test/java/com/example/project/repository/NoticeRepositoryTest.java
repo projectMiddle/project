@@ -15,13 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.example.project.dto.NoticeDTO;
 import com.example.project.dto.PageRequestDTO;
 import com.example.project.dto.PageResultDTO;
+import com.example.project.dto.board.NoticeDTO;
 import com.example.project.entity.Department;
 import com.example.project.entity.Employee;
-import com.example.project.entity.Notice;
-import com.example.project.service.NoticeService;
+import com.example.project.entity.board.Notice;
+import com.example.project.repository.board.NoticeRepository;
+import com.example.project.service.board.NoticeService;
 
 @SpringBootTest
 public class NoticeRepositoryTest {
@@ -32,20 +33,20 @@ public class NoticeRepositoryTest {
     // @Autowired
     // private NoticeService noticeService;
 
-    // @Test
-    // // insert 데이터 삽입
-    // public void insertTest() {
-    // IntStream.rangeClosed(1, 50).forEach(i -> {
-    // Notice notice = Notice.builder()
-    // .empNo(Employee.builder().empNo(1007L).build())
-    // .deptNo(Department.builder().deptNo(201L).build())
-    // .notiTitle("Test" + i)
-    // .notiContent("Test" + i)
-    // .notiRegDate(LocalDateTime.now())
-    // .build();
-    // noticeRepository.save(notice);
-    // });
-    // }
+    @Test
+    // insert 데이터 삽입
+    public void insertTest() {
+        IntStream.rangeClosed(1, 50).forEach(i -> {
+            Notice notice = Notice.builder()
+                    .empNo(Employee.builder().empNo(1006L).build())
+                    .deptNo(Department.builder().deptNo(201L).build())
+                    .notiTitle("Test" + i)
+                    .notiContent("Test" + i)
+                    .notiRegDate(LocalDateTime.now())
+                    .build();
+            noticeRepository.save(notice);
+        });
+    }
 
     // @Test
     // // 데이터 단컨 조회

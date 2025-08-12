@@ -1,4 +1,4 @@
-package com.example.project.service;
+package com.example.project.service.board;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,15 +10,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.project.dto.NoticeDTO;
 import com.example.project.dto.PageRequestDTO;
 import com.example.project.dto.PageResultDTO;
+import com.example.project.dto.board.NoticeDTO;
 import com.example.project.entity.Department;
 import com.example.project.entity.Employee;
-import com.example.project.entity.Notice;
+import com.example.project.entity.board.Notice;
 import com.example.project.repository.DepartmentRepository;
 import com.example.project.repository.EmployeeRepository;
-import com.example.project.repository.NoticeRepository;
+import com.example.project.repository.board.NoticeRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

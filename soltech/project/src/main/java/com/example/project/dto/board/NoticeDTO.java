@@ -1,4 +1,4 @@
-package com.example.project.dto;
+package com.example.project.dto.board;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

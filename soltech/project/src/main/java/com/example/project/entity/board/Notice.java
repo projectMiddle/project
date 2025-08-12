@@ -1,9 +1,12 @@
-package com.example.project.entity;
+package com.example.project.entity.board;
 
 import java.time.LocalDateTime;
 
 import org.hibernate.persister.collection.mutation.AbstractUpdateRowsCoordinator;
 import org.springframework.data.annotation.CreatedDate;
+
+import com.example.project.entity.Department;
+import com.example.project.entity.Employee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
