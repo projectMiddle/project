@@ -95,6 +95,9 @@ class EmpPayRepositoryTest {
             }
         }
     }
+    // public void insertEmpTest() {
+
+    // }
 
     /** Employee 엔티티 기준(연봉: eSalary: Long) */
     private int resolveAnnualSalary(Employee emp) {
