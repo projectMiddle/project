@@ -22,6 +22,7 @@ import MainLocationJongro from "./pages/mainhomepages/location/MainLocationJongr
 import MainLocationGangnam from "./pages/mainhomepages/location/MainLocationGangnam.jsx";
 import Report from "./pages/bimatrix/Report.jsx";
 import Now from "./pages/bimatrix/Now.jsx";
+import MainApplyRecruitDetail from "./pages/mainhomepages/jobs/MainApplyRecruitDetail.jsx";
 
 function App() {
   const { isAuthReady } = useAuth();
@@ -52,6 +53,7 @@ function App() {
         <Route path="/apply/information" element={<MainApplyInformation />} />
         <Route path="/apply/process" element={<MainApplyProcess />} />
         <Route path="/apply/recruit" element={<MainApplyRecruitList />} />
+        <Route path="/apply/recruit/:jobsNo" element={<MainApplyRecruitDetail />} />
 
         {/* Location 관련 */}
         <Route path="/location/jongro" element={<MainLocationJongro />} />
