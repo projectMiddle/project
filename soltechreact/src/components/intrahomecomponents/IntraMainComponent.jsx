@@ -223,7 +223,7 @@ const IntraMainComponent = () => {
 
                 <nav className="mt-6 space-y-3 text-sm grid grid-cols-2">
                   <SideLink Icon={Bell} label="알림" />
-                  <SideLink Icon={Mail} label="메일" to={"/intrasoltech/mail"} />
+                  <SideLink Icon={Mail} label="메일" />
                   <SideLink Icon={MessageSquare} label="쪽지" to={"/intrasoltech/note"} />
                   <SideLink Icon={Users} label="부서목록" to="/intrasoltech/department" />
                 </nav>
