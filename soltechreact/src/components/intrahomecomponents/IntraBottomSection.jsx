@@ -2,8 +2,9 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { fetchNoticeList } from "./../../api/board/noticeApi";
+import { fetchNoticeList } from "./../../api/noticeApi";
 import dayjs from "dayjs";
+import { fetchNoticeList } from "./../../api/board/noticeApi";
 
 const IntraBottomSection = () => {
   const [selectedTab, setSelectedTab] = useState("all");

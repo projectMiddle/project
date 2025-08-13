@@ -4,7 +4,6 @@ import ApprovalRoute from "./routes/ApprovalRoute";
 import EmployeePayRoute from "./routes/EmployeePayRoute";
 import CalenderRoute from "./routes/CalenderRoute";
 import NoticeRoute from "./routes/NoticeRoute";
-import MailRoute from "./routes/MailRoute";
 import AttendanceRoute from "./routes/AttendanceRoute";
 import DepartmentRoute from "./routes/DepartmentRoute";
 import WelfareMallRoute from "./routes/WelfareMallRoute";
@@ -34,7 +33,6 @@ const Intra = () => {
         <Route path="emppay/*" element={<EmployeePayRoute />} />
         <Route path="calendar/*" element={<CalenderRoute />} />
         <Route path="notices/*" element={<NoticeRoute />} />
-        <Route path="mail/*" element={<MailRoute />} />
         <Route path="note/*" element={<NoteRoute />} />
         <Route path="attendance/*" element={<AttendanceRoute />} />
         <Route path="department/*" element={<DepartmentRoute />} />
