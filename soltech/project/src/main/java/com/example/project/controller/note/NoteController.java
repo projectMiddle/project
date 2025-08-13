@@ -44,10 +44,10 @@ public class NoteController {
             @RequestParam("senderEmpNo") Long senderEmpNo,
             @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
 
-        log.info("📩 받은 noteTitle: {}", noteTitle);
-        log.info("📝 받은 noteContent: {}", noteContent);
-        log.info("📨 받은 receiverIds: {}", receiverIds);
-        log.info("📎 받은 attachments 수: {}", attachments != null ? attachments.size() : 0);
+        log.info("받은 noteTitle: {}", noteTitle);
+        log.info("받은 noteContent: {}", noteContent);
+        log.info("받은 receiverIds: {}", receiverIds);
+        log.info("받은 attachments 수: {}", attachments != null ? attachments.size() : 0);
 
         // 실제 서비스 로직 호출
         noteService.sendNote(noteTitle, noteContent, receiverIds, senderEmpNo, attachments);
@@ -126,6 +126,7 @@ public class NoteController {
     // 물리- 수신
     @DeleteMapping("/delete/receive")
     public ResponseEntity<Void> deleteReceive(@RequestBody List<Long> noteReceiveNo) {
+        System.out.println(">>> deleteReceive BULK called: " + noteReceiveNo);
         noteService.deleteReceiveNote(noteReceiveNo);
         return ResponseEntity.ok().build();
     }

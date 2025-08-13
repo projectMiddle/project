@@ -355,7 +355,7 @@ export default function WelfareMallCart() {
             <dd>{amounts.subtotal.toLocaleString()}원</dd>
           </div>
           <div className="flex justify-between">
-            <dt>직급 할인 (10%)</dt>
+            <dt>직급 할인 </dt>
             <dd className="text-red-500">-{amounts.discount.toLocaleString()}원</dd>
           </div>
           <div className="flex justify-between text-base font-semibold">

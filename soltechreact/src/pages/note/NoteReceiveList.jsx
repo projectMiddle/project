@@ -118,10 +118,18 @@ const NoteReceiveList = () => {
           읽음 처리
         </button>
       </div>
-      <table className="w-full table-fixed border text-sm">
+      <table className="w-full table-fixed border-collapse text-sm">
+        <colgroup>
+          <col className="w-10" />
+          <col className="w-10" />
+          <col className="w-1/3" />
+          <col />
+          <col className="w-32" />
+        </colgroup>
+
         <thead className="bg-violet-100">
           <tr>
-            <th className="p-2 w-10">
+            <th className="p-2 border-y text-center">
               <input
                 type="checkbox"
                 onChange={(e) => {
@@ -130,22 +138,23 @@ const NoteReceiveList = () => {
                 }}
               />
             </th>
-            <th className="p-2 w-10">#</th>
-            <th className="p-2 w-1/3">보낸 사람</th>
-            <th className="p-2">제목</th>
-            <th className="p-2 w-32">날짜</th>
+            <th className="p-2 border-y text-center">#</th>
+            <th className="p-2 border-y text-center">보낸 사람</th>
+            <th className="p-2 border-y text-center">제목</th>
+            <th className="p-2 border-y text-center">날짜</th>
           </tr>
         </thead>
+
         <tbody>
           {paged.length > 0 ? (
             paged.map((note, i) => (
               <tr
                 key={note.noteReceiveNo}
-                className={`border-t cursor-pointer ${
+                className={`cursor-pointer ${
                   note.isRead ? "text-gray-500 font-normal" : "text-gray-900 font-semibold"
                 }`}
               >
-                <td className="p-2">
+                <td className="p-2 border-y text-center">
                   <input
                     type="checkbox"
                     checked={note.checked}
@@ -157,23 +166,29 @@ const NoteReceiveList = () => {
                     }}
                   />
                 </td>
-                <td className="p-2">{startIdx + i + 1}</td>
-                <td className="p-2 truncate">{note.from}</td>
-                <td className="p-2 truncate hover:underline" onClick={() => handleClick(note.noteReceiveNo)}>
+                <td className="p-2 border-y text-center">{startIdx + i + 1}</td>
+                <td className="p-2 border-y text-center max-w-0 whitespace-nowrap overflow-hidden text-ellipsis">
+                  {note.from}
+                </td>
+                <td
+                  className="p-2 border-y text-center max-w-0 whitespace-nowrap overflow-hidden text-ellipsis hover:underline"
+                  onClick={() => handleClick(note.noteReceiveNo)}
+                >
                   {note.title}
                 </td>
-                <td className="p-2 text-sm">{note.date}</td>
+                <td className="p-2 border-y text-center text-sm whitespace-nowrap">{note.date}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="text-center p-4 text-gray-400">
+              <td colSpan="5" className="text-center p-4 text-gray-400 border-y">
                 결과 없음
               </td>
             </tr>
           )}
         </tbody>
       </table>
+
       {totalPage > 1 && (
         <div className="flex justify-center mt-4 gap-2">
           {Array.from({ length: totalPage }, (_, i) => (
@@ -187,7 +202,6 @@ const NoteReceiveList = () => {
           ))}
         </div>
       )}
-      {/* <CatWalker /> */}
     </div>
   );
 };

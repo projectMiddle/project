@@ -38,7 +38,6 @@ const NoteSendList = () => {
     fetchNotes();
   }, []);
 
-  // 필터 + 정렬
   const filteredNotes = notes.filter((note) => note.to.toLowerCase().includes(filterText.toLowerCase()));
 
   const sortedNotes = [...filteredNotes].sort((a, b) =>
@@ -51,7 +50,6 @@ const NoteSendList = () => {
 
   return (
     <div className="p-10">
-      {/* 헤더 */}
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h2 className="text-2xl font-bold text-violet-600 flex items-center">
           <RiMailSendFill className="text-xl mr-2" />
@@ -78,35 +76,40 @@ const NoteSendList = () => {
         </div>
       </div>
 
-      {/* 테이블 */}
       <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-sm table-fixed">
+        <table className="w-full text-sm table-fixed border-collapse">
+          <colgroup>
+            <col className="w-10" />
+            <col className="w-1/3" />
+            <col />
+            <col className="w-32" />
+          </colgroup>
           <thead className="bg-violet-100 text-violet-800 font-semibold">
             <tr>
-              <th className="p-2 w-10">#</th>
-              <th className="p-2">받는 사람</th>
-              <th className="p-2">제목</th>
-              <th className="p-2 text-right">날짜</th>
+              <th className="p-2 border-y text-center">#</th>
+              <th className="p-2 border-y text-center">받는 사람</th>
+              <th className="p-2 border-y text-center">제목</th>
+              <th className="p-2 border-y text-center">날짜</th>
             </tr>
           </thead>
           <tbody>
             {pagedNotes.length > 0 ? (
               pagedNotes.map((note, index) => (
-                <tr key={note.id} className="cursor-pointer border-b hover:bg-gray-100">
-                  <td className="p-2">{startIdx + index + 1}</td>
-                  <td className="p-2">{note.to}</td>
+                <tr key={note.id} className="cursor-pointer border-y hover:bg-gray-100">
+                  <td className="p-2 text-center">{startIdx + index + 1}</td>
+                  <td className="p-2 text-center">{note.to}</td>
                   <td
-                    className="p-2 underline hover:text-blue-500"
+                    className="p-2 text-center underline hover:text-blue-500"
                     onClick={() => navigate(`/intrasoltech/note/send/${note.id}`)}
                   >
                     {note.title}
                   </td>
-                  <td className="p-2 text-right">{note.date}</td>
+                  <td className="p-2 text-center">{note.date}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center text-gray-400 py-8">
+                <td colSpan="4" className="text-center text-gray-400 py-8 border-y">
                   보낸 쪽지가 없습니다.
                 </td>
               </tr>
@@ -115,7 +118,6 @@ const NoteSendList = () => {
         </table>
       </div>
 
-      {/* 페이지네이션 */}
       {totalPage > 1 && (
         <div className="flex justify-center mt-4 gap-2">
           {Array.from({ length: totalPage }, (_, i) => (

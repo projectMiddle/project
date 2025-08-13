@@ -26,6 +26,7 @@ const IntraMainComponent = () => {
   const empNo = userInfo?.empNo;
   const [profile, setProfile] = useState(null);
   const [isWorking, setIsWorking] = useState(false);
+  const isHR = useIsHR();
 
   const handleGoToWork = async () => {
     try {

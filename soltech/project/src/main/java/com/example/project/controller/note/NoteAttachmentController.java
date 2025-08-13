@@ -78,15 +78,15 @@ public class NoteAttachmentController {
             String decodedFileName = URLDecoder.decode(fileName, "UTF-8");
 
             Path filePath = Paths.get("C:/project/soltech/project/note", decodedPath, decodedFileName);
-            log.info("📥 다운로드 시도: {}", filePath);
+            log.info("다운로드 시도: {}", filePath);
 
             if (!Files.exists(filePath)) {
-                log.error("❌ 파일 없음: {}", filePath);
+                log.error("파일 없음: {}", filePath);
                 return ResponseEntity.notFound().build();
             }
 
             byte[] fileBytes = Files.readAllBytes(filePath);
-            log.info("📦 파일 크기: {} bytes", fileBytes.length);
+            log.info("파일 크기: {} bytes", fileBytes.length);
 
             String encodedFileName = URLEncoder.encode(decodedFileName, "UTF-8").replace("+", "%20");
 
@@ -96,7 +96,7 @@ public class NoteAttachmentController {
                     .body(fileBytes);
 
         } catch (Exception e) {
-            log.error("📛 다운로드 실패", e);
+            log.error("다운로드 실패", e);
             return ResponseEntity.internalServerError().build();
         }
     }
