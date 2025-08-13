@@ -1,13 +1,7 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import {
-  getCartList,
-  deleteCart,
-  clearCart,
-  createOrder,
-  getEmployeeMobile, // /intrasoltech/empinfo/{empNo}
-} from "../../api/mallApi";
+import { useEffect, useMemo, useState } from "react";
+import { getCartList, deleteCart, clearCart, createOrder, getEmployeeMobile, addCart } from "../../api/mallApi";
 import useAuth from "../../hooks/useAuth";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function WelfareMallCart() {
   const { userInfo } = useAuth();
@@ -66,7 +60,9 @@ export default function WelfareMallCart() {
       setLoading(true);
       const data = await getCartList(empNo);
       setCartItems(Array.isArray(data) ? data : []);
-      setSelectedItems([]); // 갱신 시 선택 초기화
+      setSelectedItems([]);
+      // const ids = (Array.isArray(data) ? data : []).map((i) => i.cartItemId).filter(Boolean);
+      // setSelectedItems(ids); // 갱신 시 선택 초기화
     } catch (err) {
       console.error("장바구니 불러오기 실패", err);
     } finally {
@@ -112,51 +108,130 @@ export default function WelfareMallCart() {
     }
   };
 
-  // 합계(백엔드 createOrder가 '전체 장바구니' 기준이므로 전체 금액으로 보여줌)
-  const subtotal = useMemo(() => cartItems.reduce((acc, it) => acc + it.price * it.quantity, 0), [cartItems]);
-  const discount = Math.floor(subtotal * 0.1);
-  const total = subtotal - discount;
+  // ---------- 선택/전체 공용 계산 ----------
+  const selectedList = useMemo(
+    () => cartItems.filter((it) => selectedItems.includes(it.cartItemId)),
+    [cartItems, selectedItems]
+  );
+  const hasSelection = selectedItems.length > 0;
+
+  const calcAmounts = (list) => {
+    const subtotal = list.reduce((a, it) => a + it.price * it.quantity, 0);
+    const discount = Math.floor(subtotal * 0.1);
+    const total = subtotal - discount;
+    return { subtotal, discount, total, count: list.length };
+  };
+
+  // 결제 기준 아이템과 금액(선택 있으면 선택, 아니면 전체)
+  const itemsForOrder = selectedList;
+  const amounts = useMemo(
+    () => (hasSelection ? calcAmounts(selectedList) : { subtotal: 0, discount: 0, total: 0, count: 0 }),
+    [hasSelection, selectedList]
+  );
+  // ----------------------------------------
 
   // 결제하기 → 체크아웃 모달
   const handleCheckoutOpen = () => {
-    if (cartItems.length === 0) return alert("주문할 항목이 없습니다.");
+    if (selectedItems.length === 0) return alert("결제할 항목을 선택하세요.");
     setOpenCheckout(true);
   };
 
   // 폼 제출 → 서버 주문 생성(실패하면 프론트 폴백)
   const submitCheckout = async (checkoutForm) => {
+    const DEBUG = true;
+    const dlog = (...args) => DEBUG && console.log("[checkout]", ...args);
+
     setLoading(true);
+    if (selectedItems.length === 0) {
+      alert("결제할 항목을 선택하세요.");
+      setLoading(false);
+      setOpenCheckout(false);
+      return;
+    }
+
+    const selected = cartItems.filter((i) => selectedItems.includes(i.cartItemId));
+    const unselected = cartItems.filter((i) => !selectedItems.includes(i.cartItemId));
+    const unselectedIds = unselected.map((i) => i.cartItemId);
+
+    dlog("selectedItems:", selectedItems);
+    dlog(
+      "selected:",
+      selected.map((s) => ({ id: s.cartItemId, pid: s.productId, qty: s.quantity }))
+    );
+    dlog(
+      "unselected:",
+      unselected.map((u) => ({ id: u.cartItemId, pid: u.productId, qty: u.quantity }))
+    );
+
     let created = null;
+    let removedUnselected = false;
 
     try {
-      // 현재 API 시그니처: createOrder(empNo) → 전체 장바구니로 주문 생성
-      const res = await createOrder(empNo);
-      if (res && res.orderId) {
-        created = { ...res, shipping: checkoutForm };
+      // 1) 미선택 삭제
+      if (unselectedIds.length) {
+        dlog("deleteCart ->", { empNo, unselectedIds });
+        await deleteCart(empNo, unselectedIds);
+        dlog("deleteCart done");
+        removedUnselected = true;
       }
-    } catch (err) {
-      console.warn("createOrder failed:", err?.response?.status, err?.response?.data || err.message);
-    } finally {
-      if (!created) {
-        // 프론트 폴백 주문(보여주기용)
-        const sub = cartItems.reduce((a, it) => a + it.price * it.quantity, 0);
-        const dis = Math.floor(sub * 0.1);
-        const tot = sub - dis;
 
+      // 2) 주문 생성
+      dlog("createOrder start", { empNo });
+      const res = await createOrder(empNo);
+      dlog("createOrder result", res);
+      if (res?.orderId) created = { ...res, shipping: checkoutForm };
+    } catch (err) {
+      console.warn("[checkout] createOrder failed", {
+        status: err?.response?.status,
+        data: err?.response?.data,
+        msg: err?.message,
+      });
+
+      // // 실패 롤백: 방금 뺀 미선택 복구 (부분 실패도 원인 수집)
+    } finally {
+      if (removedUnselected && unselected.length) {
+        const results = await Promise.allSettled(
+          unselected.map(async (u) => {
+            const pid = u.productId ?? u.sku ?? u.id ?? u.productNo;
+            const qty = Number(u.quantity || 0);
+            if (!pid || !qty) {
+              throw new Error(`invalid restore payload pid=${pid}, qty=${qty}`);
+            }
+            await addCart(pid, empNo, qty); // 1차 시그니처
+          })
+        );
+        // 어떤게 실패했는지 한눈에
+        const failed = results.map((r, i) => ({ r, item: unselected[i] })).filter((x) => x.r.status === "rejected");
+        if (failed.length) {
+          console.error("[restore] failed items:", failed);
+        }
+      }
+
+      if (!created) {
+        // 서버 실패 시 프런트 폴백(주문내역엔 안 남음)
         created = {
           orderId: "ORD-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
           orderedAt: new Date().toISOString().slice(0, 19).replace("T", " "),
-          items: cartItems,
-          subtotal: sub,
-          discount: dis,
-          total: tot,
+          items: selected,
+          subtotal: amounts.subtotal,
+          discount: amounts.discount,
+          total: amounts.total,
           shipping: checkoutForm,
         };
       }
+      try {
+        if (created?.orderId) {
+          localStorage.setItem(`wm_order_shipping_${created.orderId}`, JSON.stringify(created.shipping || {}));
+        }
+      } catch (e) {
+        console.debug("[checkout] localStorage save skipped:", e);
+      }
+
       setOrder(created);
       setOpenCheckout(false);
       setOpenDone(true);
-      await fetchCart(); // 서버가 장바구니 비우면 반영됨
+      await fetchCart();
+      setSelectedItems([]);
       setLoading(false);
     }
   };
@@ -201,6 +276,26 @@ export default function WelfareMallCart() {
           >
             전체 비우기
           </button>
+
+          {/* 우측 하단 플로팅 */}
+          <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-2">
+            <Link
+              to="/intrasoltech/welfaremall"
+              className="w-12 h-12 flex items-center justify-center rounded-full shadow-lg bg-blue-600 text-white hover:bg-blue-700"
+              aria-label="복지몰 홈"
+              title="복지몰 홈"
+            >
+              🏬
+            </Link>
+            <Link
+              to="/intrasoltech/welfaremall/orders"
+              className="w-12 h-12 flex items-center justify-center rounded-full shadow-lg bg-blue-600 text-white hover:bg-blue-700"
+              aria-label="주문목록"
+              title="주문목록"
+            >
+              🧾
+            </Link>
+          </div>
         </div>
 
         {/* 목록 */}
@@ -247,26 +342,32 @@ export default function WelfareMallCart() {
           ))}
         </ul>
 
-        {/* 합계(전체 기준) */}
+        {/* 합계(선택 있으면 선택 기준, 아니면 전체 기준) */}
         <div className="mt-8 border-t pt-6 max-w-lg ml-auto text-sm text-gray-700 space-y-2">
+          {hasSelection && (
+            <div className="flex justify-between">
+              <dt className="text-purple-600">선택된 상품</dt>
+              <dd className="text-purple-600">{amounts.count}개</dd>
+            </div>
+          )}
           <div className="flex justify-between">
-            <dt>합계</dt>
-            <dd>{subtotal.toLocaleString()}원</dd>
+            <dt>{hasSelection ? "선택 합계" : "합계"}</dt>
+            <dd>{amounts.subtotal.toLocaleString()}원</dd>
           </div>
           <div className="flex justify-between">
-            <dt>직급 할인 (10%)</dt>
-            <dd className="text-red-500">-{discount.toLocaleString()}원</dd>
+            <dt>직급 할인 </dt>
+            <dd className="text-red-500">-{amounts.discount.toLocaleString()}원</dd>
           </div>
           <div className="flex justify-between text-base font-semibold">
-            <dt>총 합계</dt>
-            <dd>{total.toLocaleString()}원</dd>
+            <dt>{hasSelection ? "선택 총 합계" : "총 합계"}</dt>
+            <dd>{amounts.total.toLocaleString()}원</dd>
           </div>
 
           <div className="text-right mt-6">
             <button
               onClick={handleCheckoutOpen}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded disabled:opacity-50"
-              disabled={loading || cartItems.length === 0}
+              disabled={loading || selectedItems.length === 0}
             >
               {loading ? "처리 중..." : "결제하기"}
             </button>
@@ -278,7 +379,7 @@ export default function WelfareMallCart() {
         <CheckoutModal
           onClose={() => setOpenCheckout(false)}
           onSubmit={submitCheckout}
-          defaultAmount={{ subtotal, discount, total, count: cartItems.length }}
+          defaultAmount={amounts} // ✅ 단일 소스
           defaults={{
             receiver: defaultReceiver,
             phone: phoneDefault, // 숫자만 전달 → 모달에서 하이픈 포맷
@@ -336,7 +437,7 @@ export default function WelfareMallCart() {
  * 전화번호는 보기용 하이픈 포맷(010-1234-5678)으로 표시, 전송은 숫자만
  */
 function CheckoutModal({ onClose, onSubmit, defaultAmount, defaults = {}, lockAddress = false }) {
-  // ✅ 보기용 하이픈 포맷터
+  // 보기용 하이픈 포맷터
   const formatPhone = (v = "") =>
     v
       .replace(/\D/g, "")
@@ -346,7 +447,7 @@ function CheckoutModal({ onClose, onSubmit, defaultAmount, defaults = {}, lockAd
 
   const [form, setForm] = useState({
     receiver: defaults.receiver ?? "",
-    phone: formatPhone(defaults.phone ?? ""), // ← 기본값도 하이픈 표시
+    phone: formatPhone(defaults.phone ?? ""), // 기본값도 하이픈 표시
     address1: defaults.address1 ?? "서울특별시 종로구 종로12길 15",
     address2: "",
     requestMessage: "",
@@ -361,7 +462,7 @@ function CheckoutModal({ onClose, onSubmit, defaultAmount, defaults = {}, lockAd
     setForm((prev) => {
       const next = { ...prev };
       if (!prev.receiver && defaults?.receiver) next.receiver = defaults.receiver;
-      if (!prev.phone && defaults?.phone) next.phone = formatPhone(defaults.phone); // ✅ 포맷 적용
+      if (!prev.phone && defaults?.phone) next.phone = formatPhone(defaults.phone);
       if (lockAddress && defaults?.address1) next.address1 = defaults.address1;
       return next;
     });
@@ -370,7 +471,7 @@ function CheckoutModal({ onClose, onSubmit, defaultAmount, defaults = {}, lockAd
   const change = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
-      setForm((f) => ({ ...f, phone: formatPhone(value) })); // ✅ 입력 시 하이픈 자동
+      setForm((f) => ({ ...f, phone: formatPhone(value) })); // 입력 시 하이픈 자동
       return;
     }
     setForm((f) => ({ ...f, [name]: value }));

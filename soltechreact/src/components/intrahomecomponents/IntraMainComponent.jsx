@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Cog, User, PowerOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { loginAttendance, logoutAttendance } from "../../api/attendanceApi";
+import { fetchWorkingStatus, loginAttendance, logoutAttendance } from "../../api/attendanceApi";
 import { fetchEmployeeInfo } from "../../api/employeeProfile";
 import { NavLink } from "react-router-dom";
 import IntraTopSection from "./IntraTopSection";
@@ -25,12 +25,24 @@ const IntraMainComponent = () => {
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
   const [profile, setProfile] = useState(null);
+  const [isWorking, setIsWorking] = useState(false);
   const isHR = useIsHR();
 
   const handleGoToWork = async () => {
     try {
+      const status = await fetchWorkingStatus(empNo);
+      if (status.attStatus === "WORK") {
+        alert("이미 출근 중입니다.");
+        return;
+      }
       const data = await loginAttendance(empNo);
-      alert("출근 완료", data);
+      if (data?.attEndTime) {
+        alert("오늘은 이미 출퇴근 처리가 완료되었습니다.");
+      } else {
+        alert("출근 처리 완료");
+        setIsWorking(true);
+      }
+      window.location.reload();
     } catch (err) {
       console.error("출근 실패", err);
       alert("출근 실패");
@@ -38,8 +50,19 @@ const IntraMainComponent = () => {
   };
   const handleLeaveWork = async () => {
     try {
+      const status = await fetchWorkingStatus(empNo);
+      if (status.attStatus !== "WORK") {
+        alert("이미 퇴근 처리되었습니다.");
+        return;
+      }
       const data = await logoutAttendance(empNo);
-      alert("퇴근 완료", data);
+      if (data?.attEndTime) {
+        alert("퇴근 완료");
+        setIsWorking(false);
+      } else {
+        alert("출근 기록이 없습니다.");
+      }
+      window.location.reload();
     } catch (err) {
       console.error("퇴근 실패", err);
       alert("퇴근 실패");
@@ -50,6 +73,7 @@ const IntraMainComponent = () => {
     fetchEmployeeInfo(empNo)
       .then((datas) => {
         setProfile(datas);
+        setIsWorking(datas.attStatus === "WORK");
       })
       .catch((err) => {
         console.log("사원정보 조회 실패", err);

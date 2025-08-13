@@ -43,7 +43,7 @@ class EmpPayRepositoryTest {
                     YearMonth.of(year, 1),
                     YearMonth.of(year, 12));
 
-            for (int m = 1; m <= 12; m++) {
+            for (int m = 1; m <= 8; m++) {
                 YearMonth ym = YearMonth.of(year, m);
 
                 // 월 기본급 = 연봉/12

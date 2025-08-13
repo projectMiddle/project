@@ -110,7 +110,7 @@ export default function WelfareMallList() {
 
   // ✅ 여기서 컴포넌트를 닫아야 함 (이 아래 코드들은 전부 return 내부)
   return (
-    <div className="p-6">
+    <div className="p-6 pt-20">
       {/* 상품 그리드 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {pageItems.map((product) => (

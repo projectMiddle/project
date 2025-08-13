@@ -1,8 +1,12 @@
 package com.example.project.entity.note;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.project.entity.Employee;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 
 import lombok.AllArgsConstructor;
@@ -61,7 +66,9 @@ public class NoteReceive {
     @Column(nullable = false)
     private Long senderEmpNo;
 
-    // 삭제 추가
+    @OneToMany(mappedBy = "noteReceive", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteAttachment> attachments = new ArrayList<>();
+
     @Column(nullable = false)
     private boolean noteDelete;
 

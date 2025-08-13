@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
+const SHIP_KEY = (id) => `wm_order_shipping_${id}`;
+const toApiId = (v) => (typeof v === "number" ? String(v) : typeof v === "string" && /^\d+$/.test(v) ? v : null);
+
 export default function WelfareMallComplete() {
   const { userInfo } = useAuth();
   const navigate = useNavigate();
@@ -22,14 +25,11 @@ export default function WelfareMallComplete() {
       try {
         sessionStorage.setItem("wm_last_order", JSON.stringify(state));
       } catch (e) {
-        // 저장 실패해도 진행
-        console.warn("wm_last_order save failed:", e);
+        console.warn("error");
       }
       setOrder(state);
       return;
     }
-
-    // 새로고침 대비 복구
     try {
       const raw = sessionStorage.getItem("wm_last_order");
       if (raw) {
@@ -37,7 +37,7 @@ export default function WelfareMallComplete() {
         if (cached) setOrder(cached);
       }
     } catch (e) {
-      console.warn("wm_last_order restore failed:", e);
+      console.warn("error");
     }
   }, [state]);
 
@@ -70,6 +70,24 @@ export default function WelfareMallComplete() {
     cardLast4 = "",
   } = shipping;
 
+  // 주문내역 페이지로 이동 (숫자형 주문ID만 넘김)
+  const goOrders = () => {
+    const shippingSeed = { receiver, phone, address1, address2, requestMessage };
+    const apiOrderId = toApiId(order?.orderNo) ?? toApiId(orderId); // 서버가 기대하는 숫자 PK
+
+    try {
+      if (apiOrderId) {
+        localStorage.setItem(SHIP_KEY(apiOrderId), JSON.stringify(shippingSeed));
+      }
+    } catch (e) {
+      console.warn("error");
+    }
+
+    navigate("/intrasoltech/welfaremall/orders", {
+      state: { seedOrderId: apiOrderId, seedShipping: shippingSeed },
+    });
+  };
+
   const payMethodLabel = payMethod === "TRANSFER" ? "계좌이체" : "카드";
   const maskedCard = payMethod === "CARD" && cardLast4 ? `**** **** **** ${cardLast4}` : undefined;
 
@@ -83,7 +101,6 @@ export default function WelfareMallComplete() {
       alt={alt || ""}
       className="w-16 h-16 rounded object-cover"
       onError={(e) => {
-        // 무한 onError 방지
         e.currentTarget.onerror = null;
         e.currentTarget.src = noImg;
       }}
@@ -191,10 +208,7 @@ export default function WelfareMallComplete() {
           <button onClick={() => navigate("/intrasoltech/welfaremall")} className="px-4 py-2 rounded border">
             쇼핑 계속
           </button>
-          <button
-            onClick={() => navigate("/intrasoltech/welfaremall/orders")}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-          >
+          <button onClick={goOrders} className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
             주문내역 보기
           </button>
         </div>

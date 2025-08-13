@@ -64,22 +64,29 @@ const NoteTrash = () => {
         <p className="text-gray-400">휴지통에 쪽지가 없습니다.</p>
       ) : (
         <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100 border-b">
+          <colgroup>
+            <col className="w-10" />
+            <col className="w-1/3" />
+            <col />
+            <col className="w-24" />
+            <col className="w-40" />
+          </colgroup>
+          <thead className="bg-gray-100 border-y">
             <tr>
-              <th className="p-2 w-10">#</th>
-              <th className="p-2">보낸/받은 사람</th>
-              <th className="p-2">제목</th>
-              <th className="p-2">종류</th>
-              <th className="p-2 text-right">삭제</th>
+              <th className="p-2 border-y text-center">#</th>
+              <th className="p-2 border-y text-center">보낸/받은 사람</th>
+              <th className="p-2 border-y text-center">제목</th>
+              <th className="p-2 border-y text-center">종류</th>
+              <th className="p-2 border-y text-center">삭제</th>
             </tr>
           </thead>
           <tbody>
             {trashNotes.map((note, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50">
-                <td className="p-2">{index + 1}</td>
-                <td className="p-2">{note.targetName}</td>
+              <tr key={index} className="hover:bg-gray-50 border-y">
+                <td className="p-2 text-center">{index + 1}</td>
+                <td className="p-2 text-center">{note.targetName}</td>
                 <td
-                  className="p-2 truncate text-blue-600 hover:underline cursor-pointer"
+                  className="p-2 text-center truncate text-blue-600 hover:underline cursor-pointer"
                   onClick={() =>
                     note.noteType === "보낸쪽지"
                       ? navigate(`/intrasoltech/note/send/${note.id}`)
@@ -88,8 +95,8 @@ const NoteTrash = () => {
                 >
                   {note.noteTitle}
                 </td>
-                <td className="p-2">{note.noteType}</td>
-                <td className="p-2 text-right">
+                <td className="p-2 text-center">{note.noteType}</td>
+                <td className="p-2 text-center">
                   <button
                     onClick={() => handleRecover(note)}
                     className="px-2 py-1 text-sm bg-green-100 hover:bg-green-200 rounded mr-2"

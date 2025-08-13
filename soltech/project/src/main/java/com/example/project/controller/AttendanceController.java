@@ -45,23 +45,17 @@ public class AttendanceController {
         return attendanceService.logout(employee);
     }
 
-    // 불반짝 업그레이드
-    // @GetMapping("/working/{empNo}")
-    // public AttendanceDTO working(@PathVariable Long empNo) {
-    // Employee employee = employeeRepository.findById(empNo).orElseThrow();
-    // return attendanceService.working(employee);
-    // }
     @GetMapping("/working/{empNo}")
     public ResponseEntity<AttendanceDTO> working(@PathVariable Long empNo) {
         return employeeRepository.findById(empNo)
                 .map(employee -> {
                     AttendanceDTO dto = attendanceService.working(employee);
                     if (dto == null) {
-                        return ResponseEntity.ok(new AttendanceDTO()); // 안전하게 빈 DTO 반환
+                        return ResponseEntity.ok(new AttendanceDTO());
                     }
                     return ResponseEntity.ok(dto);
                 })
-                .orElseGet(() -> ResponseEntity.ok(new AttendanceDTO())); // 사원이 없으면 빈 DTO
+                .orElseGet(() -> ResponseEntity.ok(new AttendanceDTO()));
     }
 
     // 연,월 필터링
@@ -80,9 +74,8 @@ public class AttendanceController {
     @GetMapping("/user/info/{empNo}")
     public Map<String, Object> getUserSummary(@PathVariable Long empNo) {
         Employee employee = employeeRepository.findById(empNo).orElseThrow();
-        Attendance attendance = attendanceRepository.findByEmpNoAndAttWorkDate(employee, LocalDate.now());
 
-        boolean isWorking = (attendance != null && attendance.getAttEndTime() == null);
+        boolean isWorking = attendanceRepository.existsByEmpNoAndAttEndTimeIsNull(employee);
 
         return Map.of(
                 "name", employee.getEName(),

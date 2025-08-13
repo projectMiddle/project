@@ -6,15 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { totalWorkTime } from "../../utils/timeUtils";
 import { fetchAttendanceList } from "../../api/attendanceApi";
 import useAuth from "../../hooks/useAuth";
+import { today } from "@internationalized/date";
 
 const Attendance = () => {
   const [attList, setAttList] = useState([]); // 서버에서 받아 올 데이터
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(6);
+  const day = today("Asia/Seoul");
+  const [year, setYear] = useState(day.year);
+  const [month, setMonth] = useState(day.month);
   const navigate = useNavigate();
   const { userInfo } = useAuth();
 
-  const empNo = userInfo?.empNo; // 임시 사번
+  const empNo = userInfo?.empNo;
 
   const fetchAttendance = () => {
     fetchAttendanceList(empNo, year, month)

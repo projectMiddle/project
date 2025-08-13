@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { getOrderList, getOrderDetail } from "../../api/mallApi";
+
+/** 서버 호출용 숫자 ID만 통과시키는 헬퍼 */
+const toApiId = (v) => (typeof v === "number" ? String(v) : typeof v === "string" && /^\d+$/.test(v) ? v : null);
 
 /** 이미지 깜빡임 방지: onError 시 fallback 상태 유지 */
 function ImgWithFallback({ src, fallback = "/welfimages/fallback.jpg", alt = "", ...rest }) {
   const [useFallback, setUseFallback] = useState(false);
   const finalSrc = useFallback ? fallback : src;
-
   return <img src={finalSrc} alt={alt} onError={() => setUseFallback(true)} loading="lazy" {...rest} />;
 }
 
@@ -46,6 +48,8 @@ export default function WelfareMallOrders() {
     return data.list || data.items || data.content || data.data || data.orders || [];
   };
 
+  const { state: locState } = useLocation();
+
   // 목록 로드
   useEffect(() => {
     let mounted = true;
@@ -54,7 +58,6 @@ export default function WelfareMallOrders() {
       setErr("");
 
       if (!empNo) {
-        console.log("[orders] empNo 아직 없음");
         setLoading(false);
         return;
       }
@@ -62,12 +65,8 @@ export default function WelfareMallOrders() {
       try {
         const data = await getOrderList(empNo);
         const arr = coerceArray(data);
-        if (mounted) {
-          console.log("[orders] 응답:", data);
-          setOrders(arr);
-        }
+        if (mounted) setOrders(arr);
       } catch (e) {
-        console.error("주문 목록 불러오기 실패", e);
         if (mounted) setErr("주문 목록을 불러오지 못했습니다.");
       } finally {
         if (mounted) setLoading(false);
@@ -75,6 +74,15 @@ export default function WelfareMallOrders() {
     })();
     return () => (mounted = false);
   }, [empNo]);
+
+  // Complete에서 넘어온 seedOrderId가 있으면 자동 오픈
+  useEffect(() => {
+    const safe = toApiId(locState?.seedOrderId);
+    if (safe) {
+      setDetailId(safe);
+      setOpenDetail(true);
+    }
+  }, [locState]);
 
   // URL 쿼리 → 페이지 반영
   useEffect(() => {
@@ -130,9 +138,15 @@ export default function WelfareMallOrders() {
     );
   }, [page, totalPages]);
 
-  // 리스트에서 쓸 필드 매핑
+  // 리스트 표시용/호출용 ID 분리
   const normalizeRow = (o) => {
-    const id = o.orderId ?? o.id ?? o.orderNo ?? o.order_no ?? "";
+    // 서버 호출용(숫자만)
+    const apiId =
+      toApiId(o.orderNo) ?? toApiId(o.order_no) ?? toApiId(o.id) ?? toApiId(o.orderId) ?? toApiId(o.order_id) ?? null;
+
+    // 테이블에 보여줄 ID(문자열 OK)
+    const displayId = o.orderId ?? o.order_id ?? o.id ?? o.orderNo ?? o.order_no ?? apiId ?? "";
+
     const when = o.orderedAt ?? o.orderDate ?? o.createdAt ?? o.reg_dt ?? "";
     const total = o.total ?? o.totalPrice ?? o.amount ?? 0;
     const status = o.status ?? o.orderStatus ?? "COMPLETED";
@@ -141,11 +155,11 @@ export default function WelfareMallOrders() {
       o.itemCount ??
       o.totalQuantity ??
       (Array.isArray(o.details) ? o.details.reduce((a, d) => a + (d.quantity || 0), 0) : undefined);
-    return { id, when: formatDate(when), total, status, count: count ?? "-" };
+    return { apiId, displayId, when: formatDate(when), total, status, count: count ?? "-" };
   };
 
   return (
-    <section className="bg-gray-50 p-6">
+    <section className="bg-gray-50 px-6 pb-6 pt-20">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">주문 내역</h1>
@@ -179,8 +193,8 @@ export default function WelfareMallOrders() {
                     {pageItems.map((o) => {
                       const row = normalizeRow(o);
                       return (
-                        <tr key={row.id} className="border-t">
-                          <td className="px-4 py-3">{row.id}</td>
+                        <tr key={row.apiId ?? row.displayId} className="border-t">
+                          <td className="px-4 py-3">{row.displayId}</td>
                           <td className="px-4 py-3">{row.when}</td>
                           <td className="px-4 py-3 text-right">{row.count}</td>
                           <td className="px-4 py-3 text-right">{currency(row.total)}</td>
@@ -200,7 +214,8 @@ export default function WelfareMallOrders() {
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={() => {
-                                setDetailId(row.id);
+                                if (!row.apiId) return; // 숫자 ID 없으면 호출 안 함
+                                setDetailId(row.apiId);
                                 setOpenDetail(true);
                               }}
                               className="px-3 py-1 rounded border hover:bg-gray-50"
@@ -242,6 +257,7 @@ export default function WelfareMallOrders() {
         <OrderDetailModal
           empNo={empNo}
           orderId={detailId}
+          seedShipping={locState?.seedShipping}
           onClose={() => {
             setOpenDetail(false);
             setDetailId(null);
@@ -255,33 +271,58 @@ export default function WelfareMallOrders() {
   );
 }
 
-function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, formatDate }) {
+function OrderDetailModal({ empNo, orderId, seedShipping, onClose, formatPhone, currency, formatDate }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+
+  const safeOrderId = toApiId(orderId); // 숫자만 허용
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       setLoading(true);
       setErr("");
+      if (!empNo || !safeOrderId) {
+        setErr("잘못된 요청입니다.");
+        setLoading(false);
+        return;
+      }
       try {
-        const d = await getOrderDetail(empNo, orderId);
+        const d = await getOrderDetail(empNo, safeOrderId);
         if (mounted) setData(d);
-        console.log("주문 상세 정보", d);
       } catch (e) {
-        console.error("주문 상세 불러오기 실패", e);
         if (mounted) setErr("주문 상세를 불러오지 못했습니다.");
       } finally {
         if (mounted) setLoading(false);
       }
     })();
     return () => (mounted = false);
-  }, [empNo, orderId]);
+  }, [empNo, safeOrderId]);
 
   const order = data || {};
+  const serverShipping = order.shipping || {};
+
+  // 캐시 키는 숫자 ID로 통일
+  const storageKey = `wm_order_shipping_${safeOrderId}`;
+  let cached = null;
+  try {
+    cached = JSON.parse(localStorage.getItem(storageKey) || "null");
+  } catch (e) {
+    console.error("error");
+  }
+  if (!cached) {
+    try {
+      cached = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+    } catch (e) {
+      console.error("error");
+    }
+  }
+
+  // 서버 → 캐시 → 시드 순서로 병합(시드가 최종 우선)
+  const shipping = { ...serverShipping, ...(cached || {}), ...(seedShipping || {}) };
+
   const items = order.items || order.orderItems || order.details || [];
-  const shipping = order.shipping || {};
   const receiver = shipping.receiver || order.receiver || "";
   const phone = shipping.phone || order.phone || "";
   const address1 = shipping.address1 || order.address1 || "서울특별시 종로구 종로12길 15";
@@ -308,7 +349,7 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
                 <div className="text-sm text-gray-500">주문번호</div>
-                <div className="font-medium">{order.orderId || order.id}</div>
+                <div className="font-medium">{order.orderId || order.id || safeOrderId}</div>
               </div>
               <div>
                 <div className="text-sm text-gray-500">주문일시</div>
@@ -349,8 +390,16 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
               </div>
             </div>
 
-            <div className="max-h-72 overflow-auto border rounded">
-              <table className="min-w-full text-sm">
+            <div className="max-h-72 overflow-y-auto overflow-x-hidden border rounded">
+              <table className="w-full table-fixed text-sm border-collapse">
+                <colgroup>
+                  {[
+                    <col key="c0" />,
+                    <col key="c1" className="w-[64px]" />,
+                    <col key="c2" className="w-[120px]" />,
+                    <col key="c3" className="w-[120px]" />,
+                  ]}
+                </colgroup>
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-3 py-2 text-left">상품</th>
@@ -373,14 +422,14 @@ function OrderDetailModal({ empNo, orderId, onClose, formatPhone, currency, form
                     return (
                       <tr key={pid ?? it.cartItemId ?? idx} className="border-t">
                         <td className="px-3 py-2">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
                             <ImgWithFallback
                               src={imgSrc}
                               fallback={`${base}welfimages/fallback.jpg`}
                               alt={it.productName || it.name || "상품"}
                               className="w-10 h-10 rounded object-cover"
                             />
-                            <div className="truncate">{it.productName || it.name || pid}</div>
+                            <div className="flex-1 min-w-0 truncate">{it.productName || it.name || pid}</div>
                           </div>
                         </td>
                         <td className="px-3 py-2 text-right">{qty}</td>
