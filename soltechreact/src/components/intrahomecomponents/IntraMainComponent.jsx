@@ -49,13 +49,17 @@ const IntraMainComponent = () => {
     }
   };
   const handleLeaveWork = async () => {
+    const confirmLeave = window.confirm("퇴근 처리하시겠습니까?");
+    if (!confirmLeave) return;
     try {
       const status = await fetchWorkingStatus(empNo);
+
       if (status.attStatus !== "WORK") {
         alert("이미 퇴근 처리되었습니다.");
         return;
       }
       const data = await logoutAttendance(empNo);
+
       if (data?.attEndTime) {
         alert("퇴근 완료");
         setIsWorking(false);
