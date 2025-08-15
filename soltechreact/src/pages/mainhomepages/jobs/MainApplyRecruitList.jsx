@@ -13,7 +13,7 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import MainApplyJobModal from "./MainApplyJobModal";
 
@@ -24,8 +24,9 @@ export default function MainApplyRecruitList() {
   const [pageResult, setPageResult] = useState({});
   const [jobsList, setJobsList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const { userInfo } = useAuth();
+  const { isLoggedIn, userInfo } = useAuth();
   const isHR = userInfo?.deptNo === 201; // 인사팀만 작성/수정/삭제
 
   const isNoData = jobsList.length === 0 || !pageResult.pageNumList || pageResult.pageNumList.length === 0;
@@ -47,6 +48,15 @@ export default function MainApplyRecruitList() {
   useEffect(() => {
     loadList();
   }, [loadList]);
+
+  const handleJobClick = (e, jobsNo) => {
+    // 로그인 안 했거나 MEMBER가 아니면 로그인 페이지로 이동
+    if (!isLoggedIn || userInfo?.role !== "MEMBER") {
+      e.preventDefault();
+      alert("로그인 후 이용 가능합니다.");
+      navigate("/login");
+    }
+  };
 
   // -------------------- 모달(등록/수정 겸용) --------------------
   const [modalOpen, setModalOpen] = useState(false);
@@ -192,6 +202,7 @@ export default function MainApplyRecruitList() {
                     <Link
                       to={`/apply/recruit/${job.jobsNo}`}
                       className="w-200 text-lg font-semibold text-gray-600 cursor-pointer hover:text-violet-900"
+                      onClick={(e) => handleJobClick(e, job.jobsNo)}
                     >
                       {job.jobsTitle}
                     </Link>
@@ -252,8 +263,8 @@ export default function MainApplyRecruitList() {
             <button
               key={num}
               className={`px-2 mx-1 text-lg transition ${pageResult.current === num
-                  ? "text-purple-900 font-bold underline underline-offset-4"
-                  : "text-gray-400 hover:text-gray-500 cursor-pointer"
+                ? "text-purple-900 font-bold underline underline-offset-4"
+                : "text-gray-400 hover:text-gray-500 cursor-pointer"
                 }`}
               onClick={() => setPage(num)}
               disabled={isNoData || pageResult.current === num}

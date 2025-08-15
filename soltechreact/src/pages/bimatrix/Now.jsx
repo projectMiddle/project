@@ -15,19 +15,22 @@ function Now() {
       {/* 배경 이미지 */}
       <div className="relative w-full h-full mx-auto">
         <motion.img
-          src="https://www.bimatrix.co.kr/wp-content/themes/bimatrix/assets/images/common/img_company_visual02.jpg"
+          src="	https://www.bimatrix.co.kr/wp-content/themes/bimatrix/assets/images/common/img_company_visual01.jpg"
           alt="회사 이미지"
           className="w-full h-full object-cover shadow"
-          initial={{ scale: 1.15, opacity: 0.6 }}
+          initial={{ scale: 1.2, opacity: 0.6 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          transition={{ duration: 2, ease: "easeIn" }}
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <h2 className="text-white text-4xl font-bold drop-shadow-lg">SOLTech, 미래를 이끄는 혁신</h2>
+          <h2 className="text-white text-4xl font-bold drop-shadow-lg">Defining the Now, Creating the Next</h2>
           <p className="mt-4 text-lg text-white font-semibold drop-shadow-lg">
-            창의성과 기술력으로 새로운 가치를 만듭니다.
+            차이를 넘어, 가능성을 확장하다
           </p>
         </div>
+        <div className="absolute bottom-5 right-5 p-2">
+            <p className="text-white text-sm drop-shadow-lg">Image from: Bi Matrix</p>
+          </div>
       </div>
 
       {/* 점 메뉴 */}

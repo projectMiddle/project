@@ -1,19 +1,37 @@
 import React from "react";
 import "@fontsource/pretendard";
+import { motion } from "framer-motion";
 
 const MainAboutUs = () => {
   return (
-    <div className="bg-white text-gray-800 mt-20 font-[Pretendard]">
+    <div className="bg-white text-gray-800 font-[Pretendard]">
+      <div className="relative w-full h-full mx-auto">
+        <motion.img
+          src="https://www.bimatrix.co.kr/wp-content/themes/bimatrix/assets/images/common/img_company_visual04.jpg"
+          alt="회사 이미지"
+          className="w-full h-full object-cover shadow"
+          initial={{ scale: 1.15, opacity: 0.6 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.15, ease: "linear" }}
+        />
+        <div className="absolute inset-0 grid grid-cols-4 grid-rows-2 items-center p-50 pt-50 px-60">
+          {/* h2 - 1행 2열 */}
+          <h2 className="text-white text-4xl font-bold drop-shadow-lg col-start-1 row-start-1">
+            One Vision, One Flow
+          </h2>
+
+          {/* p - 2행 4열 */}
+          <p className="text-lg text-white font-semibold drop-shadow-lg col-start-4 row-start-2 text-right">
+            모든 흐름이 하나로 모이는 조화로운 공간
+          </p>
+        </div>
+        <div className="absolute bottom-5 right-5 p-2">
+          <p className="text-white text-sm drop-shadow-lg">Image from: Bi Matrix</p>
+        </div>
+      </div>
       <section className="text-center py-16 px-4">
         <h1 className="text-4xl font-bold text-black">주요 기능 소개</h1>
         <p className="mt-2 text-lg text-gray-500">하나의 시스템으로 사내 모든 흐름을 통합 관리합니다</p>
-        <div className="mt-10">
-          <img
-            src="/mainImages/aboutUs/about_us_first.png"
-            alt="Intro banner"
-            className="mx-auto max-w-4xl rounded-lg shadow"
-          />
-        </div>
       </section>
 
       <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-20">
