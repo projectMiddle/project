@@ -23,6 +23,7 @@ import MainLocationGangnam from "./pages/mainhomepages/location/MainLocationGang
 import Report from "./pages/bimatrix/Report.jsx";
 import Now from "./pages/bimatrix/Now.jsx";
 import MainApplyRecruitDetail from "./pages/mainhomepages/jobs/MainApplyRecruitDetail.jsx";
+import ScrollToTop from "./ScrollToTop.jsx";
 
 function App() {
   const { isAuthReady } = useAuth();
@@ -32,55 +33,54 @@ function App() {
   }
   return (
     // <AuthProvider>
-    <Routes>
-      {/* 메인화면 관련 기능들 */}
-      <Route path="/" element={<MainHome />} />
-      <Route element={<MainLayout />}>
-        {/* 로그인 관련 */}
-        <Route path="signup" element={<MainSignUp />} />
-        <Route path="login" element={<MainLogin />} />
-        <Route path="/oauth2/success" element={<OAuth2Success />} />
-        <Route path="/member/login" element={<MainMemberLogin />} />
-        <Route path="/employee/login" element={<MainEmployeeLogin />} />
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* 메인화면 관련 기능들 */}
+        <Route path="/" element={<MainHome />} />
+        <Route element={<MainLayout />}>
+          {/* 로그인 관련 */}
+          <Route path="signup" element={<MainSignUp />} />
+          <Route path="login" element={<MainLogin />} />
+          <Route path="/oauth2/success" element={<OAuth2Success />} />
+          <Route path="/member/login" element={<MainMemberLogin />} />
+          <Route path="/employee/login" element={<MainEmployeeLogin />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          {/* Team Soltech */}
+          <Route path="/company/aboutus" element={<MainAboutUs />} />
+          <Route path="/company/teams" element={<MainOurTeams />} />
+          <Route path="/matrix/now" element={<Now />} />
+          {/* Jobs 관련 */}
+          <Route path="/apply/information" element={<MainApplyInformation />} />
+          <Route path="/apply/process" element={<MainApplyProcess />} />
+          <Route path="/apply/recruit" element={<MainApplyRecruitList />} />
+          <Route path="/apply/recruit/:jobsNo" element={<MainApplyRecruitDetail />} />
+          {/* Location 관련 */}
+          <Route path="/location/jongro" element={<MainLocationJongro />} />
+          <Route path="/location/gangnam" element={<MainLocationGangnam />} />
+          {/* Faq 관련 */}
+          <Route path="/faq" element={<MainFaq />} />
+        </Route>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute requiredRole="MEMBER">
+              <MainHome />
+            </ProtectedRoute>
+          }
+        />
+        {/* 인트라넷 연결 */}
+        <Route
+          path="/intrasoltech/*"
+          element={
+            <ProtectedRoute requiredRole="EMPLOYEE">
+              <Intra />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
-        {/* Team Soltech */}
-        <Route path="/company/aboutus" element={<MainAboutUs />} />
-        <Route path="/company/teams" element={<MainOurTeams />} />
-        <Route path="/matrix/now" element={<Now />} />
-
-        {/* Jobs 관련 */}
-        <Route path="/apply/information" element={<MainApplyInformation />} />
-        <Route path="/apply/process" element={<MainApplyProcess />} />
-        <Route path="/apply/recruit" element={<MainApplyRecruitList />} />
-        <Route path="/apply/recruit/:jobsNo" element={<MainApplyRecruitDetail />} />
-
-        {/* Location 관련 */}
-        <Route path="/location/jongro" element={<MainLocationJongro />} />
-        <Route path="/location/gangnam" element={<MainLocationGangnam />} />
-
-        {/* Faq 관련 */}
-        <Route path="/faq" element={<MainFaq />} />
-      </Route>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute requiredRole="MEMBER">
-            <MainHome />
-          </ProtectedRoute>
-        }
-      />
-      {/* 인트라넷 연결 */}
-      <Route
-        path="/intrasoltech/*"
-        element={
-          <ProtectedRoute requiredRole="EMPLOYEE">
-            <Intra />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-    </Routes>
+      </Routes>
+    </>
     // </AuthProvider>
   );
 }

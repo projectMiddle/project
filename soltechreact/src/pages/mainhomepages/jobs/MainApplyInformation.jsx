@@ -67,21 +67,23 @@ const MainApplyInformation = () => {
               </header>
 
               {/* 내용 목록 */}
-              <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
-                <li>
-                  타인의 지원서를 무단으로 표절하거나 대리 작성 후 제출하는 경우
-                </li>
-                <li>
-                  학력 및 경력사항 등의 정보를 허위로 기재하는 경우
-                </li>
-                <li>
-                  증빙 서류(졸업증명서, 자격증 등)를 위조하거나 허위로 발급 받아
-                  제출하는 경우
-                </li>
-                <li>
-                  그 외 부적절한 방법으로 전형 결과에 영향을 미칠 수 있는 경우
-                </li>
-              </ol>
+              <div className="pl-5">
+                <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
+                  <li>
+                    타인의 지원서를 무단으로 표절하거나 대리 작성 후 제출하는 경우
+                  </li>
+                  <li>
+                    학력 및 경력사항 등의 정보를 허위로 기재하는 경우
+                  </li>
+                  <li>
+                    증빙 서류(졸업증명서, 자격증 등)를 위조하거나 허위로 발급 받아
+                    제출하는 경우
+                  </li>
+                  <li>
+                    그 외 부적절한 방법으로 전형 결과에 영향을 미칠 수 있는 경우
+                  </li>
+                </ol>
+              </div>
             </article>
           </div>
 
@@ -100,20 +102,22 @@ const MainApplyInformation = () => {
                 <h2 className="text-base sm:text-lg font-semibold">인 · 적성검사</h2>
               </header>
 
-              <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
-                <li>
-                  신분증을 위·변조하거나 대리 응시를 통해 신분을 속이고 검사에
-                  응시하는 경우
-                </li>
-                <li>
-                  검사 도중 규정에 의해 허용되지 않은 외부 자료(인터넷 등) 및
-                  보조 기기를 사용하는 경우
-                </li>
-                <li>검사 문항 일부 또는 전체를 외부에 유출하는 경우</li>
-                <li>
-                  그 외 부적절한 방법으로 검사 결과에 영향을 미칠 수 있는 경우
-                </li>
-              </ol>
+              <div className="pl-5">
+                <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
+                  <li>
+                    신분증을 위·변조하거나 대리 응시를 통해 신분을 속이고 검사에
+                    응시하는 경우
+                  </li>
+                  <li>
+                    검사 도중 규정에 의해 허용되지 않은 외부 자료(인터넷 등) 및
+                    보조 기기를 사용하는 경우
+                  </li>
+                  <li>검사 문항 일부 또는 전체를 외부에 유출하는 경우</li>
+                  <li>
+                    그 외 부적절한 방법으로 검사 결과에 영향을 미칠 수 있는 경우
+                  </li>
+                </ol>
+              </div>
             </article>
           </div>
 
@@ -132,20 +136,22 @@ const MainApplyInformation = () => {
                 <h2 className="text-base sm:text-lg font-semibold">면접전형</h2>
               </header>
 
-              <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
-                <li>
-                  신분증을 위·변조하거나 대리 응시를 통해 신분을 속이고 면접에
-                  참석하는 경우
-                </li>
-                <li>
-                  전형 도중 규정에 의해 허용되지 않은 외부 자료(인터넷 등) 및 보조
-                  기기를 사용하는 경우
-                </li>
-                <li>면접 문항이나 내용을 외부에 무단으로 공유하는 경우</li>
-                <li>
-                  그 외 부적절한 방법으로 전형 결과에 영향을 미칠 수 있는 경우
-                </li>
-              </ol>
+              <div className="pl-5">
+                <ol className="px-4 sm:px-6 py-4 space-y-2 text-sm sm:text-[15px] leading-relaxed list-decimal pl-5">
+                  <li>
+                    신분증을 위·변조하거나 대리 응시를 통해 신분을 속이고 면접에
+                    참석하는 경우
+                  </li>
+                  <li>
+                    전형 도중 규정에 의해 허용되지 않은 외부 자료(인터넷 등) 및 보조
+                    기기를 사용하는 경우
+                  </li>
+                  <li>면접 문항이나 내용을 외부에 무단으로 공유하는 경우</li>
+                  <li>
+                    그 외 부적절한 방법으로 전형 결과에 영향을 미칠 수 있는 경우
+                  </li>
+                </ol>
+              </div>
             </article>
           </div>
         </div>
