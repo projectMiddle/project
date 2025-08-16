@@ -33,12 +33,18 @@ jobs:
       # aud-7 설치
       - name: Install aud7-embedded jar
         working-directory: soltech/project
-        run: ./mvnw install:install-file \
-          -Dfile=libs/aud7-embedded.jar \
-          -DgroupId=com.matrix \
-          -DartifactId=aud7-embedded \
-          -Dversion=1.0.0 \
-          -Dpackaging=jar
+        shell: bash
+        run: |
+          echo "[DEBUG] pwd = $(pwd)"
+          ls -al libs || true
+          test -f libs/aud7-embedded.jar || (echo "❌ libs/aud7-embedded.jar not found"; exit 1)
+
+          ./mvnw install:install-file \
+            -Dfile=libs/aud7-embedded.jar \
+            -DgroupId=com.matrix \
+            -DartifactId=aud7-embedded \
+            -Dversion=1.0.0 \
+            -Dpackaging=jar
 
       - name: Build backend with Maven
         working-directory: soltech/project
