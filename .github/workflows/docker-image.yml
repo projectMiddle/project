@@ -53,13 +53,24 @@ jobs:
           ./mvnw -B com.mysema.maven:apt-maven-plugin:1.1.3:process \
             -DoutputDirectory=target/generated-sources/annotations \
             -Dprocessor=com.querydsl.apt.jpa.JPAAnnotationProcessor
-          echo "[DEBUG] Generated Q classes:"
+          echo "[DEBUG] Generated Q classes under target/generated-sources/annotations"
           ls -R target/generated-sources/annotations || true
+          # 특정 엔티티가 실제 생성됐는지 빠르게 체크
+          grep -R "class QApprovalDocument" -n target/generated-sources/annotations || echo "[WARN] QApprovalDocument not found (check entity annotations/package)"
 
-      # Backend Build
+      # 생성된 경로를 컴파일 소스 루트에 추가
+      - name: Add generated sources to compile path
+        working-directory: soltech/project
+        run: |
+          ./mvnw -B org.codehaus.mojo:build-helper-maven-plugin:3.5.0:add-source \
+            -Dsource=target/generated-sources/annotations -Dsources=target/generated-sources/annotations
+          echo "[DEBUG] compileSourceRoots ="
+          ./mvnw -q help:evaluate -Dexpression=project.compileSourceRoots -DforceStdout
+
+      # Backend Build (clean 금지: Q 지워짐)
       - name: Build backend with Maven
         working-directory: soltech/project
-        run: ./mvnw -B clean package -DskipTests
+        run: ./mvnw -B package -DskipTests
 
       # Build & Push Backend
       - name: Build & Push Backend Docker Image
