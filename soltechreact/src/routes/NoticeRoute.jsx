@@ -6,7 +6,7 @@ import NoticeForm from "../pages/notice/NoticeForm";
 import EditNoticeForm from "../pages/notice/EditNoticeForm";
 import NoticeRead from "../pages/notice/NoticeRead";
 import FreeBoardList from "../pages/notice/FreeBoardList";
-import FreeBoardRead from "../pages/notice/FreeboardRead";
+import FreeBoardRead from "../pages/notice/FreeBoardRead";
 import FreeBoardForm from "../pages/notice/FreeBoardForm";
 
 const NoticeRoute = () => {
