@@ -83,7 +83,7 @@ export default function MainMemberLogin() {
 
         <div className="flex justify-center mb-6">
           <button
-            onClick={() => (window.location.href = "http://localhost:8080/oauth2/authorization/google")}
+            onClick={() => (window.location.href = "http://15.164.169.222:8080/oauth2/authorization/google")}
             className="cursor-pointer w-64 border border-purple-300 rounded-full py-2 flex items-center justify-center gap-2 hover:bg-purple-50 transition"
           >
             <img src="/mainImages/google_logo.png" alt="Google" className="w-5 h-5" />
