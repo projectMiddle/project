@@ -37,7 +37,7 @@ const FreeBoardList = () => {
         setTotalPages(data.totalPages);
         setTotalCount(data.totalElements);
       } catch (error) {
-        console.error("자유게시판 데이터를 불러오는 데 실패했습니다:", error);
+        console.error("자유게시판 데이터를 불러오는 데 실패했습니다!:", error);
       }
     };
     loadPosts();

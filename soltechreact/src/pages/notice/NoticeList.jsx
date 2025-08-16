@@ -24,7 +24,7 @@ const NoticeList = () => {
       setTotalPages(data.totalPages || 1);
       setTotalCount(data.totalElements || 0);
     } catch (err) {
-      console.error("공지사항 로딩 실패", err);
+      console.error("공지사항 로딩 실패!", err);
     }
   };
 

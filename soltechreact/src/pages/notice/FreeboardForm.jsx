@@ -48,7 +48,7 @@ const FreeBoardForm = () => {
       alert("게시글이 등록되었습니다.");
       navigate("/intrasoltech/notices/freeboard/");
     } catch (err) {
-      console.error("❌ 등록 실패:", err.response?.data || err.message);
+      console.error("❌ 등록 실패!:", err.response?.data || err.message);
       alert("오류 발생: " + (err.response?.data?.message || err.message));
     }
   };

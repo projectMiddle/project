@@ -26,7 +26,7 @@ const EditNoticeForm = () => {
           notiRegDate: data.notiRegDate,
         });
       } catch (err) {
-        alert("공지사항을 불러오는 데 실패했습니다.");
+        alert("공지사항을 불러오는 데 실패했습니다.!");
       }
     };
 

@@ -17,7 +17,7 @@ const EditNoticeWrapper = () => {
         setNoticeData(data);
       } catch (err) {
         console.error(err);
-        alert("공지사항 조회 중 오류 발생");
+        alert("공지사항 조회 중 오류 발생!");
       } finally {
         setLoading(false);
       }
