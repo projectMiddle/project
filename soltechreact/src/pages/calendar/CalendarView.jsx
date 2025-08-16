@@ -4,7 +4,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import "../../css/calendarView.css";
+import "../../css/calendarview.css";
 
 const CalendarView = () => {
   const [events, setEvents] = useState([]);
