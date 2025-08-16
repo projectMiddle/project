@@ -101,7 +101,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-backend:latest
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-frontend:latest
 
-            # env 파일 생성 (mysql 건드리지 않고, backend 실행할 때만 사용)
+            # env 파일 생성
             echo "${{ secrets.DOCKER_ENV_DB }}" > /home/ubuntu/db.env
             echo "${{ secrets.DOCKER_ENV_GOOGLE }}" > /home/ubuntu/google.env
             echo "${{ secrets.DOCKER_ENV_JWT }}" > /home/ubuntu/jwt.env
