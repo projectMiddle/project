@@ -5,7 +5,7 @@ import { fetchFreePost, deleteFreePost } from "../../api/board/noticeApi";
 import { fetchComments, createComment, deleteComment } from "../../api/board/commentApi";
 import { useAuth } from "../../contexts/AuthContext";
 
-const FreeboardRead = () => {
+const FreeBoardRead = () => {
   const { fbNo } = useParams();
   const navigate = useNavigate();
   const { userInfo } = useAuth();
@@ -381,4 +381,4 @@ const hiddenStyle = {
   pointerEvents: "none", // 마우스 이벤트 방지
 };
 
-export default FreeboardRead;
+export default FreeBoardRead;
