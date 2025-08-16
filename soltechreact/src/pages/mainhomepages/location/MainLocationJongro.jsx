@@ -7,52 +7,65 @@ function MainLocationJongro() {
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-    // 카카오 맵 호출
-    const container = document.getElementById("map");
-    const options = {
-      center: new kakao.maps.LatLng(37.5693656626833, 126.986022414113),
-      level: 2,
-    };
-    const map = new kakao.maps.Map(container, options);
+    const initMap = () => {
+      const { kakao } = window;
+      const container = document.getElementById("map");
+      const options = {
+        center: new kakao.maps.LatLng(37.5693656626833, 126.986022414113),
+        level: 2,
+      };
+      const map = new kakao.maps.Map(container, options);
 
-    // 마커 클러스터러 생성
-    const clusterer = new kakao.maps.MarkerClusterer({
-      map: map,
-      gridSize: 35,
-      averageCenter: true,
-      minLevel: 6,
-      disableClickZoom: true,
-      styles: [
-        {
-          width: "53px",
-          height: "52px",
-          background: "url(cluster.png) no-repeat",
-          color: "#ff5a5a",
-          textAlign: "center",
-          lineHeight: "54px",
-        },
-      ],
-    });
+      // 마커 클러스터러 생성
+      const clusterer = new kakao.maps.MarkerClusterer({
+        map: map,
+        gridSize: 35,
+        averageCenter: true,
+        minLevel: 6,
+        disableClickZoom: true,
+        styles: [
+          {
+            width: "53px",
+            height: "52px",
+            background: "url(cluster.png) no-repeat",
+            color: "#ff5a5a",
+            textAlign: "center",
+            lineHeight: "54px",
+          },
+        ],
+      });
 
-    // 마커 생성
-    const marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(37.5693656626833, 126.986022414113),
-    });
+      // 마커 생성
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(37.5693656626833, 126.986022414113),
+      });
 
-    // 정보창
-    const infowindow = new kakao.maps.InfoWindow({
-      content: `
+      // 정보창
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `
         <div style="padding:8px;min-width:120px;font-size:14px;">
           <b>SOLTech 종로본사</b><br/>
           서울특별시 종로구 종로12길 15 2,5,8,9,10층 (관철동 13-13)<br/>
           <span style="color:#888;font-size:12px;">대표전화: 02-1544-0714</span>
         </div>
       `,
-    });
+      });
 
-    infowindow.open(map, marker);
+      infowindow.open(map, marker);
+      clusterer.addMarker(marker);
+    };
 
-    clusterer.addMarker(marker);
+    // SDK 로드됐는지 체크
+    if (window.kakao && window.kakao.maps) {
+      initMap();
+    } else {
+      const interval = setInterval(() => {
+        if (window.kakao && window.kakao.maps) {
+          clearInterval(interval);
+          initMap();
+        }
+      }, 100); // 0.1초마다 체크
+    }
   }, []);
 
   return (
@@ -63,7 +76,9 @@ function MainLocationJongro() {
           <ul className="flex gap-x-10">
             <li
               className={`cursor-pointer transition ${
-                selected === 0 ? "font-bold text-black border-b-1" : "font-semibold text-gray-400"
+                selected === 0
+                  ? "font-bold text-black border-b-1"
+                  : "font-semibold text-gray-400"
               }`}
               onClick={() => setSelected(0)}
             >
@@ -73,7 +88,9 @@ function MainLocationJongro() {
             </li>
             <li
               className={`cursor-pointer transition ${
-                selected === 1 ? "font-bold text-black border-b-1" : "font-semibold text-gray-400"
+                selected === 1
+                  ? "font-bold text-black border-b-1"
+                  : "font-semibold text-gray-400"
               }`}
               onClick={() => setSelected(1)}
             >
@@ -113,7 +130,9 @@ function MainLocationJongro() {
               </td>
               <td className="w-[30%] bg-[#f1f1f1]">
                 <p className="text-left my-[10px] ml-[30px]">
-                  <span className="text-[18px] text-[#795ac2] font-semibold">대표번호 1544-0714</span>
+                  <span className="text-[18px] text-[#795ac2] font-semibold">
+                    대표번호 1544-0714
+                  </span>
                 </p>
               </td>
             </tr>
@@ -124,37 +143,60 @@ function MainLocationJongro() {
         <div className="flex mt-25">
           <div className="basis-1/2 flex flex-col gap-y-4 mr-6">
             <div>
-              <img src="/mainImages/officeimage/soltech_reception_img.png" alt="reception" />
+              <img
+                src="/mainImages/officeimage/soltech_reception_img.png"
+                alt="reception"
+              />
             </div>
             <div>
-              <img src="/mainImages/officeimage/soltech_office_img1.png" alt="reception" />
+              <img
+                src="/mainImages/officeimage/soltech_office_img1.png"
+                alt="reception"
+              />
             </div>
             <div>
-              <img src="/mainImages/officeimage/soltech_office_img2.png" alt="office" />
+              <img
+                src="/mainImages/officeimage/soltech_office_img2.png"
+                alt="office"
+              />
             </div>
           </div>
           <div className="basis-1/2 flex flex-col gap-y-4">
             <div>
-              <img src="/mainImages/officeimage/soltech_isle_img.png" alt="office" />
+              <img
+                src="/mainImages/officeimage/soltech_isle_img.png"
+                alt="office"
+              />
             </div>
             <div>
-              <img src="/mainImages/officeimage/soltech_meetingroom_img.png" alt="reception" />
+              <img
+                src="/mainImages/officeimage/soltech_meetingroom_img.png"
+                alt="reception"
+              />
             </div>
 
             <div>
-              <img src="/mainImages/officeimage/soltech_rounge_img.png" alt="office" />
+              <img
+                src="/mainImages/officeimage/soltech_rounge_img.png"
+                alt="office"
+              />
             </div>
           </div>
         </div>
 
         <div className="mt-20 flex flex-col items-center justify-center">
           <h3 className="text-[#6b46c1] text-2xl font-bold mb-5">오시는 길</h3>
-          <span className="font-semibold">서울특별시 종로구 종로12길 15 2,5,8,9,10층 (관철동 13-13)</span>
+          <span className="font-semibold">
+            서울특별시 종로구 종로12길 15 2,5,8,9,10층 (관철동 13-13)
+          </span>
           <span className="font-semibold">종각역 4번출구에서 약 240m</span>
         </div>
 
         {/* 지도 영역 */}
-        <div id="map" className="mx-auto mb-30 h-[500px] w-[1000px] mt-15"></div>
+        <div
+          id="map"
+          className="mx-auto mb-30 h-[500px] w-[1000px] mt-15"
+        ></div>
       </div>
     </>
   );
