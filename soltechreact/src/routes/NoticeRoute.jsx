@@ -2,13 +2,13 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import NoticeList from "./../pages/notice/NoticeList";
 import NoticeForm from "./../pages/notice/NoticeForm";
-import EditNoticeForm from "./../pages/notice/editNoticeForm";
 import NoticeRead from "../pages/notice/NoticeRead";
 import FreeBoardList from "../pages/notice/FreeboardList";
 import FreeBoardForm from "../pages/notice/FreeboardForm";
 import FreeBoardRead from "../pages/notice/freeboardRead";
 import EditFreeBoardForm from "../pages/notice/EditFreeboardForm";
 import FreeboardRead from "../pages/notice/freeboardRead";
+import EditNoticeForm from "../pages/notice/editNoticeForm";
 
 const NoticeRoute = () => {
   return (
