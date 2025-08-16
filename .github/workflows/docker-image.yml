@@ -28,12 +28,13 @@ jobs:
       # aud-7 실행
       - name: Install aud7-embedded jar
         working-directory: soltech/project
-        run: mvn install:install-file \
+        run: ./mvnw install:install-file \
           -Dfile=libs/aud7-embedded.jar \
           -DgroupId=com.matrix \
           -DartifactId=aud7-embedded \
           -Dversion=1.0.0 \
           -Dpackaging=jar
+
 
       - name: Build backend with Maven
         working-directory: soltech/project
