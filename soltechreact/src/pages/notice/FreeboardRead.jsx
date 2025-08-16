@@ -22,7 +22,7 @@ const FreeBoardRead = () => {
 
   useEffect(() => {
     if (!fbNo) {
-      setError("유효하지 않은 게시글 접근입니다.");
+      setError("유효하지 않은 게시글 접근입니다.!");
       return;
     }
 

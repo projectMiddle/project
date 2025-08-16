@@ -25,7 +25,7 @@ const EditFreeBoardForm = () => {
           frBdRegDate: data.frBdRegDate,
         });
       } catch (err) {
-        alert("게시글을 불러오는 데 실패했습니다.");
+        alert("게시글을 불러오는 데 실패했습니다!");
       }
     };
 

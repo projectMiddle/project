@@ -16,7 +16,7 @@ const NoticeRead = () => {
         const data = await fetchNoticeDetail(notiNo);
         setNotice(data);
       } catch (err) {
-        setError("공지사항을 불러올 수 없습니다.");
+        setError("공지사항을 불러올 수 없습니다.!");
       } finally {
         setLoading(false);
       }
