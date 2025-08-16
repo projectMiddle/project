@@ -25,6 +25,15 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # aud-7 실행
+      - name: Install aud7-embedded jar
+        run: mvn install:install-file \
+          -Dfile=soltech/project/libs/aud7-embedded.jar \
+          -DgroupId=com.matrix \
+          -DartifactId=aud7-embedded \
+          -Dversion=1.0.0 \
+          -Dpackaging=jar
+
       - name: Build backend with Maven
         working-directory: soltech/project
         run: mvn -B package -DskipTests
