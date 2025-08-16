@@ -32,7 +32,7 @@ services:
       - ./jwt.env
     environment:
       SPRING_PROFILES_ACTIVE: prod,oauth
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/soltech?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     restart: always
 
   frontend:
