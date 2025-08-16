@@ -141,7 +141,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173") // React 주소
+                        .allowedOrigins("http://localhost:5173", "http://15.164.169.222:5173" ) // React 주소
                         .allowedMethods("*")
                         .allowCredentials(true);
             }
