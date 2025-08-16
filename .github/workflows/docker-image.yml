@@ -25,6 +25,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # 권한 부여
+      - name: Grant execute permission for mvnw
+        run: chmod +x soltech/project/mvnw
+
       # aud-7 실행
       - name: Install aud7-embedded jar
         working-directory: soltech/project
@@ -34,7 +38,6 @@ jobs:
           -DartifactId=aud7-embedded \
           -Dversion=1.0.0 \
           -Dpackaging=jar
-
 
       - name: Build backend with Maven
         working-directory: soltech/project
