@@ -5,7 +5,7 @@ import WelfareMallDetail from "../pages/welfaremall/WelfareMallDetail";
 import WelfareMallCart from "../pages/welfaremall/WelfareMallCart";
 import WelfareMallComplete from "../pages/welfaremall/WelfareMallComplete";
 import WelfareMallOrders from "../pages/welfaremall/WelfareMallOrders";
-import MallHeader from "../components/mall/mallHeader";
+import MallHeader from "../components/mall/MallHeader";
 
 function MallLayout() {
   return (
