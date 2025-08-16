@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // 정확한 경로로 수정하세요
-import EditNoticeForm from "./editNoticeForm";
+import EditNoticeForm from "./EditNoticeForm";
 
 const EditNoticeWrapper = () => {
   const { notiNo } = useParams();

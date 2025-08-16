@@ -10,6 +10,7 @@ const NoticeList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
+  
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedNotices, setSelectedNotices] = useState([]);
 
