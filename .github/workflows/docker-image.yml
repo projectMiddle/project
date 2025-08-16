@@ -27,13 +27,14 @@ jobs:
 
       # 권한 부여
       - name: Grant execute permission for mvnw
-        run: chmod +x soltech/project/mvnw
+        working-directory: soltech/project
+        run: chmod +x mvnw
 
-      # aud-7 실행
+      # aud-7 설치
       - name: Install aud7-embedded jar
         working-directory: soltech/project
         run: ./mvnw install:install-file \
-          -Dfile=./libs/aud7-embedded.jar \
+          -Dfile=libs/aud7-embedded.jar \
           -DgroupId=com.matrix \
           -DartifactId=aud7-embedded \
           -Dversion=1.0.0 \
