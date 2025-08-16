@@ -35,7 +35,7 @@ public class EmpPay {
     private Long payNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PAY_EMP_NO", nullable = false)
+    @JoinColumn(name = "pay_emp_no", nullable = false)
     private Employee empNo;
 
     @Column(nullable = false)

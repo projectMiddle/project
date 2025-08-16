@@ -17,7 +17,7 @@ export const login = async ({ loginType, email, empNo, password, jobNo, deptNo, 
     payload.empNo = empNo;
   }
 
-  const res = await api.post("http://localhost:8080/api/auth/login", payload);
+  const res = await api.post(`/api/auth/login`, payload);
   return res.data; // 여기서 accessToken, refreshToken 포함된 응답 객체 리턴됨
 };
 
@@ -30,6 +30,6 @@ export const logoutMember = () => {
 
 // 회원가입 api
 export const registerMember = async (memberData) => {
-  const res = await api.post("http://localhost:8080/api/auth/member/signup", memberData);
+  const res = await api.post(`/api/auth/member/signup`, memberData);
   return res.data;
 };
