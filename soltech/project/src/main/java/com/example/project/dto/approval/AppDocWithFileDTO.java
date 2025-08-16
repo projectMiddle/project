@@ -25,6 +25,7 @@ public class AppDocWithFileDTO {
     private String appDocContent; // 문서 본문 내용
     private boolean appIsUrgent; // 긴급 여부 (체크박스)
     private boolean appIsFinalized;
+    private Boolean appIsTemporary;
 
     // 첨부파일
     private MultipartFile[] uploadFiles; // FormData에서 "uploadFiles"라는 key로 append

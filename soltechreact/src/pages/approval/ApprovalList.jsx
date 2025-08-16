@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { fetchApprovalList } from "../../api/approvalApi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 const ApprovalList = () => {
-  // ====================== jwt 이용 ======================
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
 
@@ -12,30 +11,30 @@ const ApprovalList = () => {
   const [page, setPage] = useState(1);
   const [pageInfo, setPageInfo] = useState(null);
 
-  // 현재 경로를 확인해서 상태 분기
   const location = useLocation();
-  let status = "all"; // 기본값
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [category, setCategory] = useState(searchParams.get("category") || "전체문서");
 
-  // 카테고리 ? 이후 가져오기
-  const [category, setCategory] = useState("기안서");
+  // 경로
+  const pathMap = {
+    "/confirm/list": "list",
+    "/confirm/history": "history",
+    "/confirm/reference": "reference",
+    "/confirm/enforced": "enforced",
+    "/confirm/temporary": "temporary",
+    "/confirm/retrieved": "retrieved",
+    "/request/submitted": "submitted",
+    "/request/processing": "processing",
+    "/request/completed": "completed",
+    "/request/rejected": "rejected",
+  };
 
-  if (location.pathname.includes("/confirm/list")) status = "list"; // 수신함
-  else if (location.pathname.includes("/processing")) status = "processing";
-  else if (location.pathname.includes("submitted")) status = "all";
-  else if (location.pathname.includes("completed")) status = "completed";
-  else if (location.pathname.includes("history")) status = "history";
-  else if (location.pathname.includes("reference")) status = "reference";
+  const status = Object.entries(pathMap).find(([path]) => location.pathname.includes(path))?.[1] || "submitted";
 
-  // 사이드 카테고리 X / 결재 양식에 따라서 적용해야 하는거 선별
-  const shouldFilterByCategory = ["submitted", "list", "history", "completed", "reference", "processing"].includes(
-    status
-  );
-
-  const filteredApprovals = shouldFilterByCategory
-    ? approvals.filter((doc) => doc.appDocCategory === category)
-    : approvals;
-
+  // 문서 목록
   useEffect(() => {
+    if (!empNo) return;
+    console.log("현재 상태 status:", status);
     fetchApprovalList(status, page, 10, empNo)
       .then((data) => {
         setApprovals(data.dtoList);
@@ -44,71 +43,72 @@ const ApprovalList = () => {
       .catch((err) => {
         console.error("목록 불러오기 실패", err);
       });
-  }, [status, page, empNo, category]); // ✅ empNo 추가
-  // ====================== 테스트 용 ======================
+  }, [status, page, empNo]);
 
-  // 실사용 jwt 이후 수정 예정
-  // useEffect(() => {
-  //   fetchApprovalList(status, page, 10)
-  //     .then(data => {
-  //       console.log("결재 문서 리스트:", data.dtoList);
-
-  //       setApprovals(data.dtoList);
-  //       setPageInfo(data);
-  //     })
-  //     .catch(err => {
-  //       console.error("목록 불러오기 실패", err);
-  //     });
-  // }, [status, page]);
+  // 카테고리 필터링
+  const filteredApprovals =
+    category === "전체문서" ? approvals : approvals.filter((doc) => doc.appDocCategory === category);
 
   return (
     <div className="bg-[#f4f4f4e1]">
       <div className="flex text-sm font-semibold text-black min-h-screen mx-auto">
-        {/* 본문: ApprovalList */}
         <div className="flex-1 bg-gray-50 rounded-xl p-10">
           <section className="bg-white rounded-xl p-6 shadow min-h-screen">
             <div className="text-right text-xs text-gray-500 mb-4">home / 전자결재</div>
 
             {/* 카테고리 탭 */}
             <div className="flex gap-4 mb-4 text-sm">
-              {["기안서", "보고서", "연차신청서", "출장신청서"].map((cat) => (
+              {["전체문서", "기안서", "보고서", "연차신청서", "출장신청서", "영수증"].map((cat) => (
                 <button
                   key={cat}
                   className={`px-3 py-1 rounded 
                     ${cat === category ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600"}`}
-                  onClick={() => setCategory(cat)}
+                  onClick={() => {
+                    setCategory(cat);
+                    setSearchParams({ category: cat });
+                  }}
                 >
                   {cat}
                 </button>
               ))}
             </div>
 
-            {/* 리스트 뿌리는 공간 */}
+            {/* 리스트 */}
             <div className="space-y-4">
-              {filteredApprovals.map((doc) => (
-                <Link key={doc.appDocNo} to={`/intrasoltech/approval/detail/${doc.appDocNo}`} className="block">
-                  <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 hover:bg-[#f9fbff] transition">
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-purple-100 text-purple-700 flex items-center justify-center font-bold rounded-full">
-                        {doc.appDocCategory[0]}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-800">{doc.appDocTitle}</div>
-                        <div className="text-xs text-gray-500">
-                          기안자 : {doc.eName} · {doc.deptName} · {doc.appDocDate}
+              {filteredApprovals.length === 0 ? (
+                <div className="text-center text-sm text-gray-400 py-10">문서가 없습니다</div>
+              ) : (
+                filteredApprovals.map((doc) => (
+                  <Link key={doc.appDocNo} to={`/intrasoltech/approval/detail/${doc.appDocNo}`} className="block">
+                    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 hover:bg-[#f9fbff] transition">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 bg-purple-100 text-purple-700 flex items-center justify-center font-bold rounded-full">
+                          {doc.appDocCategory[0]}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-800">{doc.appDocTitle}</div>
+                          <div className="text-xs text-gray-500">
+                            기안자 : {doc.eName} · {doc.deptName} · {doc.appDocDate}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <span
-                      className={`text-xs font-semibold px-2 py-0.5 rounded
-            ${doc.appIsFinalized ? "text-green-700 bg-green-100" : "text-yellow-700 bg-yellow-100"}`}
-                    >
-                      {doc.appIsFinalized ? "완료" : "대기"}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                      <span
+                        className={`text-xs font-semibold px-2 py-0.5 rounded
+                        ${
+                          doc.isRejected
+                            ? "text-red-700 bg-red-100"
+                            : doc.appIsFinalized
+                            ? "text-green-700 bg-green-100"
+                            : "text-yellow-700 bg-yellow-100"
+                        }`}
+                      >
+                        {doc.isRejected ? "반려" : doc.appIsFinalized ? "완료" : "대기"}
+                      </span>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
 
             {/* 페이지네이션 */}

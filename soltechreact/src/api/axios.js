@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_SERVER_HOST = "http://localhost:8080";
+const API_SERVER_HOST = import.meta.env.VITE_API_SERVER_HOST;
+console.log("[환경변수] API_SERVER_HOST =", API_SERVER_HOST);
 const api = axios.create({
   baseURL: API_SERVER_HOST,
   withCredentials: true,
@@ -18,14 +19,48 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// 요청 시 accessToken 자동 첨부
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+
+    // 요청 로그
+    console.log(
+      "[API 요청]",
+      config.method?.toUpperCase(),
+      config.baseURL + config.url
+    );
+    if (config.data) {
+      console.log("[요청 데이터]", config.data);
+    }
+    if (token) {
+      console.log("[토큰 첨부]", token);
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    console.error("[요청 오류]", error);
+    return Promise.reject(error);
+  }
+);
+
 // 응답 인터셉터 - accessToken 만료 시 자동 재발급
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // ✅ 응답 로그
+    console.log("[API 응답]", response.status, response.data);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
     // accessToken이 만료됐고, 재시도한 적 없고, refreshToken 존재하면
-    if (error.response?.status === 401 && !originalRequest._retry && localStorage.getItem("refreshToken")) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      localStorage.getItem("refreshToken")
+    ) {
       originalRequest._retry = true;
 
       try {

@@ -2,50 +2,65 @@ import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { postApproval, removeAppFile } from "../../api/approvalApi"; // 백엔드에 FormData 전송/삭제용 API
+import { fetchApprovalDocNoCounts, postApproval, removeAppFile } from "../../api/approvalApi"; // 백엔드에 FormData 전송/삭제용 API
 import ApprovalLineModal from "./ApprovalLineModal";
 import useAuth from "../../hooks/useAuth";
+import { fetchAllEmployeeInfo } from "../../api/informationApi";
 
 const ApprovalForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const category = searchParams.get("category") || "기안서";
+  const category = searchParams.get("category") || "";
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
-  const [employee, setEmployee] = useState(null); // 🔒 추후 로그인 연동 시 사용
   const [uploadFiles, setUploadFiles] = useState([]); // 첨부파일 상태 추가
 
   const [modalMode, setModalMode] = useState("APPROVER"); // or "REFERENCE" 모달 재사용
 
-  // 테스트용 임시 입력값 (추후 삭제 예정)
-  const [empNoTest, setEmpNoTest] = useState("");
-  const [deptNoTest, setDeptNoTest] = useState("");
+  // 문서번호 자동생성용
+  const [appDocNo, setappDocNo] = useState(null);
 
+  // jwt 토큰 값
   const { userInfo } = useAuth();
   const empNo = userInfo?.empNo;
   const deptNo = userInfo?.deptNo;
 
+  const [information, setEmployee] = useState([]); // 첨부파일 상태 추가
+
+  // 전체 정보 출력용
+  useEffect(() => {
+    if (!empNo) return;
+
+    fetchAllEmployeeInfo(empNo).then((info) => {
+      setEmployee(info);
+    });
+  }, [empNo]);
+
+  // 카테고리별 내용 변경
   const categoryTemplates = {
     기안서: `※ 기안 목적:\n\n※ 관련 내용:\n\n※ 요청 사항:\n`,
     보고서: `※ 주요 내용:\n\n※ 결론 및 제안:\n`,
     연차신청서: `※ 연차 기간: yyyy-mm-dd ~ yyyy-mm-dd\n\n※ 사유:\n`,
     출장신청서: `※ 출장 일자:\n\n※ 출장 지역:\n\n※ 출장 목적:\n\n※ 비고:\n`,
+    영수증: `※ 영수증 내역을 첨부파일로 반드시 첨부\n\n※ 결재 일자:\n\n※ 사용 내역:\n\n※ 비고:\n`,
   };
 
-  // 🔒 추후 로그인 연동 시 자동 세팅 예정
-  // useEffect(() => {
-  //   axios
-  //     .get("/api/employees/me")
-  //     .then((res) => setEmployee(res.data))
-  //     .catch((err) => console.error("사원 정보 불러오기 실패", err));
-  // }, []);
-
+  // 본문 내용 저장용
   useEffect(() => {
     setContent(categoryTemplates[category] || "");
   }, [category]);
 
+  // 문서 번호용
+  useEffect(() => {
+    // 문서번호 미리 불러오기
+    fetchApprovalDocNoCounts().then((res) => {
+      setappDocNo(res); // 문서번호 상태에 저장
+    });
+  }, []);
+
+  // 전자결재 생성용
   const handleSubmit = async () => {
     if (!empNo || !deptNo) return alert("사번과 부서번호를 입력하세요");
     if (!title) return alert("제목을 입력하세요");
@@ -61,6 +76,7 @@ const ApprovalForm = () => {
     formData.append("appIsUrgent", isUrgent);
 
     formData.append("appIsFinalized", false);
+    formData.append("appIsTemporary", false);
     formData.append("empNo", empNo);
     formData.append("deptNo", deptNo);
 
@@ -83,18 +99,56 @@ const ApprovalForm = () => {
       }
     });
 
-    // 넘어오는 값 확인
-    for (let pair of formData.entries()) {
-      console.log(pair[0], ":", pair[1]);
-    }
-
     try {
       await postApproval(empNo, formData);
       alert("문서가 성공적으로 제출되었습니다");
       navigate("/intrasoltech/approval/request/submitted");
+      window.location.reload();
     } catch (error) {
       console.error("문서 제출 실패", error);
       alert("제출 중 오류 발생");
+    }
+  };
+
+  // 임시저장용
+  const handleSaveAsTemporary = async () => {
+    if (!empNo || !deptNo) return alert("사번과 부서번호를 입력하세요");
+    if (!title) return alert("제목을 입력하세요");
+
+    const formData = new FormData();
+    formData.append("appDocCategory", category);
+    formData.append("appDocTitle", title);
+    formData.append("appDocContent", content);
+    formData.append("appIsUrgent", isUrgent);
+    formData.append("appIsFinalized", false);
+    formData.append("appIsTemporary", "true");
+    formData.append("empNo", empNo);
+    formData.append("deptNo", deptNo);
+
+    uploadFiles.forEach((file) => formData.append("uploadFiles", file));
+
+    // 결재선이 없어도 저장 가능하게끔 → optional
+    approvalLine.approvers.forEach((approver, idx) => {
+      formData.append(`approvers[${idx}].empNo`, approver.empNo);
+      formData.append(`approvers[${idx}].appRoleJobNo`, approver.appRoleJobNo);
+      formData.append(`approvers[${idx}].appOrder`, approver.appOrder);
+    });
+
+    approvalLine.references.forEach((reference, idx) => {
+      formData.append(`references[${idx}].empNo`, reference.empNo);
+      if (reference.appRoleJobNo) formData.append(`references[${idx}].appRoleJobNo`, reference.appRoleJobNo);
+      if (reference.appOrder !== null && reference.appOrder !== undefined)
+        formData.append(`references[${idx}].appOrder`, reference.appOrder);
+    });
+
+    try {
+      await postApproval(empNo, formData);
+      alert("임시저장 완료되었습니다.");
+      navigate("/intrasoltech/approval/confirm/temporary");
+      window.location.reload();
+    } catch (error) {
+      console.error("임시저장 실패", error);
+      alert("임시저장 중 오류 발생");
     }
   };
 
@@ -118,8 +172,6 @@ const ApprovalForm = () => {
         {/* 중앙 영역 */}
         <div className="flex-1">
           <main className="flex-1 bg-white px-10 py-6 relative overflow-auto pb-16">
-            {/* 테스트용 임시 입력란 (추후 삭제 예정) */}
-
             <div className="w-auto mx-auto">
               <div className="mb-1 text-[14px] font-semibold">결재 작성</div>
               <p className="text-[12px] text-gray-500 mb-6">진행중인 결재내역을 확인하고 관리합니다</p>
@@ -129,15 +181,15 @@ const ApprovalForm = () => {
                   <div className="grid grid-cols-7">
                     <div className="col-span-2 bg-[#f1f2f6] min-h-[64px] p-3 border-r border-gray-200">
                       <div className="text-black text-[14px] font-bold mb-1">제목</div>
-                      <div className="text-gray-500 text-[12px]">결재문서의 제목입니다.</div>
+                      <div className="text-gray-500 text-[12px]">결재문서의 제목 입니다.</div>
                     </div>
                     <div className="col-span-5 p-3">
                       <input
                         type="text"
-                        placeholder="비품 구매 품의서"
                         value={title}
+                        placeholder="결재문서의 제목을 입력하세요."
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-2 rounded"
+                        className="w-full border border-gray-300 px-3 py-2 rounded h-full text-[15px]"
                       />
                     </div>
                   </div>
@@ -147,14 +199,14 @@ const ApprovalForm = () => {
                   <div className="grid grid-cols-7">
                     <div className="col-span-2 bg-[#f1f2f6] min-h-[64px] p-3 border-r border-gray-200">
                       <div className="text-black text-[14px] font-bold mb-1">기안자</div>
-                      <div className="text-gray-500 text-[12px]">결재문서의</div>
+                      <div className="text-gray-500 text-[12px]">결재문서의 사원명 입니다.</div>
                     </div>
                     <div className="col-span-5 p-3">
                       <input
                         type="text"
-                        placeholder="홍길동"
-                        value={empNo}
-                        className="w-full border border-gray-300 px-3 py-2 rounded"
+                        className="w-full border border-gray-300 px-3 py-2 rounded h-full text-[15px]"
+                        defaultValue={information.eName}
+                        readOnly
                       />
                     </div>
                   </div>
@@ -164,15 +216,14 @@ const ApprovalForm = () => {
                   <div className="grid grid-cols-7">
                     <div className="col-span-2 bg-[#f1f2f6] min-h-[64px] p-3 border-r border-gray-200">
                       <div className="text-black text-[14px] font-bold mb-1">부서명</div>
-                      <div className="text-gray-500 text-[12px]"></div>
+                      <div className="text-gray-500 text-[12px]">결재문서의 부서명 입니다.</div>
                     </div>
                     <div className="col-span-5 p-3">
                       <input
                         type="text"
-                        placeholder="인사팀"
-                        value={deptNo}
-                        onChange={(e) => setDeptNoTest(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-3 rounded"
+                        defaultValue={information.deptName}
+                        className="w-full border border-gray-300 px-3 py-3 rounded h-full text-[15px]"
+                        readOnly
                       />
                     </div>
                   </div>
@@ -182,10 +233,15 @@ const ApprovalForm = () => {
                   <div className="grid grid-cols-7">
                     <div className="col-span-2 bg-[#f1f2f6] min-h-[64px] p-3 border-r border-gray-200">
                       <div className="text-black text-[14px] font-bold mb-1">문서번호</div>
-                      <div className="text-gray-500 text-[12px]">결재문서의 번호입니다.</div>
+                      <div className="text-gray-500 text-[12px]">결재문서의 문서번호 입니다.</div>
                     </div>
                     <div className="col-span-5 p-3">
-                      <input type="text" readOnly className="w-full border border-gray-300 px-3 py-3 rounded" />
+                      <input
+                        type="text"
+                        value={appDocNo || ""}
+                        readOnly
+                        className="w-full border border-gray-300 px-3 py-3 rounded h-full text-[15px]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -194,14 +250,14 @@ const ApprovalForm = () => {
                   <div className="grid grid-cols-7">
                     <div className="col-span-2 bg-[#f1f2f6] min-h-[64px] p-3 border-r border-gray-200">
                       <div className="text-black text-[14px] font-bold mb-1">문서분류</div>
-                      <div className="text-gray-500 text-[12px]">결재문서의 분류입니다.</div>
+                      <div className="text-gray-500 text-[12px]">결재문서의 문서분류 입니다.</div>
                     </div>
                     <div className="col-span-5 p-3">
                       <input
                         type="text"
                         value={category}
                         readOnly
-                        className="w-full border border-gray-300 px-3 py-3 rounded"
+                        className="w-full border border-gray-300 px-3 py-3 rounded h-full text-[15px]"
                       />
                     </div>
                   </div>
@@ -218,7 +274,7 @@ const ApprovalForm = () => {
                         type="text"
                         value={new Date().toISOString().slice(0, 10)} // 오늘 날짜로 고정
                         readOnly
-                        className="w-full border border-gray-300 px-3 py-3 rounded"
+                        className="w-full border border-gray-300 px-3 py-3 rounded h-full text-[15px]"
                       />
                     </div>
                   </div>
@@ -387,17 +443,26 @@ const ApprovalForm = () => {
               <input
                 id="urgent"
                 type="checkbox"
-                checked={isUrgent} // 체크 상태 연결
-                onChange={(e) => setIsUrgent(e.target.checked)} // 체크 설정 변경
+                checked={isUrgent}
+                onChange={(e) => setIsUrgent(e.target.checked)}
                 className="w-4 h-4 text-purple-600"
               />
               <label htmlFor="urgent" className="ml-2">
                 긴급결재
               </label>
             </div>
+
+            {/* ✅ 임시저장 버튼 추가 */}
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2.5 rounded cursor-pointer transition-colors"
+              onClick={handleSaveAsTemporary}
+            >
+              임시저장
+            </button>
+
             <button
               className="bg-[#7e5be3] hover:bg-[#6b46c1] text-white px-6 py-2.5 rounded cursor-pointer transition-colors"
-              onClick={handleSubmit} // 제출 연결
+              onClick={handleSubmit}
             >
               기안
             </button>
@@ -406,7 +471,7 @@ const ApprovalForm = () => {
       </div>
       <ApprovalLineModal
         isOpen={showLineModal}
-        modalMode={modalMode} // 🔥 모드 전달!
+        modalMode={modalMode}
         onClose={() => setShowLineModal(false)}
         onSave={(selectedList) => {
           console.log("선택된 리스트:", selectedList);
@@ -416,6 +481,7 @@ const ApprovalForm = () => {
           }));
           setShowLineModal(false);
         }}
+        category={category}
       />
     </div>
   );

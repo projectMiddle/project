@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNoticeById, updateNotice } from "../../api/noticeApi"; // ✅ API 모듈 import
+import { getNoticeById, updateNotice } from "../../api/board/noticeApi"; // ✅ API 모듈 import
 
 const EditNoticeForm = () => {
   const { id } = useParams();
@@ -101,7 +101,7 @@ const EditNoticeForm = () => {
               resize: "none",
               whiteSpace: "pre-wrap",
               marginBottom: "24px",
-              background: "white"
+              background: "white",
             }}
           />
 

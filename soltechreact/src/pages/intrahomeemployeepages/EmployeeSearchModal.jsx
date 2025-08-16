@@ -10,22 +10,13 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
   const [filteredList, setFilteredList] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("/data/employees.json")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setEmployeeList(data);
-  //       setFilteredList(data);
-  //     });
-  // }, []);
   useEffect(() => {
     fetchAllEmployees()
       .then((data) => {
-        // console.log("📦 백엔드 응답 데이터:", data);
         setEmployeeList(data);
       })
       .catch((err) => {
-        console.error("🚨 사원 목록 불러오기 실패:", err);
+        console.error("사원 목록 불러오기 실패:", err);
       });
   }, []);
   //  타이핑할 때마다 자동 필터링
@@ -45,14 +36,16 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
     setSelected((prev) =>
       prev.some((e) => e.empNo === emp.empNo) ? prev.filter((e) => e.empNo !== emp.empNo) : [...prev, emp]
     );
+    // console.log(emp);
   };
   //선택완료
   const handleConfirm = () => {
     const simplified = selected.map((emp) => ({
       id: emp.empNo,
       name: emp.ename,
-      email: emp.eemail,
+      deptName: emp.deptName,
     }));
+
     onSelect && onSelect(simplified);
     onClose();
   };
@@ -94,38 +87,46 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
           </button> */}
         </form>
 
-        {/* 👥 사원 목록 */}
-        <div className="space-y-4">
-          {filteredList.length > 0 ? (
-            filteredList.map((emp) => (
-              <div
-                key={emp.empNo}
-                onClick={() => handleToggleSelect(emp)}
-                className={`cursor-pointer rounded border p-2 ${
-                  selected.some((e) => e.empNo === emp.empNo)
-                    ? "bg-purple-100 border-purple-400" // ✅ 선택된 경우 보라색 강조
-                    : "hover:bg-gray-100"
-                }`}
+        <div className="flex flex-col max-h-[80vh]">
+          {" "}
+          <div className="flex-1 overflow-y-auto space-y-4">
+            {filteredList.length > 0 ? (
+              filteredList.map((emp) => (
+                <div
+                  key={emp.empNo}
+                  onClick={() => handleToggleSelect(emp)}
+                  className={`cursor-pointer rounded border p-2 ${
+                    selected.some((e) => e.empNo === emp.empNo)
+                      ? "bg-purple-100 border-purple-400"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  <EmployeeCard key={emp.empNo} employee={emp} />
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">검색 결과가 없습니다.</p>
+            )}
+          </div>
+          <div className="p-4 border-t bg-white">
+            <div className="grid gap-2">
+              {/* <button
+                onClick={onClose}
+                className="w-full bg-purple-500 hover:bg-purple-600 transition text-white py-2 rounded-lg"
               >
-                <EmployeeCard key={emp.empNo} employee={emp} />
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">검색 결과가 없습니다.</p>
-          )}
+                닫기
+              </button> */}
+              {onSelect && (
+                <button
+                  onClick={handleConfirm}
+                  className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded"
+                >
+                  선택 완료
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-        {/* 하단 버튼 */}
-        <button
-          onClick={onClose}
-          className="mt-6 w-full bg-purple-500 hover:bg-purple-600 transition text-white py-2 rounded-lg"
-        >
-          닫기
-        </button>
-        {onSelect && (
-          <button onClick={handleConfirm} className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded">
-            선택 완료
-          </button>
-        )}
       </div>
     </div>
   );

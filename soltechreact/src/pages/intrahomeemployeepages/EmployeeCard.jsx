@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import { Mail, Phone } from "lucide-react";
 import { VscAccount } from "react-icons/vsc";
+import { fetchWorkingStatus } from "../../api/attendanceApi";
 
 const EmployeeCard = ({ employee }) => {
   const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`/attendance/working/${employee.empNo}`)
-      .then((res) => setIsWorking(res.data.attStatus === "WORK"))
+    fetchWorkingStatus(employee.empNo)
+      .then((res) => setIsWorking(res.attStatus === "WORK"))
       .catch(() => setIsWorking(false));
   }, [employee.empNo]);
 

@@ -50,14 +50,16 @@ public class ApprovalDocument {
     @Column(nullable = false)
     private String appDocContent;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR2(1) DEFAULT '0'")
+    @Column(nullable = false)
     private boolean appIsUrgent;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR2(1) DEFAULT '0'")
+    @Column(nullable = false)
     private boolean appIsFinalized;
 
     @Column(nullable = false)
     private LocalDate appDocDate;
+
+    private Boolean appIsTemporary;
 
     public void changeAppDocContent(String appDocContent) {
         this.appDocContent = appDocContent;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchNoticeDetail, deleteNotice } from "../../api/noticeApi"; // ✅ API 분리된 모듈 사용
+import { fetchNoticeDetail, deleteNotice } from "../../api/board/noticeApi"; // ✅ API 분리된 모듈 사용
 
 const NoticeRead = () => {
   const { notiNo } = useParams();
