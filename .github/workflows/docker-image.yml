@@ -88,18 +88,18 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # 기존 백엔드/프론트만 정리
-            docker stop soltech-backend || true
-            docker stop soltech-frontend || true
-            docker rm soltech-backend || true
-            docker rm soltech-frontend || true
+            docker stop soltech-final-backend || true
+            docker stop soltech-final-frontend || true
+            docker rm soltech-final-backend || true
+            docker rm soltech-final-frontend || true
 
             # 기존 이미지 정리 (백엔드/프론트만)
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/soltech-backend:latest || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/soltech-frontend:latest || true
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-backend:latest || true
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-frontend:latest || true
 
             # 최신 이미지 pull
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-backend:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-frontend:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-backend:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-frontend:latest
 
             # env 파일 생성 (mysql 건드리지 않고, backend 실행할 때만 사용)
             echo "${{ secrets.DOCKER_ENV_DB }}" > /home/ubuntu/db.env
@@ -107,16 +107,16 @@ jobs:
             echo "${{ secrets.DOCKER_ENV_JWT }}" > /home/ubuntu/jwt.env
 
             # 백엔드 실행
-            docker run -d --name soltech-backend \
+            docker run -d --name soltech-final-backend \
               --env-file /home/ubuntu/db.env \
               --env-file /home/ubuntu/google.env \
               --env-file /home/ubuntu/jwt.env \
               -p 8080:8080 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/soltech-backend:latest \
+              ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-backend:latest \
               --spring.profiles.active=prod
 
             # 프론트 실행
-            docker run -d --name soltech-frontend \
+            docker run -d --name soltech-final-frontend \
               -p 5173:5173 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/soltech-frontend:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-frontend:latest
 
