@@ -72,7 +72,6 @@ const ApprovalForm = () => {
     formData.append("appDocTitle", title);
     formData.append("appDocContent", content);
 
-    console.log("긴급 여부 : ", isUrgent);
     formData.append("appIsUrgent", isUrgent);
 
     formData.append("appIsFinalized", false);
@@ -474,7 +473,6 @@ const ApprovalForm = () => {
         modalMode={modalMode}
         onClose={() => setShowLineModal(false)}
         onSave={(selectedList) => {
-          console.log("선택된 리스트:", selectedList);
           setApprovalLine((prev) => ({
             ...prev,
             [modalMode === "APPROVER" ? "approvers" : "references"]: selectedList,

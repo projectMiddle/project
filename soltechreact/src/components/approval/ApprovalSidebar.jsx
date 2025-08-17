@@ -39,7 +39,6 @@ const ApprovalSidebar = () => {
   useEffect(() => {
     fetchApprovalCategoryCounts(empNo)
       .then((data) => {
-        console.log("사이드바 카운트 : ", data);
         setCounts({
           list: data.list,
           history: data.history,

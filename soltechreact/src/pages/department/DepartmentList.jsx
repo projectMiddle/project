@@ -9,7 +9,6 @@ export default function DepartmentList() {
   useEffect(() => {
     getDepartments()
       .then((res) => {
-        console.log("부서 목록:", res);
         setDepartments(res);
       })
       .catch((err) => {

@@ -7,6 +7,7 @@ import EmpInfoModal from "./EmpInfoModal"; // 상세 팝업 추가
 import useAuth from "../../hooks/useAuth";
 import { fetchApprovalCategoryCounts } from "../../api/approvalApi";
 import { useNavigate } from "react-router-dom";
+import { getReceivedNotes } from "../../api/noteApi";
 
 const Information = () => {
   const [user, setUser] = useState(null); // 전체 유저 정보
@@ -19,10 +20,17 @@ const Information = () => {
 
   // 미결함 카운트
   const [counts, setCounts] = useState({ list: 0 });
+  // 쪽지 카운트
+  const [noteCount, setNoteCount] = useState(0);
 
   const iconList = [
     { icon: Mail, label: "메일", cnt: "5" },
-    { icon: MessageSquare, label: "쪽지", cnt: "5" },
+    {
+      icon: MessageSquare,
+      label: "쪽지",
+      cnt: `${noteCount}`,
+      path: "/intrasoltech/note/receiveList"   // ✅ 수신함으로 이동
+    },
     {
       icon: PenLine,
       label: "미결함",
@@ -36,7 +44,6 @@ const Information = () => {
   useEffect(() => {
     fetchEmployeeInfo(empNo)
       .then((data) => {
-        console.log("직원 정보 조회 성공", data);
         setUser(data);
       })
       .catch((err) => {
@@ -45,7 +52,6 @@ const Information = () => {
 
     fetchAttendanceStatus(empNo)
       .then((data) => {
-        console.log("불반짝 성공", data);
         setIsWorking(data.attStatus === "WORK");
       })
       .catch((err) => {
@@ -55,12 +61,18 @@ const Information = () => {
     // 사이드바 뱃지용 미결함 수신결재 카운트
     fetchApprovalCategoryCounts(empNo)
       .then((data) => {
-        console.log("사이드바 미결함 수신결재 수:", data.list);
         setCounts({ list: data.list });
       })
       .catch((err) => {
         console.error("수신결재 수 조회 실패:", err);
       });
+
+    // 쪽지함 개수 카운트
+    getReceivedNotes(empNo)
+      .then((data) => {
+        setNoteCount(data.length);
+      })
+      .catch((err) => console.error("쪽지 수 조회 실패:", err));
   }, []);
 
   if (!user) {

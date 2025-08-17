@@ -17,7 +17,6 @@ export default function MainApplyJobModal({
     // open 시 포커스 & body 스크롤 잠금
     useEffect(() => {
         if (!open) return;
-        console.log("[MainApplyJobModal] open:", open, "mode:", mode, "editingId:", editingId);
 
         // 포커스
         setTimeout(() => titleRef.current?.focus(), 0);
@@ -40,7 +39,6 @@ export default function MainApplyJobModal({
                 className="absolute inset-0 bg-black/30"
                 onClick={() => {
                     if (!saving) {
-                        console.log("[MainApplyJobModal] backdrop click → onClose()");
                         onClose?.();
                     }
                 }}
@@ -78,7 +76,6 @@ export default function MainApplyJobModal({
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
-                        console.log("[MainApplyJobModal] submit with form:", form);
                         onSubmit?.(e);
                     }}
                     className="px-5 py-4 space-y-4"
@@ -92,7 +89,6 @@ export default function MainApplyJobModal({
                             name="jobsTitle"
                             value={form?.jobsTitle ?? ""}
                             onChange={(e) => {
-                                console.log("[MainApplyJobModal] change jobsTitle:", e.target.value);
                                 onChange?.(e);
                             }}
                             className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"

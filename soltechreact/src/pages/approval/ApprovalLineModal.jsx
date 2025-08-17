@@ -29,7 +29,6 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave, category }) => 
 
   const handleSearch = () => {
     const result = filterEmployees(employees, searchTerm, jobFilter, selectedDept);
-    console.log({ searchTerm, jobFilter, selectedDept, result });
     setFilteredEmployees(result);
   };
 
@@ -100,8 +99,6 @@ const ApprovalLineModal = ({ isOpen, modalMode, onClose, onSave, category }) => 
     }
 
     // 조건 통과 후 처리
-    console.log("최종 결재자 조건 통과:", finalApprover);
-
     const resultList =
       modalMode === "APPROVER"
         ? selectedApprovers.map((emp, idx) => ({

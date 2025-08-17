@@ -62,18 +62,16 @@ const IntraTopSection = () => {
               <button
                 ref={calendarRef}
                 onClick={() => setSelectedTab("calendar")}
-                className={`text-sm font-semibold pb-2 focus:outline-none ${
-                  selectedTab === "calendar" ? "text-[#6b46c1]" : "text-gray-500"
-                }`}
+                className={`text-sm font-semibold pb-2 focus:outline-none ${selectedTab === "calendar" ? "text-[#6b46c1]" : "text-gray-500"
+                  }`}
               >
                 내 캘린더 일정
               </button>
               <button
                 ref={serviceRef}
                 onClick={() => setSelectedTab("service")}
-                className={`text-sm font-semibold pb-2 focus:outline-none ${
-                  selectedTab === "service" ? "text-[#6b46c1]" : "text-gray-500"
-                }`}
+                className={`text-sm font-semibold pb-2 focus:outline-none ${selectedTab === "service" ? "text-[#6b46c1]" : "text-gray-500"
+                  }`}
               >
                 서비스
               </button>
@@ -115,26 +113,25 @@ const IntraTopSection = () => {
                           {/* 유형 */}
                           <span
                             className={`text-xs font-semibold rounded-xl px-2 py-1 min-w-[70px] text-center select-none mr-2 flex-shrink-0
-                                                            ${
-                                                              event.classNames?.includes("holiday-event")
-                                                                ? "bg-red-500 text-white"
-                                                                : event.type === "DEPARTMENT"
-                                                                ? "bg-purple-400 text-white"
-                                                                : "bg-blue-400 text-white"
-                                                            }
+                                                            ${event.classNames?.includes("holiday-event")
+                                ? "bg-red-500 text-white"
+                                : event.type === "DEPARTMENT"
+                                  ? "bg-purple-400 text-white"
+                                  : "bg-blue-400 text-white"
+                              }
                                                         `}
                           >
                             {event.classNames?.includes("holiday-event")
                               ? "공휴일"
                               : event.type === "DEPARTMENT"
-                              ? "부서일정"
-                              : "개인일정"}
+                                ? "부서일정"
+                                : "개인일정"}
                           </span>
                           {/* 제목 (ellipsis) */}
                           <span className="flex-1 font-medium text-gray-700 truncate mx-2 min-w-[60px] max-w-[160px]">
                             {event.title}
                           </span>
-                          <span className="mx-2 text-xs text-gray-500 whitespace-nowrap flex-shrink-0">
+                          <span className="mx-2 text-xs text-gray-500 whitespace-nowrap flex-shrink-0 text-center w-[50px]">
                             {event.classNames?.includes("holiday-event") ? "-" : "관리자"}
                           </span>
                           {/* 시작일 */}
@@ -150,7 +147,6 @@ const IntraTopSection = () => {
                     </ul>
                   )}
                 </div>
-                {console.log("캘린더 일정 탭에서 events: ", events)} {/* 콘솔 출력 */}
               </>
             ) : (
               "서비스 내용입니다."
@@ -160,7 +156,7 @@ const IntraTopSection = () => {
       </section>
       {/* main 오른쪽 섹션 */}
       <section className="col-span-13 w-full p-10 rounded-tr-2xl bg-gray-50 border-t border-r border-gray-300">
-        <div className="bg-white border border-gray-200 rounded-xl p-3 overflow-hidden">
+        <div className="bg-white overflow-hidden">
           <Calendar />
         </div>
         {/* 일정 테이블은 이제 여기서 제거 */}

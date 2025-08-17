@@ -21,7 +21,6 @@ const Attendance = () => {
   const fetchAttendance = () => {
     fetchAttendanceList(empNo, year, month)
       .then((data) => {
-        console.log("출근 작성", data);
         setAttList(data);
       })
       .catch((err) => {

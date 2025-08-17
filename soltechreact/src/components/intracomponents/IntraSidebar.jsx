@@ -2,8 +2,8 @@ import {
   FaHome,
   FaCalendarAlt,
   FaBullhorn,
-  FaChartBar,
   FaCalculator,
+  FaRegListAlt,
   FaBuilding,
   FaFileContract,
   FaClipboardList,
@@ -12,19 +12,18 @@ import {
   FaShoppingCart,
   FaUsers,
 } from "react-icons/fa";
-import { MdLogout, MdOutlineMessage } from "react-icons/md";
-import { LuFiles } from "react-icons/lu";
+import { MdOutlineMessage } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 export default function IntraSidebar() {
   const topItems = [
     { label: "홈", icon: <FaHome />, to: "/intrasoltech" },
     { label: "공지사항", icon: <FaBullhorn />, to: "/intrasoltech/notices" },
+    { label: "자유게시판", icon: <FaRegListAlt />, to: "/intrasoltech/notices/freeboard" },
     { label: "쪽지", icon: <MdOutlineMessage />, to: "/intrasoltech/note" },
     { label: "스케줄", icon: <FaCalendarAlt />, to: "/intrasoltech/calendar" },
     { label: "출퇴근기록", icon: <FaClipboardList />, to: "/intrasoltech/attendance" },
     { label: "전자결재", icon: <FaFileContract />, to: "/intrasoltech/approval" },
-    { label: "리포트", icon: <FaChartBar /> },
     { label: "급여명세서", icon: <FaCalculator />, to: "/intrasoltech/emppay" },
     { label: "부서목록", icon: <FaUsers />, to: "/intrasoltech/department" },
     { label: "복지몰", icon: <FaShoppingCart />, to: "/intrasoltech/welfaremall" },

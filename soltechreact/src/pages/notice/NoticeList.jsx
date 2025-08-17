@@ -10,7 +10,6 @@ const NoticeList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedNotices, setSelectedNotices] = useState([]);
 
@@ -24,7 +23,7 @@ const NoticeList = () => {
       setTotalPages(data.totalPages || 1);
       setTotalCount(data.totalElements || 0);
     } catch (err) {
-      console.error("공지사항 로딩 실패!", err);
+      console.error("공지사항 로딩 실패", err);
     }
   };
 
@@ -50,7 +49,7 @@ const NoticeList = () => {
       {/* 사이드바 */}
       <aside className="w-[230px] bg-[#f4f4f4] border-r border-gray-300 text-gray-800 flex flex-col">
         {/* 상단 타이틀 */}
-        <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">공지사항</div>
+        <div className="bg-[#6b46c1] text-white font-bold text-[17px] text-center py-[14px]">게시판</div>
 
         {/* 게시판 메뉴 항목 */}
         <nav className="flex-1 px-3 pt-4 text-sm">
@@ -58,13 +57,13 @@ const NoticeList = () => {
             className="py-2 px-2 hover:bg-gray-200 rounded cursor-pointer"
             onClick={() => navigate("/intrasoltech/notices")}
           >
-            ✅ 전체 공지사항
+            전체 공지사항
           </div>
           <div
-            className="py-2 px-2 hover:bg-gray-200 rounded cursor-pointer"
+            className="py-2 px-2 border-t border-gray-300 hover:bg-gray-200 cursor-pointer"
             onClick={() => navigate("/intrasoltech/notices/freeboard")}
           >
-            💬 자유게시판
+            자유게시판
           </div>
         </nav>
       </aside>

@@ -42,10 +42,6 @@ export default function WelfareMallList() {
     navigate("/intrasoltech/welfaremall/cart?autosubmit=1");
   };
 
-  // ❌ (삭제) checkoutData 관련 낙서 코드
-  // console.log("🛒 바로구매 데이터:", checkoutData);
-  // navigate("/intrasoltech/welfaremall/checkout", { state: checkoutData });
-
   // ======= 페이지네이션 (10개씩) =======
   const pageSize = 10;
   const pageParam = Number(searchParams.get("page") || "1");

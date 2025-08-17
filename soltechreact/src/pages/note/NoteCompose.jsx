@@ -54,9 +54,6 @@ const NoteCompose = () => {
     receiverIds.forEach((id) => formData.append("receiverIds", id));
     attachments.forEach((file) => formData.append("attachments", file));
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
     try {
       await sendNote(formData, empNo);
       alert("쪽지 전송 성공");

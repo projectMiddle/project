@@ -1,12 +1,6 @@
 import React from "react";
 import EditInfo from "./EditInfo";
 const EditInfoModal = ({ isOpen, onClose, empNo, initialData, onUpdated }) => {
-  // props 콘솔 확인
-  console.log("EditInfoModal props 확인:");
-  console.log("empNo:", empNo);
-  console.log("initialData:", initialData);
-  console.log("isOpen:", isOpen);
-
   if (!isOpen) return null;
 
   return (

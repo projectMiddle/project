@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getDepartments } from "../../api/departmentApi";
 import { Building2 } from "lucide-react";
-import { Link } from "react-router-dom"; // ✅ 추가
+import { Link } from "react-router-dom";
 
 export default function HRPayDepartmentList() {
-  console.log("render HRPayDepartmentList"); // 콘솔에 뜨면 라우팅 OK
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     getDepartments()
       .then((res) => {
-        console.log("부서 목록:", res);
         setDepartments(res);
       })
       .catch((err) => {

@@ -7,21 +7,11 @@ import NoticeRoute from "./routes/NoticeRoute";
 import AttendanceRoute from "./routes/AttendanceRoute";
 import DepartmentRoute from "./routes/DepartmentRoute";
 import WelfareMallRoute from "./routes/WelfareMallRoute";
-
-import useAuth from "./hooks/useAuth";
 import IntraMainComponent from "./components/intrahomecomponents/IntraMainComponent";
 import IntraLayout from "./components/intracomponents/IntraLayout";
 import NoteRoute from "./routes/NoteRoute";
-const Intra = () => {
-  const { isLoggedIn, userInfo } = useAuth();
 
-  useEffect(() => {
-    if (userInfo) {
-      console.log("사용자 정보:", userInfo);
-    } else {
-      console.log("사용자 정보 없음 (userInfo is null)");
-    }
-  }, [isLoggedIn, userInfo]);
+const Intra = () => {
   return (
     <Routes>
       {/* 기본 홈 */}
