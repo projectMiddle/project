@@ -33,7 +33,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication.getName());
 
         // 프론트로 리다이렉트할 URI
-        String redirectUrl = "http://localhost:5173/oauth2/success"
+        String redirectUrl = "http://15.164.169.222:5173/oauth2/success"
                 + "?accessToken=" + accessToken
                 + "&refreshToken=" + refreshToken;
 
