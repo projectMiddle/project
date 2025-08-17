@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const API_SERVER_HOST = import.meta.env.VITE_API_SERVER_HOST;
-console.log("[환경변수] API_SERVER_HOST =", API_SERVER_HOST);
 const api = axios.create({
   baseURL: API_SERVER_HOST,
   withCredentials: true,
@@ -25,16 +24,7 @@ api.interceptors.request.use(
     const token = localStorage.getItem("accessToken");
 
     // 요청 로그
-    console.log(
-      "[API 요청]",
-      config.method?.toUpperCase(),
-      config.baseURL + config.url
-    );
-    if (config.data) {
-      console.log("[요청 데이터]", config.data);
-    }
     if (token) {
-      console.log("[토큰 첨부]", token);
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -49,7 +39,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // ✅ 응답 로그
-    console.log("[API 응답]", response.status, response.data);
     return response;
   },
   async (error) => {
