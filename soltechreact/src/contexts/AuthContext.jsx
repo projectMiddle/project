@@ -27,9 +27,6 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("userInfo"); // 사용자 정보 가져옴
 
-    console.log("🟡 [AuthContext] accessToken:", token); // ✅ 토큰 확인
-    console.log("🟡 [AuthContext] userInfo(raw):", storedUser);
-
     if (token && storedUser) {
       setIsLoggedIn(true);
       try {

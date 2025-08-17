@@ -22,10 +22,12 @@ const EditFreeBoardForm = () => {
           frBdContent: data.frBdContent,
           empNo: data.empNo,
           deptNo: data.deptNo,
+          name: data.name,
+          deptName: data.deptName,
           frBdRegDate: data.frBdRegDate,
         });
       } catch (err) {
-        alert("게시글을 불러오는 데 실패했습니다!");
+        alert("게시글을 불러오는 데 실패했습니다.");
       }
     };
 
@@ -64,12 +66,12 @@ const EditFreeBoardForm = () => {
               </tr>
 
               <tr>
-                <td style={cellStyleTitle}>사원번호</td>
-                <td style={cellStyle}>{formData.empNo}</td>
+                <td style={cellStyleTitle}>사원명</td>
+                <td style={cellStyle}>{formData.name}</td>
               </tr>
               <tr>
-                <td style={cellStyleTitle}>부서번호</td>
-                <td style={cellStyle}>{formData.deptNo}</td>
+                <td style={cellStyleTitle}>부서명</td>
+                <td style={cellStyle}>{formData.deptName}</td>
               </tr>
               <tr>
                 <td style={cellStyleTitle}>작성일자</td>

@@ -25,18 +25,6 @@ const ApprovalDetail = () => {
       });
   }, [appDocNo]);
 
-  useEffect(() => {
-    if (doc) {
-      console.log("현재 사번:", myEmpNo);
-      console.log("기안자 사번:", doc.empNo);
-      console.log("결재자 목록:", doc.approvers);
-      console.log("참조자 목록:", doc.references);
-      console.log("isApprover:", isApprover);
-      console.log("isDrafter:", isDrafter);
-      console.log("isReference:", isReference);
-    }
-  }, [doc]);
-
   if (!doc) {
     return <div className="flex justify-center items-center h-[400px] text-gray-500 text-lg">문서 로딩 중...</div>;
   }
@@ -54,10 +42,8 @@ const ApprovalDetail = () => {
         status: status, // "APPROVED" or "REJECTED"
         comment: currentApprover?.comment || "", // 옵션: 의견 필드 만들면 같이 전달
       };
-      console.log("결재 처리 payload:", payload);
 
       const res = await processApproval(payload);
-      console.log("결재 처리 성공:", res.data);
       window.location.reload();
     } catch (err) {
       console.error("결재 처리 실패", err);

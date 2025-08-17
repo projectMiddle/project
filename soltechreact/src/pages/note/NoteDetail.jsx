@@ -65,14 +65,6 @@ const NoteDetail = () => {
     }
   }, [noteNo, empNo, isReceiveView]);
 
-  useEffect(() => {
-    if (note?.attachments?.length) {
-      note.attachments.forEach((file) => {
-        console.log("📎 다운로드 URL:", getDownloadUrl(file));
-      });
-    }
-  }, [note]);
-
   if (!note) {
     return <div className="p-4 text-gray-500">쪽지를 불러오는 중입니다...</div>;
   }

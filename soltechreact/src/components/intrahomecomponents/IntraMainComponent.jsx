@@ -1,6 +1,6 @@
 import { Mail, Bell, Users, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Cog, User, PowerOff } from "lucide-react";
+import { ShoppingCart, House, User, PowerOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { fetchWorkingStatus, loginAttendance, logoutAttendance } from "../../api/attendanceApi";
@@ -11,6 +11,9 @@ import IntraBottomSection from "./IntraBottomSection";
 import EmployeeSearchModal from "../../pages/intrahomeemployeepages/EmployeeSearchModal";
 import Information from "../../pages/intrahomeemployeepages/Information";
 import useIsHR from "../../hooks/useIsHR";
+import { fetchAttendanceList } from "../../api/attendanceApi";
+import { totalWorkTime } from "../../utils/timeUtils";
+
 // 사이드바용
 function SideLink({ Icon, label, to }) {
   return (
@@ -28,6 +31,7 @@ const IntraMainComponent = () => {
   const [isWorking, setIsWorking] = useState(false);
   const isHR = useIsHR();
 
+  // 출퇴근 버튼
   const handleGoToWork = async () => {
     try {
       const status = await fetchWorkingStatus(empNo);
@@ -69,6 +73,7 @@ const IntraMainComponent = () => {
     }
   };
 
+  // 사원 정보
   useEffect(() => {
     fetchEmployeeInfo(empNo)
       .then((datas) => {
@@ -83,7 +88,10 @@ const IntraMainComponent = () => {
   // ===================== 사이드 바텀 =====================
   const [weekDays, setWeekDays] = useState(0);
   const [monthDays, setMonthDays] = useState(0);
+  const [actualWeeklyHours, setActualWeeklyHours] = useState(0);
+  const [actualMonthlyHours, setActualMonthlyHours] = useState(0);
 
+  // 기본 UI 계산
   useEffect(() => {
     const today = new Date();
 
@@ -112,6 +120,65 @@ const IntraMainComponent = () => {
     setMonthDays(countWeekdays(startOfMonth, endOfMonth));
     setWeekDays(countWeekdays(startOfWeek, endOfWeek));
   }, []);
+
+  // 근무시간 계산
+  useEffect(() => {
+    if (!empNo) return;
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+
+    fetchAttendanceList(empNo, year, month)
+      .then((attList) => {
+        // ====== 범위 계산 ======
+        // 이번 주 범위
+        const dayOfWeek = today.getDay(); // 0=일, 1=월...
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        // 이번 달 범위
+        const startOfMonth = new Date(year, today.getMonth(), 1);
+        const endOfMonth = new Date(year, today.getMonth() + 1, 0);
+
+        // ====== 필터링 ======
+        const weeklyList = attList.filter((att) => {
+          const workDate = new Date(att.attWorkDate);
+          return workDate >= startOfWeek && workDate <= endOfWeek;
+        });
+
+        const monthlyList = attList.filter((att) => {
+          const workDate = new Date(att.attWorkDate);
+          return workDate >= startOfMonth && workDate <= endOfMonth;
+        });
+
+        // ====== 하루 단위 근무시간 계산 함수 ======
+        const calcDailyHours = (start, end) => {
+          if (!start || !end) return 0;
+          const startTime = new Date(`1970-01-01T${start}`);
+          const endTime = new Date(`1970-01-01T${end}`);
+          let diffHours = Math.floor((endTime - startTime) / (1000 * 60 * 60)); // 시간만
+          return Math.min(diffHours, 8); // 하루 최대 8시간
+        };
+
+        // ====== 총합 계산 (주 / 월) ======
+        const weeklyHours = weeklyList.reduce(
+          (sum, att) => sum + calcDailyHours(att.attStartTime, att.attEndTime),
+          0
+        );
+
+        const monthlyHours = monthlyList.reduce(
+          (sum, att) => sum + calcDailyHours(att.attStartTime, att.attEndTime),
+          0
+        );
+
+        setActualWeeklyHours(weeklyHours);
+        setActualMonthlyHours(monthlyHours);
+      })
+      .catch((err) => console.error("근무시간 조회 실패", err));
+  }, [empNo]);
 
   // header 용
   const [showModal, setShowModal] = useState(false);
@@ -161,9 +228,12 @@ const IntraMainComponent = () => {
           >
             <User className="w-6 h-6" />
           </button>
-          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer">
-            <Cog className="w-5 h-5" />
-          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
+          >
+            <House className="w-5 h-5" />
+          </button>
           <button
             onClick={handleLogout}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer"
@@ -223,20 +293,33 @@ const IntraMainComponent = () => {
                   </div>
 
                   {/* 우측 누적 근무시간 */}
+                  {/* 누적 주간 별 */}
                   <div className="flex flex-col gap-2">
                     <div>
                       <div className="text-gray-500 text-[14px]">금주 누적 근무시간</div>
-                      <div className="w-40 h-2 bg-gray-200 rounded-full mt-1">
-                        <div className="h-full bg-purple-400 rounded-full w-0" />
+                      <div className="relative w-40 h-2 bg-gray-200 rounded-full mt-1 overflow-hidden">
+                        <div
+                          className="absolute top-0 left-0 h-full bg-purple-400 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((actualWeeklyHours / (weekDays * 8)) * 100, 100)}%` }}
+                        />
                       </div>
-                      <div className="text-sm font-bold mt-1">0 / {weekDays * 8}</div>
+                      <div className="text-sm font-bold mt-1">
+                        {actualWeeklyHours} / {weekDays * 8}
+                      </div>
                     </div>
+
+                    {/* 누적 월별 */}
                     <div>
                       <div className="text-gray-500 text-[14px]">금월 누적 근무시간</div>
-                      <div className="w-40 h-2 bg-gray-200 rounded-full mt-1">
-                        <div className="h-full bg-purple-400 rounded-full w-0" />
+                      <div className="relative w-40 h-2 bg-gray-200 rounded-full mt-1 overflow-hidden">
+                        <div
+                          className="absolute top-0 left-0 h-full bg-purple-400 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min((actualMonthlyHours / (monthDays * 8)) * 100, 100)}%` }}
+                        />
                       </div>
-                      <div className="text-sm font-bold mt-1">0 / {monthDays * 8}</div>
+                      <div className="text-sm font-bold mt-1">
+                        {actualMonthlyHours} / {monthDays * 8}
+                      </div>
                     </div>
                   </div>
                 </div>

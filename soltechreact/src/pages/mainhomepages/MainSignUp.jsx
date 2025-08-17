@@ -29,7 +29,6 @@ export default function MainSignUp() {
         mAddress: address,
         mGender: gender, // 반드시 "MALE" 또는 "FEMALE"
       };
-      console.log("memberData", memberData);
       await registerMember(memberData);
       alert("회원가입 성공!");
       navigate("/member/login");

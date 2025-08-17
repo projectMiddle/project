@@ -37,7 +37,7 @@ const NoticeForm = () => {
     e.preventDefault();
     try {
       await createNotice(formData); // ✅ 분리된 API 사용
-      alert("공지사항이 등록되었습니다.!");
+      alert("공지사항이 등록되었습니다.");
       navigate("/intrasoltech/notices");
     } catch (err) {
       alert("오류 발생: " + err.message);

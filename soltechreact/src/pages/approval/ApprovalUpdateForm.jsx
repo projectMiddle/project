@@ -394,7 +394,6 @@ const ApprovalUpdateForm = () => {
         modalMode={modalMode}
         onClose={() => setShowLineModal(false)}
         onSave={(selectedList) => {
-          console.log("선택된 리스트:", selectedList);
           setApprovalLine((prev) => ({
             ...prev,
             [modalMode === "APPROVER" ? "approvers" : "references"]: selectedList,

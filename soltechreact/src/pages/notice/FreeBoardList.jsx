@@ -37,7 +37,7 @@ const FreeBoardList = () => {
         setTotalPages(data.totalPages);
         setTotalCount(data.totalElements);
       } catch (error) {
-        console.error("자유게시판 데이터를 불러오는 데 실패했습니다!:", error);
+        console.error("자유게시판 데이터를 불러오는 데 실패했습니다:", error);
       }
     };
     loadPosts();
@@ -53,13 +53,13 @@ const FreeBoardList = () => {
             className="py-2 px-2 hover:bg-gray-200 rounded cursor-pointer"
             onClick={() => navigate("/intrasoltech/notices")}
           >
-            ✅ 전체 공지사항
+            전체 공지사항
           </div>
           <div
-            className="py-2 px-2 hover:bg-gray-200 rounded cursor-pointer"
+            className="py-2 px-2 border-t border-gray-300 hover:bg-gray-200 cursor-pointer"
             onClick={() => navigate("/intrasoltech/notices/freeboard")}
           >
-            💬 자유게시판
+            자유게시판
           </div>
         </nav>
       </aside>

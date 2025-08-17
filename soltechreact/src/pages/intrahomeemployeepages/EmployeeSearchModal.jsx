@@ -36,7 +36,6 @@ const EmployeeSearchModal = ({ isOpen, onClose, onSelect }) => {
     setSelected((prev) =>
       prev.some((e) => e.empNo === emp.empNo) ? prev.filter((e) => e.empNo !== emp.empNo) : [...prev, emp]
     );
-    // console.log(emp);
   };
   //선택완료
   const handleConfirm = () => {

@@ -33,7 +33,6 @@ const MainFaq = () => {
   useEffect(() => {
     getFAQList(page, 10, category, keyword)
       .then((data) => {
-        console.log("받은 데이터 : ", data);
         setFaqList(data.dtoList);
         setPageResult(data);
       })

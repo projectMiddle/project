@@ -34,7 +34,6 @@ const ApprovalList = () => {
   // 문서 목록
   useEffect(() => {
     if (!empNo) return;
-    console.log("현재 상태 status:", status);
     fetchApprovalList(status, page, 10, empNo)
       .then((data) => {
         setApprovals(data.dtoList);

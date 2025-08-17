@@ -5,11 +5,9 @@ const MainApplyProcess = () => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    console.log("[ApplyProcessPage] mounted");
     const onScroll = () => {
       const s = window.scrollY > 24;
       if (s !== scrolled) {
-        console.log("[ApplyProcessPage] scrollY:", window.scrollY, "→ scrolled:", s);
         setScrolled(s);
       }
     };

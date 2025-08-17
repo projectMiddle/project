@@ -6,7 +6,6 @@ import useAuth from "../../hooks/useAuth";
 const FreeBoardForm = () => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
-  console.log("✅ userInfo:", userInfo);
 
   const [formData, setFormData] = useState({
     frBdTitle: "", // ✅ 제목
@@ -45,14 +44,12 @@ const FreeBoardForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("📦 전송될 formData:", formData);
-
     try {
       await createFreePost(formData);
       alert("게시글이 등록되었습니다.");
       navigate("/intrasoltech/notices/freeboard/");
     } catch (err) {
-      console.error("❌ 등록 실패!:", err.response?.data || err.message);
+      console.error("❌ 등록 실패:", err.response?.data || err.message);
       alert("오류 발생: " + (err.response?.data?.message || err.message));
     }
   };

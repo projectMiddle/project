@@ -13,7 +13,6 @@ const PayListTable = ({ payList = [], year }) => {
     const key = `${y}-${m.padStart(2, "0")}`;
     payMap[key] = p;
   });
-  console.log(payList)
 
   const navigate = useNavigate();
 

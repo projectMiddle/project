@@ -23,7 +23,6 @@ const EditInfo = ({ empNo, initialData, onUpdated }) => {
       onUpdated?.(); // 부모에서 재요청 등 후처리 가능
     } catch (err) {
       console.error("수정 실패:", err);
-      console.log("보내는 데이터:", formData);
     }
   };
 
