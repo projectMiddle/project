@@ -70,7 +70,7 @@ public class LoginController {
                         "success", false,
                         "message", "존재하지 않는 사원입니다."));
             }
-            if (!employee.getEPassword().equals(password)) {
+            if (!passwordEncoder.matches(password, employee.getEPassword())) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "success", false,
                         "message", "비밀번호가 일치하지 않습니다."));
