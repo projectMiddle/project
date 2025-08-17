@@ -108,6 +108,7 @@ jobs:
 
             # 백엔드 실행
             docker run -d --name soltech-final-backend \
+              --network soltech-net \
               --env-file /home/ubuntu/db.env \
               --env-file /home/ubuntu/google.env \
               --env-file /home/ubuntu/jwt.env \
@@ -117,6 +118,7 @@ jobs:
 
             # 프론트 실행
             docker run -d --name soltech-final-frontend \
+              --network soltech-net \
               -p 5173:5173 \
               ${{ secrets.DOCKERHUB_USERNAME }}/soltech-final-frontend:latest
 
