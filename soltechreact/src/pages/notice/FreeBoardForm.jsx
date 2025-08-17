@@ -27,12 +27,6 @@ const FreeBoardForm = () => {
     }
   }, [userInfo]);
 
-  const deptMap = {
-    201: "개발부",
-    202: "인사부",
-    203: "총무부",
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -85,7 +79,7 @@ const FreeBoardForm = () => {
               </tr>
               <tr>
                 <td style={cellStyleTitle}>부서명</td>
-                <td style={cellStyle}>{deptMap[userInfo?.deptNo] || "로딩 중..."}</td>
+                <td style={cellStyle}>{userInfo?.deptNo || "로딩 중..."}</td>
               </tr>
 
               <tr>
