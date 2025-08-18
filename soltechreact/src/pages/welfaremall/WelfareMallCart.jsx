@@ -138,6 +138,9 @@ export default function WelfareMallCart() {
 
   // 폼 제출 → 서버 주문 생성(실패하면 프론트 폴백)
   const submitCheckout = async (checkoutForm) => {
+    const DEBUG = true;
+    const dlog = (...args) => DEBUG && console.log("[checkout]", ...args);
+    
     setLoading(true);
     if (selectedItems.length === 0) {
       alert("결제할 항목을 선택하세요.");
