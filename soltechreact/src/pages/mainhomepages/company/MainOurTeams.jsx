@@ -7,37 +7,37 @@ const teamData = [
     name: "정용재",
     position: "CEO / 팀장",
     description: "ERD 설계, Notion 제작, 메인/인트라넷 홈페이지 제작, 디자인, 카카오맵 API, 전자결재, 서버, 디버깅",
-    image: "/mainImages/company/jyj_pic.png", // 이미지 경로 변경 가능
+    image: "/mainImages/company/jyj.png", // 이미지 경로 변경 가능
   },
   {
     name: "이용성",
     position: "수석 연구원",
     description: "인트라넷 흐름 설계, 스케줄, 감사 로그, 사원 검색 기능",
-    image: "/team/lys.jpg",
+    image: "/mainImages/company/lys.png",
   },
   {
     name: "정동진",
     position: "책임 연구원",
     description: "회원관리, JWT 토큰, Google 로그인 API, Google Meet 화상 회의",
-    image: "/team/jdj.jpg",
+    image: "/mainImages/company/jdj.jpg",
   },
   {
     name: "박병선",
     position: "책임 연구원",
     description: "급여 명세서, PDF, 복지몰",
-    image: "/team/pbs.jpg",
+    image: "/mainImages/company/pbs.jpg",
   },
   {
     name: "장미경",
     position: "책임 연구원",
     description: "출결, 사원 정보 관리, 쪽지, 복지몰",
-    image: "/team/jmk.jpg",
+    image: "/mainImages/company/jmk.jpg",
   },
   {
     name: "신승찬",
     position: "선임 연구원",
     description: "공지/자유 게시판, 댓글",
-    image: "/team/ssc.jpg",
+    image: "/mainImages/company/ssh.jpg",
   },
 ];
 
